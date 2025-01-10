@@ -1,9 +1,7 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.actividad_10.powerzone_back.Entities.Ids.PostId;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,7 +10,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "groupmessenger")
-public class Groupmessenger implements Serializable {
+@IdClass(PostId.class)
+public class GroupMessenger implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)
