@@ -23,7 +23,7 @@ RUN ./mvnw package
 COPY target/*.jar app.jar
 
 # Expose the port the application runs on
-EXPOSE 1234
+EXPOSE 8080:1234
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
