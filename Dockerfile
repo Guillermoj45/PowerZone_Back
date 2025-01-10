@@ -9,6 +9,9 @@ COPY .mvn/ .mvn/
 COPY mvnw .
 COPY mvnw.cmd .
 
+# Ensure the Maven wrapper script has execute permissions
+RUN chmod +x mvnw
+
 # Copy the Maven build file and install dependencies
 COPY pom.xml .
 COPY src ./src
