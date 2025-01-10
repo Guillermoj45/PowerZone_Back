@@ -19,7 +19,7 @@ COPY src ./src
 # Package the application
 RUN ./mvnw package
 
-CMD ["ls", "-la", "/app/target"]
+RUN ls -la /app/target
 
 # Copy the packaged jar file to the container
 COPY target/*.jar app.jar
