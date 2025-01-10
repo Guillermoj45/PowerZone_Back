@@ -13,8 +13,6 @@ import java.io.Serializable;
 @Table(name = "groupuser")
 public class Groupuser implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Column(name = "id", nullable = false)
     private Long id;
 

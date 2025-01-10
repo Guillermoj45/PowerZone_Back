@@ -14,8 +14,6 @@ import java.util.Date;
 @Table(name = "post")
 public class Post implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @Column(name = "id", nullable = false)
     private Long id;

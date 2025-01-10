@@ -14,8 +14,6 @@ import java.util.Date;
 @Table(name = "booksmarks")
 public class Booksmarks implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @Column(name = "user_id", nullable = false)
     private Long userId;

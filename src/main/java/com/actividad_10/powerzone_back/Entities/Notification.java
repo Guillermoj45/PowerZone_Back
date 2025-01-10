@@ -14,8 +14,6 @@ import java.util.Date;
 @Table(name = "notification")
 public class Notification implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @Column(name = "id", nullable = false)
     private Long id;

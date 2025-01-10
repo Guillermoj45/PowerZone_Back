@@ -14,8 +14,6 @@ import java.util.Date;
 @Table(name = "profile")
 public class Profile implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
