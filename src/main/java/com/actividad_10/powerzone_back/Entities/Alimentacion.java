@@ -1,19 +1,17 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "alimentacion")
 public class Alimentacion implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -24,5 +22,11 @@ public class Alimentacion implements Serializable {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @ManyToMany
+    @JoinTable(name = "diet_alimentation",
+        joinColumns = {@JoinColumn(name = "alimentation_id")},
+        inverseJoinColumns = {@JoinColumn(name = "diet_id")})
+    private Set<Diet> diets;
 
 }

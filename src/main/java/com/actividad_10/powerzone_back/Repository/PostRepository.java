@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.sql.Date;
 
-public interface PostRepository extends JpaRepository<Post, Date>, JpaSpecificationExecutor<Post> {
+public interface PostRepository extends JpaRepository<Post, Date>{
 
 }

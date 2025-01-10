@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.sql.Date;
 
-public interface GroupmessengerRepository extends JpaRepository<Groupmessenger, Date>, JpaSpecificationExecutor<Groupmessenger> {
+public interface GroupmessengerRepository extends JpaRepository<Groupmessenger, Date> {
 
 }
