@@ -4,6 +4,11 @@ LABEL authors="guill"
 # Set the working directory
 WORKDIR /app
 
+# Copy the Maven wrapper files
+COPY .mvn/ .mvn/
+COPY mvnw .
+COPY mvnw.cmd .
+
 # Copy the Maven build file and install dependencies
 COPY pom.xml .
 COPY src ./src
@@ -15,7 +20,7 @@ RUN ./mvnw package
 COPY target/*.jar app.jar
 
 # Expose the port the application runs on
-EXPOSE 8080
+EXPOSE 1234
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
