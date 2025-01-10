@@ -1,9 +1,6 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +8,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "groupuser")
+@IdClass(Groupuser.class)
 public class Groupuser implements Serializable {
 
     @Column(name = "id", nullable = false)

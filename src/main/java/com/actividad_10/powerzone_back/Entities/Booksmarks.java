@@ -1,9 +1,7 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.actividad_10.powerzone_back.Entities.Ids.LikeId;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,6 +10,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "booksmarks")
+@IdClass(LikeId.class)
 public class Booksmarks implements Serializable {
 
     @Id

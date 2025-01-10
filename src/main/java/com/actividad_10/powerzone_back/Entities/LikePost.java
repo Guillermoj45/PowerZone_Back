@@ -1,9 +1,6 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,6 +9,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "like_post")
+@IdClass(LikePost.class)
 public class LikePost implements Serializable {
 
     @Id
