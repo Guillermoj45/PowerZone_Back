@@ -26,4 +26,4 @@ COPY target/*.jar app.jar
 EXPOSE 1234
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
