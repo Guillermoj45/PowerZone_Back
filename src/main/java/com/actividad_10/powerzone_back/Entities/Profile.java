@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -18,14 +19,16 @@ public class Profile implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    //Nombre de usuario
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "avatar", nullable = false)
     private String avatar;
 
+    //Fecha de nacimiento
     @Column(name = "born_date", nullable = false)
-    private Date bornDate;
+    private LocalDate bornDate;
 
     @Column(name = "ban_at")
     private Date banAt;
@@ -34,7 +37,7 @@ public class Profile implements Serializable {
     private Long diet;
 
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "activo", nullable = false)
     private Boolean activo;

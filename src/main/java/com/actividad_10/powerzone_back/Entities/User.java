@@ -15,9 +15,11 @@ public class User implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    //Correo electronico
     @Column(name = "email", nullable = false)
     private String email;
 
+    //Contraseña
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -29,5 +31,5 @@ public class User implements Serializable {
         joinColumns = {@JoinColumn(name = "user_id")},
         inverseJoinColumns = {@JoinColumn(name = "follower_id")}
     )
-    private Set<User> diets;
+    private Set<User> users;
 }
