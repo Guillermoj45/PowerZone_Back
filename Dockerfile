@@ -20,8 +20,7 @@ COPY src ./src
 RUN ./mvnw package
 
 # Copy the packaged jar file to the container
-cmd ["ls"]
-COPY target/*.jar app.jar
+COPY .target/*.jar app.jar
 
 # Expose the port the application runs on
 EXPOSE 1234
