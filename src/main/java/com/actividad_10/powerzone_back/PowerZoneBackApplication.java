@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PowerZoneBackApplication {
 
     public static void main(String[] args) {
+        System.out.println(args);
         SpringApplication.run(PowerZoneBackApplication.class, args);
     }
 
