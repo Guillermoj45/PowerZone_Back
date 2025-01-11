@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
+import com.actividad_10.powerzone_back.DTOs.ProfileDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Services.UserService;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    ResponseEntity<Profile> loginUser(@RequestParam String email, @RequestParam String password) {
+    ResponseEntity<ProfileDto> loginUser(@RequestParam String email, @RequestParam String password) {
         return new ResponseEntity<>(userService.LoginUser(email, password), HttpStatus.OK);
     }
 }

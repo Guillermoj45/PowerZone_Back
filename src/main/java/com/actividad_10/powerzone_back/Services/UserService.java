@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
+import com.actividad_10.powerzone_back.DTOs.ProfileDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
@@ -8,11 +9,11 @@ import com.actividad_10.powerzone_back.Exceptions.ExistingField;
 import com.actividad_10.powerzone_back.Repository.ProfileRepository;
 import com.actividad_10.powerzone_back.Repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +38,7 @@ public class UserService implements IUserService {
         // Crear usuario
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
-        user.setPassword(nuevoPerfil.getPassword());
+        user.setPassword(new BCryptPasswordEncoder().encode(nuevoPerfil.getPassword()));
         user.setRole(nuevoPerfil.getRole() != null ? nuevoPerfil.getRole() : 0);
 
         // Crear perfil asociado
@@ -57,22 +58,29 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Profile LoginUser(String email, String password) {
+    public ProfileDto LoginUser(String email, String password) {
         if (email == null || password == null) {
             throw new BlankInfo("Email y password son obligatorios.");
         }
 
-        User user = userRepository.findByEmailAndPassword(email, password)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
 
-        Long id = user.getProfile().getId();
+        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+            throw new BlankInfo("Email o password incorrectos.");
+        }
 
-        Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new BlankInfo("Perfil no encontrado."));
+        Profile profile = user.getProfile();
+        ProfileDto profileDto = new ProfileDto();
+        profileDto.setId(profile.getId());
+        profileDto.setName(profile.getName());
+        profileDto.setAvatar(profile.getAvatar());
+        profileDto.setBornDate(profile.getBornDate());
+        profileDto.setActivo(profile.getActivo());
 
-        return profile;
-
+        return profileDto;
     }
+
 
 
 }
