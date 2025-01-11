@@ -24,8 +24,8 @@ public class Alimentacion implements Serializable {
     private String description;
 
     @ManyToMany
-    @JoinTable(name = "diet_alimentation",
-        joinColumns = {@JoinColumn(name = "alimentation_id")},
+    @JoinTable(name = "diet_alimentacion",
+        joinColumns = {@JoinColumn(name = "alimentacion_id")},
         inverseJoinColumns = {@JoinColumn(name = "diet_id")})
     private Set<Diet> diets;
 
