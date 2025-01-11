@@ -20,7 +20,7 @@ COPY src ./src
 RUN ./mvnw package && ls -la target
 
 # Copy the packaged jar file to the container
-COPY target/PowerZone_back-0.0.1-SNAPSHOT.jar.original app.jar
+COPY target tarjet
 
 # Expose the port the application runs on
 EXPOSE 8080
