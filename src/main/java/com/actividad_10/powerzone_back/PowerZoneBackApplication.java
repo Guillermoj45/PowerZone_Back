@@ -11,6 +11,7 @@ public class PowerZoneBackApplication {
         for (String arg : args) {
             System.out.println("hola :" + arg);
         }
+        System.out.println("hola" + System.getenv());
         SpringApplication.run(PowerZoneBackApplication.class, args);
     }
 
