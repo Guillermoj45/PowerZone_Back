@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     @Transactional
@@ -54,6 +56,23 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
+    @Override
+    public Profile LoginUser(String email, String password) {
+        if (email == null || password == null) {
+            throw new BlankInfo("Email y password son obligatorios.");
+        }
+
+        User user = userRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
+
+        Long id = user.getProfile().getId();
+
+        Profile profile = profileRepository.findById(id)
+                .orElseThrow(() -> new BlankInfo("Perfil no encontrado."));
+
+        return profile;
+
+    }
 
 
 }
