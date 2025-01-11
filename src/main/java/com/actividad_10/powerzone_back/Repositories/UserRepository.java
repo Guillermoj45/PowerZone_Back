@@ -1,4 +1,4 @@
-package com.actividad_10.powerzone_back.Repository;
+package com.actividad_10.powerzone_back.Repositories;
 
 import com.actividad_10.powerzone_back.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
