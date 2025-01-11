@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -22,7 +23,7 @@ public class GroupMessenger implements Serializable {
 
     @Id
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "grupouser", nullable = false)
     private Long grupouser;

@@ -39,7 +39,7 @@ create table alimentacion_ingredients(
 
 );
 
-create table "user" (
+create table "users" (
                         id bigserial primary key,
                         email varchar(50) not null unique,
                         password varchar(50) not null,
@@ -55,7 +55,7 @@ create table "profile" (
                            diet bigint,
                            created_at timestamp not null default now(),
                            activo boolean not null default true,
-                           constraint fk_profile_user foreign key (id) references "user" (id) on delete cascade,
+                           constraint fk_profile_user foreign key (id) references "users" (id) on delete cascade,
                            constraint fk_profile_diet foreign key (diet) references "diet" (id) on delete SET NULL
 );
 
@@ -63,8 +63,8 @@ create table "follower" (
                             user_id bigint not null,
                             follower_id bigint not null,
                             constraint pk_follower primary key (user_id, follower_id),
-                            constraint fk_follower_user foreign key (user_id) references "user" (id) on delete cascade,
-                            constraint fk_follower_follower foreign key (follower_id) references "user" (id) on delete cascade
+                            constraint fk_follower_user foreign key (user_id) references "users" (id) on delete cascade,
+                            constraint fk_follower_follower foreign key (follower_id) references "users" (id) on delete cascade
 );
 
 create table "post" (
@@ -75,7 +75,7 @@ create table "post" (
                         user_id bigint not null,
                         delete boolean,
                         primary key (id, created_at),
-                        constraint fk_post_user foreign key (user_id) references "user" (id) on delete cascade
+                        constraint fk_post_user foreign key (user_id) references "users" (id) on delete cascade
 ) partition by RANGE (created_at);
 
 create table post_2025 partition of post
@@ -107,7 +107,7 @@ create table comment (
     user_id bigint not null,
     post_id bigint not null,
     post_created_at timestamp not null,
-    constraint fk_comment_user foreign key (user_id) references "user" (id) on delete cascade,
+    constraint fk_comment_user foreign key (user_id) references "users" (id) on delete cascade,
     constraint fk_comment_post foreign key (post_id, post_created_at) references post (id, created_at) on delete cascade
 );
 
@@ -116,7 +116,7 @@ create table like_post (
                            post_id bigint not null,
                            created_at_post timestamp not null default now(),
                            constraint pk_like_post primary key (user_id, post_id),
-                           constraint fk_like_post_user foreign key (user_id) references "user" (id) on delete cascade,
+                           constraint fk_like_post_user foreign key (user_id) references "users" (id) on delete cascade,
                            constraint fk_like_post_post foreign key (post_id, created_at_post) references post (id, created_at) on delete cascade
 );
 
@@ -125,7 +125,7 @@ create table booksmarks (
                             post_id bigint not null,
                             created_at_post timestamp not null default now(),
                             constraint pk_booksmarks primary key (user_id, post_id),
-                            constraint fk_booksmarks_user foreign key (user_id) references "user" (id) on delete cascade,
+                            constraint fk_booksmarks_user foreign key (user_id) references "users" (id) on delete cascade,
                             constraint fk_booksmarks_post foreign key (post_id, created_at_post) references post (id, created_at) on delete cascade
 );
 
@@ -139,7 +139,7 @@ create table groupUser (
                            user_id bigint not null,
                            group_id bigint not null,
                            constraint pk_groupUser primary key (user_id, group_id),
-                           constraint fk_groupUser_user foreign key (user_id) references "user" (id) on delete cascade,
+                           constraint fk_groupUser_user foreign key (user_id) references "users" (id) on delete cascade,
                            constraint fk_groupUser_group foreign key (group_id) references groupName (id) on delete cascade
 );
 
@@ -170,7 +170,7 @@ create table reports (
     user_id bigint not null,
     post_id bigint not null,
     created_at_post timestamp not null,
-    constraint fk_reports_user foreign key (user_id) references "user" (id) on delete cascade,
+    constraint fk_reports_user foreign key (user_id) references "users" (id) on delete cascade,
     constraint fk_reports_post foreign key (post_id, created_at_post) references post (id, created_at) on delete cascade
 );
 
@@ -180,7 +180,7 @@ create table notification (
                               type smallint,
                               created_at timestamp not null default now(),
                               user_id bigint not null,
-                              constraint fk_notification_user foreign key (user_id) references "user" (id) on delete cascade
+                              constraint fk_notification_user foreign key (user_id) references "users" (id) on delete cascade
 );
 
 

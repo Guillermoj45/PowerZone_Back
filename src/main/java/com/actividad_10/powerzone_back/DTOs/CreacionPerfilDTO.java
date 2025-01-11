@@ -4,8 +4,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreacionPerfilDTO {
@@ -16,4 +15,7 @@ public class CreacionPerfilDTO {
     private String avatar;
     private LocalDate bornDate;
     private Boolean activo;
+
 }
+
+
