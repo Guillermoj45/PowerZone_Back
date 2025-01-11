@@ -12,18 +12,15 @@ COPY mvnw.cmd .
 # Ensure the Maven wrapper script has execute permissions
 RUN chmod +x mvnw
 
-# Copy the Maven build file and source code
+# Copy the Maven build file and install dependencies
 COPY pom.xml .
 COPY src ./src
 
 # Package the application
-RUN ./mvnw package && ls -la target
-
-# Copy the packaged jar file to the container
-COPY target tarjet
+RUN ./mvnw package
 
 # Expose the port the application runs on
-EXPOSE 8080
+EXPOSE 8080:1234
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
