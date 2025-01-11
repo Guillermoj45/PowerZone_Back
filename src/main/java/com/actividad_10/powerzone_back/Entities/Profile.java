@@ -1,13 +1,10 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -18,25 +15,29 @@ public class Profile implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private User user;
+
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "avatar", nullable = false)
-    private String avatar;
+    @Column(name = "avatar", nullable = false, length = 200, columnDefinition = "varchar(200) default 'https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png'")
+    private String avatar = "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png";
 
     @Column(name = "born_date", nullable = false)
-    private Date bornDate;
+    private LocalDate bornDate;
 
     @Column(name = "ban_at")
-    private Date banAt;
+    private LocalDate banAt;
 
     @Column(name = "diet")
     private Long diet;
 
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private LocalDate createdAt = LocalDate.now();
 
     @Column(name = "activo", nullable = false)
-    private Boolean activo;
-
+    private Boolean activo = true;
 }

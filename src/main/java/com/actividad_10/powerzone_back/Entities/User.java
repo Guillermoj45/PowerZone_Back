@@ -8,26 +8,36 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "role", nullable = false)
-    private Integer role;
+    private Integer role = 0;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Profile profile;
 
     @ManyToMany
     @JoinTable(name = "follower",
-        joinColumns = {@JoinColumn(name = "user_id")},
-        inverseJoinColumns = {@JoinColumn(name = "follower_id")}
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "follower_id")}
     )
-    private Set<User> diets;
+    private Set<User> followers;
+
+    // Método para asociar el perfil
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+        profile.setUser(this); // Configura la relación bidireccional
+    }
 }

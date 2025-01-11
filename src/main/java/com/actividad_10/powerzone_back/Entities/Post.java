@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -25,7 +25,7 @@ public class Post implements Serializable {
 
     @Id
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
