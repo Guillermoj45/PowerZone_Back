@@ -12,18 +12,18 @@ COPY mvnw.cmd .
 # Ensure the Maven wrapper script has execute permissions
 RUN chmod +x mvnw
 
-# Copy the Maven build file and install dependencies
+# Copy the Maven build file and source code
 COPY pom.xml .
 COPY src ./src
 
 # Package the application
-RUN ./mvnw package
+RUN ./mvnw package && ls -la target
 
 # Copy the packaged jar file to the container
-COPY target/*.jar app.jar
+COPY target/PowerZone_back-0.0.1-SNAPSHOT.jar.original app.jar
 
 # Expose the port the application runs on
-EXPOSE 8080:1234
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
