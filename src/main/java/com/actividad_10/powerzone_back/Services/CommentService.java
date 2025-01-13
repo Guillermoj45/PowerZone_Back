@@ -14,7 +14,7 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public void getCommentByName() {
+    public void getCommentByUserName() {
 
 
     }
