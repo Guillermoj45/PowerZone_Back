@@ -6,6 +6,7 @@ import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
+import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
