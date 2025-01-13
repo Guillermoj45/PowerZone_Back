@@ -24,27 +24,31 @@ public class SecurityConfig {
 
     AuthenticationConfiguration authenticationConfiguration;
 
+    // Metodo que gestiona la cadena de filtros que usa el SecurityConfig
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        //De momento desabilitamos tokens y todos los usuarios pueden visitar todas las páginas
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().permitAll() // Permite todas las solicitudes sin autenticación
                 );
-        return httpSecurity.build();
+        return httpSecurity.build(); // Construimos el http
     }
 
 
+    // Manager que gestiona la cadena de filtros
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // Proveedor que le da los servicios al Manager
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(username -> {
+        provider.setPasswordEncoder(passwordEncoder()); // Servicio de encriptado
+        provider.setUserDetailsService(username -> { // Servicio de acesso a usuarios
             // Crea un usuario predeterminado
             return org.springframework.security.core.userdetails.User.builder()
                     .username("defaultUser")
@@ -56,7 +60,7 @@ public class SecurityConfig {
     }
 
 
-
+    //Método que me encripta las contraseñas
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }

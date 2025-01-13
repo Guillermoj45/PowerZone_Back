@@ -59,6 +59,7 @@ public class UserService implements IUserService {
 
     @Override
     public ProfileDto LoginUser(String email, String password) {
+
         if (email == null || password == null) {
             throw new BlankInfo("Email y password son obligatorios.");
         }
@@ -66,10 +67,12 @@ public class UserService implements IUserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
 
+        // Si la nueva contraseña NO coincide con la que está en la base de datos...
         if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
             throw new BlankInfo("Email o password incorrectos.");
         }
 
+        // Creo perfilDTO para devolver el usuario de la base de datos
         Profile profile = user.getProfile();
         ProfileDto profileDto = new ProfileDto();
         profileDto.setId(profile.getId());
