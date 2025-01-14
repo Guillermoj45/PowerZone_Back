@@ -3,6 +3,7 @@ package com.actividad_10.powerzone_back.Services;
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
 import com.actividad_10.powerzone_back.DTOs.ProfileDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Entities.Rol;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
@@ -39,7 +40,8 @@ public class UserService implements IUserService {
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
         user.setPassword(new BCryptPasswordEncoder().encode(nuevoPerfil.getPassword()));
-        user.setRole(nuevoPerfil.getRole() != null ? nuevoPerfil.getRole() : 0);
+        //Como todos son ususarios a no ser que lo modifiquemos en la base de datos, lo hardcodeamos
+        user.setRole(Rol.USER);
 
         // Crear perfil asociado
         Profile profile = new Profile();
