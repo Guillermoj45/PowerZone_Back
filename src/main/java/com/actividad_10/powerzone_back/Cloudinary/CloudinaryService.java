@@ -1,5 +1,5 @@
 package com.actividad_10.powerzone_back.Cloudinary;
-import lombok.AllArgsConstructor;
+
 import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -9,10 +9,13 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 public class CloudinaryService {
 
     private final Cloudinary cloudinary;
+
+    public CloudinaryService(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
 
     /**
      * Sube un archivo a Cloudinary
