@@ -31,6 +31,6 @@ public class Post implements Serializable {
     private Long userId;
 
     @Column(name = "delete")
-    private Boolean delete;
+    private Boolean delete = false;
 
 }

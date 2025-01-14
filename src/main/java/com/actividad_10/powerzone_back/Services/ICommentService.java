@@ -4,5 +4,5 @@ public interface ICommentService {
     void createComment();
     void deleteComment();
 
-    void getCommentByName();
+    void getCommentByUserName();
 }

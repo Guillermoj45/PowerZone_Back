@@ -1,12 +1,15 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
+import com.actividad_10.powerzone_back.DTOs.ProfileDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
+import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     @Transactional
@@ -34,7 +38,7 @@ public class UserService implements IUserService {
         // Crear usuario
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
-        user.setPassword(nuevoPerfil.getPassword());
+        user.setPassword(new BCryptPasswordEncoder().encode(nuevoPerfil.getPassword()));
         user.setRole(nuevoPerfil.getRole() != null ? nuevoPerfil.getRole() : 0);
 
         // Crear perfil asociado
@@ -51,6 +55,33 @@ public class UserService implements IUserService {
 
         // Guardar usuario (el perfil se guarda automáticamente)
         userRepository.save(user);
+    }
+
+    @Override
+    public ProfileDto LoginUser(String email, String password) {
+
+        if (email == null || password == null) {
+            throw new BlankInfo("Email y password son obligatorios.");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
+
+        // Si la nueva contraseña NO coincide con la que está en la base de datos...
+        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+            throw new BlankInfo("Email o password incorrectos.");
+        }
+
+        // Creo perfilDTO para devolver el usuario de la base de datos
+        Profile profile = user.getProfile();
+        ProfileDto profileDto = new ProfileDto();
+        profileDto.setId(profile.getId());
+        profileDto.setName(profile.getName());
+        profileDto.setAvatar(profile.getAvatar());
+        profileDto.setBornDate(profile.getBornDate());
+        profileDto.setActivo(profile.getActivo());
+
+        return profileDto;
     }
 
 
