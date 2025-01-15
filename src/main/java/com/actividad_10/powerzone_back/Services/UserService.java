@@ -1,15 +1,22 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
+import com.actividad_10.powerzone_back.DTOs.LoginDto;
 import com.actividad_10.powerzone_back.DTOs.ProfileDto;
+import com.actividad_10.powerzone_back.DTOs.RespuestaDTO;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Entities.Rol;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
-import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +25,10 @@ import java.time.LocalDate;
 
 @Service
 @AllArgsConstructor
-public class UserService implements IUserService {
+public class UserService implements IUserService, UserDetailsService {
 
     private final UserRepository userRepository;
-    private final ProfileRepository profileRepository;
+    private final JwtService jwtService;
 
     @Override
     @Transactional
@@ -60,32 +67,34 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ProfileDto LoginUser(String email, String password) {
+    public ResponseEntity<RespuestaDTO> LoginUser(LoginDto loginDto) {
 
-        if (email == null || password == null) {
+        if (loginDto.getEmail() == null || loginDto.getPassword() == null) {
             throw new BlankInfo("Email y password son obligatorios.");
         }
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
 
-        // Si la nueva contraseña NO coincide con la que está en la base de datos...
-        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+        if (!new BCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword())) {
             throw new BlankInfo("Email o password incorrectos.");
         }
 
-        // Creo perfilDTO para devolver el usuario de la base de datos
-        Profile profile = user.getProfile();
-        ProfileDto profileDto = new ProfileDto();
-        profileDto.setId(profile.getId());
-        profileDto.setName(profile.getName());
-        profileDto.setAvatar(profile.getAvatar());
-        profileDto.setBornDate(profile.getBornDate());
-        profileDto.setActivo(profile.getActivo());
+        // Generate token
+        String token = jwtService.generateToken(user);
 
-        return profileDto;
+        // Build the response
+        RespuestaDTO respuesta = RespuestaDTO.builder()
+                .estado(HttpStatus.OK.value())
+                .token(token)
+                .build();
+
+        return ResponseEntity.ok(respuesta);
     }
 
 
-
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username).orElse(null);
+    }
 }
