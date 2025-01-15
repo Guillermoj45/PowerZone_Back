@@ -12,30 +12,25 @@ public class PostService implements IPostService {
     @Autowired
     private PostRepository postRepository;
 
-//    @Override
-//    public void createPost(int idUser) {
-//        Post post = new Post();
-//        post.setUserId((long) idUser);
-//        post.setCreatedAt(java.time.LocalDate.now());
-//        postRepository.createPost(idUser);
-//    }
+   @Override
+   public void createPost(Post newPost) {
+       Post post = new Post();
+       post.setUserId(newPost.getUserId());
+       post.setTitle(newPost.getTitle());
+       post.setContent(newPost.getContent());
+       post.setCreatedAt(java.time.LocalDate.now());
+       postRepository.save(post);
+   }
+
 
     @Override
-    public void createPost(int idUser) {
-
+    public void deletePost(Long idPost) {
+        postRepository.deleteById(idPost);
     }
 
-    @Override
-    public void deletePost(int idPost) {
-
+    public void findallPost(Post userPosts) {
+        postRepository.findAll();
     }
-
-//    @Override
-//    public void deletePost(int idPost) {
-//        postRepository.deletePost(idPost);
-//    }
-
-
     @Override
     public Optional<Post> findByTitle(String namePost) {
         return postRepository.findByTitle(namePost);
