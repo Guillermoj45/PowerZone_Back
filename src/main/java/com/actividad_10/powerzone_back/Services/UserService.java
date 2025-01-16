@@ -1,12 +1,11 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
-import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
+import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDto;
 import com.actividad_10.powerzone_back.DTOs.LoginDto;
-import com.actividad_10.powerzone_back.DTOs.ProfileDto;
-import com.actividad_10.powerzone_back.DTOs.RespuestaDTO;
+import com.actividad_10.powerzone_back.DTOs.RespuestaDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
-import com.actividad_10.powerzone_back.Entities.Rol;
+import com.actividad_10.powerzone_back.Entities.emun.Rol;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
@@ -32,7 +31,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void createUser(CreacionPerfilDTO nuevoPerfil) {
+    public void createUser(CreacionPerfilDto nuevoPerfil) {
         // Validar datos del DTO
         if (nuevoPerfil.getEmail() == null || nuevoPerfil.getPassword() == null || nuevoPerfil.getName() == null) {
             throw new BlankInfo("Email, password y nombre son obligatorios.");
@@ -67,7 +66,7 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<RespuestaDTO> LoginUser(LoginDto loginDto) {
+    public ResponseEntity<RespuestaDto> LoginUser(LoginDto loginDto) {
 
         if (loginDto.getEmail() == null || loginDto.getPassword() == null) {
             throw new BlankInfo("Email y password son obligatorios.");
@@ -84,7 +83,7 @@ public class UserService implements IUserService, UserDetailsService {
         String token = jwtService.generateToken(user);
 
         // Build the response
-        RespuestaDTO respuesta = RespuestaDTO.builder()
+        RespuestaDto respuesta = RespuestaDto.builder()
                 .estado(HttpStatus.OK.value())
                 .token(token)
                 .build();

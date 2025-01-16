@@ -1,9 +1,8 @@
 package com.actividad_10.powerzone_back.Controllers;
 
-import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
+import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDto;
 import com.actividad_10.powerzone_back.DTOs.LoginDto;
-import com.actividad_10.powerzone_back.DTOs.RespuestaDTO;
-import com.actividad_10.powerzone_back.Entities.User;
+import com.actividad_10.powerzone_back.DTOs.RespuestaDto;
 import com.actividad_10.powerzone_back.Services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,13 +18,13 @@ UserController {
     private UserService userService;
 
     @PostMapping("/create")
-    ResponseEntity<Void> createUser(@RequestBody CreacionPerfilDTO nuevoPerfil) {
+    ResponseEntity<Void> createUser(@RequestBody CreacionPerfilDto nuevoPerfil) {
         userService.createUser(nuevoPerfil);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/login")
-    ResponseEntity<RespuestaDTO> loginUser(@RequestBody LoginDto loginDto) {
+    ResponseEntity<RespuestaDto> loginUser(@RequestBody LoginDto loginDto) {
         return userService.LoginUser(loginDto);
     }
 }

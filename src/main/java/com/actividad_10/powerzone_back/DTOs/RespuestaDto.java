@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RespuestaDTO {
+public class RespuestaDto {
     private Integer estado;
     private String token;
     private String mensaje;
