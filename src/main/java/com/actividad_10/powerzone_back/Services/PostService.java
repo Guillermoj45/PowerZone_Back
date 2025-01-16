@@ -1,7 +1,9 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Entities.Post;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
+import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +14,19 @@ public class PostService implements IPostService {
     @Autowired
     private PostRepository postRepository;
 
+    private UserRepository userRepository;
+
    @Override
    public void createPost(Post newPost) {
-       Post post = new Post();
-       post.setUserId(newPost.getUserId());
-       post.setTitle(newPost.getTitle());
-       post.setContent(newPost.getContent());
-       post.setCreatedAt(java.time.LocalDate.now());
-       postRepository.save(post);
+       newPost.setCreatedAt(java.time.LocalDate.now());
+       postRepository.save(newPost);
    }
+    public Long extractUserPosts(String userPosts) {
+        Optional<User> user1 = userRepository.findByEmail(userPosts);
+        Long userID = user1.get().getId();
+        return userID;
 
+    }
 
     @Override
     public void deletePost(Long idPost) {

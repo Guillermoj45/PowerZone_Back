@@ -39,7 +39,7 @@ public class JwtService {
     }
 
     //Me extrae todo el token
-    private Claims extractDatosToken(String token){
+    public Claims extractDatosToken(String token){
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())
