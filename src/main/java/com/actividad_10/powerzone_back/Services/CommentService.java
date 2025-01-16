@@ -1,20 +1,19 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Entities.Comment;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.CommentRepository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class CommentService implements ICommentService {
 
     private CommentRepository commentRepository;
     @Override
     public void createComment(Comment newComment) {
-        Comment comment = new Comment();
-        comment.setUserId(newComment.getUserId());
-        comment.setPostId(newComment.getPostId());
-        comment.setContent(newComment.getContent());
-        comment.setCreatedAt(java.time.LocalDate.now());
-        commentRepository.save(comment);
-
+        newComment.setCreatedAt(LocalDate.now());
+        commentRepository.save(newComment);
     }
 
     @Override
@@ -26,8 +25,8 @@ public class CommentService implements ICommentService {
 
     @Override
     public void getCommentByUserName(Comment userComments) {
-        Long userId = userComments.getUserId();
-        commentRepository.findByUser_Id(userId);
+        User userId = userComments.getUser();
+        List<Comment> hola = commentRepository.findByUser(userId);
 
     }
 }
