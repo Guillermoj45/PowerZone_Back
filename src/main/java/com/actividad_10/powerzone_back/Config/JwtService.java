@@ -34,7 +34,7 @@ public class JwtService {
         return Jwts
                 .builder()
                 .claim("tokenDto", tokenDto)
-                .signWith(getSignInKey(), SignatureAlgorithm.ES512)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 

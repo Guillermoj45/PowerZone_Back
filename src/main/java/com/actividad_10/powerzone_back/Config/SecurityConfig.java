@@ -23,11 +23,6 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new CustomAccessDeniedHandler();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -36,8 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().hasAnyAuthority("ADMIN", "USER"))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling((exception) -> exception.accessDeniedHandler(accessDeniedHandler()));
+                .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
