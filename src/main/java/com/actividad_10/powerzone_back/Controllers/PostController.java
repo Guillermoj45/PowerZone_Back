@@ -16,32 +16,19 @@ import java.util.Map;
 public class PostController {
 
     private PostService postService;
-    private final JwtService jwtService;
 
-    public PostController(JwtService jwtService) {
-        this.jwtService = jwtService;
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
+
     @PostMapping("/create")
-    public ResponseEntity<String> createPost(
-            @RequestHeader("Authorization") String token, // JWT desde el encabezado
-            @RequestBody Post post                        // JSON del cuerpo
-    ) {
-        // Extraer datos del usuario desde el token
-        String jwt = token.replace("Bearer ", "");
-        Claims claims = jwtService.extractDatosToken(jwt);
-        String email = claims.get("tokenDto", Map.class).get("email").toString();
+    public ResponseEntity<String> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
 
-        // Asociar el usuario al post
-        post.setUserId(extractUserIdFromEmail(email));
-
-        // Guardar el post en la base de datos
-        postService.createPost(post);
+        postService.createPost(token,post);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Post creado exitosamente");
     }
-    private Long extractUserIdFromEmail(String email) {
-        return postService.extractUserPosts(email);
-    }
+
     @DeleteMapping("/delete")
     ResponseEntity<Void> deletePost(@RequestBody Post deletePost) {
         postService.deletePost(deletePost.getId());

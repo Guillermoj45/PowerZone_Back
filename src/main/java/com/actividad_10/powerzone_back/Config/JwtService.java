@@ -23,20 +23,19 @@ public class JwtService {
     private String secretKey;
 
     public String generateToken(User user){
-            TokenDto tokenDto = TokenDto
-                    .builder()
-                    .email(user.getEmail())
-                    .rol(user.getRole().name())
-                    .fecha_creacion(System.currentTimeMillis())
-                    .fecha_expiracion(System.currentTimeMillis() + 1000 * 60 * 60)
-                    .build();
+        Map<String, Object> claims = new LinkedHashMap<>();
+        claims.put("email", user.getEmail());
+        claims.put("rol", user.getRole().name());
+        claims.put("fecha_creacion", System.currentTimeMillis());
+        claims.put("fecha_expiracion", System.currentTimeMillis() + 1000 * 60 * 60+12);
 
         return Jwts
                 .builder()
-                .claim("tokenDto", tokenDto)
+                .setClaims(claims)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     //Me extrae todo el token
     public Claims extractDatosToken(String token){
@@ -51,13 +50,12 @@ public class JwtService {
     //Me extrea los datos que queremos
     public TokenDto extractTokenData(String token) {
         Claims claims = extractDatosToken(token);
-        Map<String, Object> mapa = (LinkedHashMap<String, Object>) claims.get("tokenDto");
 
         return TokenDto.builder()
-                .email((String) mapa.get("email"))
-                .rol((String) mapa.get("rol"))
-                .fecha_creacion((Long) mapa.get("fecha_creacion"))
-                .fecha_expiracion((Long) mapa.get("fecha_expiracion"))
+                .email((String) claims.get("email"))
+                .rol((String) claims.get("rol"))
+                .fecha_creacion((Long) claims.get("fecha_creacion"))
+                .fecha_expiracion((Long) claims.get("fecha_expiracion"))
                 .build();
     }
 

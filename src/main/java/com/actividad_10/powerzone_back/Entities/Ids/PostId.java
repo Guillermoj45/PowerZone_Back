@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -13,13 +14,13 @@ public class PostId implements Serializable {
 
     // Getters y setters
     private Long id;
-    private Date createdAt;
+    private LocalDate createdAt;
 
     // Constructor por defecto
     public PostId() {}
 
     // Constructor con todos los atributos
-    public PostId(Long id, Date createdAt) {
+    public PostId(Long id, LocalDate createdAt) {
         this.id = id;
         this.createdAt = createdAt;
     }
