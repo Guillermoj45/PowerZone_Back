@@ -27,19 +27,14 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    @Override
-    @Transactional
-    public void createUser(CreacionPerfilDto nuevoPerfil) {
+    private static void IsEmailValid(CreacionPerfilDto nuevoPerfil) {
         // Validar datos del DTO
         if (nuevoPerfil.getEmail() == null || nuevoPerfil.getPassword() == null || nuevoPerfil.getName() == null) {
             throw new BlankInfo("Email, password y nombre son obligatorios.");
         }
+    }
 
-        // Verificar si el email ya existe
-        if (userRepository.findByEmail(nuevoPerfil.getEmail()).isPresent()) {
-            throw new ExistingField("El email ya está en uso.");
-        }
-
+    private static User createProfileAndUser(CreacionPerfilDto nuevoPerfil) {
         // Crear usuario
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
@@ -58,10 +53,26 @@ public class UserService implements IUserService, UserDetailsService {
 
         // Asignar el perfil al usuario
         user.setProfile(profile);
+        return user;
+    }
+
+    @Override
+    @Transactional
+    public void createUser(CreacionPerfilDto nuevoPerfil) {
+        IsEmailValid(nuevoPerfil);
+
+        // Verificar si el email ya existe
+        if (userRepository.findByEmail(nuevoPerfil.getEmail()).isPresent()) {
+            throw new ExistingField("El email ya está en uso.");
+        }
+        User user = createProfileAndUser(nuevoPerfil);
 
         // Guardar usuario (el perfil se guarda automáticamente)
         userRepository.save(user);
     }
+
+
+
 
     @Override
     public ResponseEntity<RespuestaDto> LoginUser(LoginDto loginDto) {
@@ -69,14 +80,9 @@ public class UserService implements IUserService, UserDetailsService {
         if (loginDto.getEmail() == null || loginDto.getPassword() == null) {
             throw new BlankInfo("Email y password son obligatorios.");
         }
-
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
-
-        if (!new BCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword())) {
-            throw new BlankInfo("Email o password incorrectos.");
-        }
-
+        isPasswordValid(loginDto, user);
         // Generate token
         String token = jwtService.generateToken(user);
 
@@ -85,10 +91,16 @@ public class UserService implements IUserService, UserDetailsService {
                 .estado(HttpStatus.OK.value())
                 .token(token)
                 .build();
-
         return ResponseEntity.ok(respuesta);
     }
 
+    private static void isPasswordValid(LoginDto loginDto, User user) {
+        if (!new BCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword())) {
+            throw new BlankInfo("Email o password incorrectos.");
+        }
+    }
+
+    //Metodo que me devuelve un perfil concreto
     @Override
     public Profile2Dto returnProfile(String token) {
         // Remove the "Bearer " prefix if it exists
@@ -108,6 +120,7 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
 
+    //Metodo que me encuentra el email
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElse(null);

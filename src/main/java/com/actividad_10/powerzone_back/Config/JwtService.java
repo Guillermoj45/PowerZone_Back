@@ -22,6 +22,7 @@ public class JwtService {
     @Value("${JWT_SECRET}")
     private String secretKey;
 
+    //Método que me genera el token
     public String generateToken(User user){
         Map<String, Object> claims = new LinkedHashMap<>();
         claims.put("email", user.getEmail());
@@ -37,7 +38,7 @@ public class JwtService {
     }
 
 
-    //Me extrae todo el token
+    // Función extraer los datos del todo el token
     public Claims extractDatosToken(String token){
         return Jwts
                 .parserBuilder()
@@ -47,7 +48,7 @@ public class JwtService {
                 .getBody();
     }
 
-    //Me extrea los datos que queremos
+    // Función que me extrae los datos del usuario eliminando toda la seguridad y header del token
     public TokenDto extractTokenData(String token) {
         token = token.trim();
 
@@ -61,10 +62,12 @@ public class JwtService {
                 .build();
     }
 
+    //Método que me comprueba si el token está expirado
     public boolean isExpired(String token){
         return new Date(extractTokenData(token).getFecha_expiracion()).before(new Date());
     }
 
+    //Metodo que me decodifica el token
     private Key getSignInKey(){
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

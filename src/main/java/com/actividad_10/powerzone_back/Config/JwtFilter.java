@@ -23,6 +23,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtService jwtService;
     private UserService usuarioService;
 
+    //Filtro que se va a seguir para ver si el token es correcto
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -31,24 +32,31 @@ public class JwtFilter extends OncePerRequestFilter {
     {
         final String authHeader = request.getHeader("Authorization");
 
+        // Si la ruta enviada por el http tiene /auth se salta el filtro
         if( request.getServletPath().contains("/auth")){
             filterChain.doFilter(request, response);
             return;
         }
 
+        //Si el header es nulo o el token empieza por Bearer, me lo manda hacia atrás
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
         }
 
+        //Quitamos la palabra Bearer...
         String token = authHeader.substring(7).trim();
+        //Extraemos los datos del token
         TokenDto tokenDto = jwtService.extractTokenData(token);
 
-        //TODO
+
         if (tokenDto != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            //Casteamos los datos del token a un objeto de tipo usuario
             User user = (User) usuarioService.loadUserByUsername(tokenDto.getEmail());
 
+            //Si el usuario devuelto es nuelo o el token está expirado
             if (user != null && !jwtService.isExpired(token)){
+                // Validamos el token
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         user.getUsername(),
                         user.getPassword(),
