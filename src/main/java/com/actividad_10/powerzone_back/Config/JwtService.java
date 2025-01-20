@@ -27,7 +27,7 @@ public class JwtService {
         claims.put("email", user.getEmail());
         claims.put("rol", user.getRole().name());
         claims.put("fecha_creacion", System.currentTimeMillis());
-        claims.put("fecha_expiracion", System.currentTimeMillis() + 1000 * 60 * 60+12);
+        claims.put("fecha_expiracion", System.currentTimeMillis() + 1000 * 60 * 60 * 12);
 
         return Jwts
                 .builder()
@@ -49,6 +49,8 @@ public class JwtService {
 
     //Me extrea los datos que queremos
     public TokenDto extractTokenData(String token) {
+        token = token.trim();
+
         Claims claims = extractDatosToken(token);
 
         return TokenDto.builder()

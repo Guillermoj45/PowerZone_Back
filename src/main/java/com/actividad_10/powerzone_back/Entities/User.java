@@ -1,8 +1,10 @@
 package com.actividad_10.powerzone_back.Entities;
 
 import com.actividad_10.powerzone_back.Entities.emun.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +16,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@ToString
 @Table(name = "users")
 public class User implements Serializable, UserDetails {
 
@@ -32,21 +35,15 @@ public class User implements Serializable, UserDetails {
     @Column(name = "role", nullable = false, columnDefinition = "0")
     private Rol role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne()
     private Profile profile;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "follower",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "follower_id")}
     )
     private Set<User> followers;
-
-    // Método para asociar el perfil
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-        profile.setUser(this); // Configura la relación bidireccional
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

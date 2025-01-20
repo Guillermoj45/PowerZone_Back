@@ -1,9 +1,7 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
-import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDto;
-import com.actividad_10.powerzone_back.DTOs.LoginDto;
-import com.actividad_10.powerzone_back.DTOs.RespuestaDto;
+import com.actividad_10.powerzone_back.DTOs.*;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Entities.emun.Rol;
 import com.actividad_10.powerzone_back.Entities.User;
@@ -91,9 +89,23 @@ public class UserService implements IUserService, UserDetailsService {
         return ResponseEntity.ok(respuesta);
     }
 
+    //TODO
+    @Override
+    public Profile2Dto returnProfile(String token) {
+        // Remove the "Bearer " prefix if it exists
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+        return null;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElse(null);
     }
+
+
 }

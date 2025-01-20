@@ -25,6 +25,8 @@ public class ApplicationConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -36,4 +38,7 @@ public class ApplicationConfig {
     private PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    // Bean que proporciona el usuario autenticado en el contexto de la solicitud
+
 }
