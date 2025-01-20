@@ -89,7 +89,6 @@ public class UserService implements IUserService, UserDetailsService {
         return ResponseEntity.ok(respuesta);
     }
 
-    //TODO
     @Override
     public Profile2Dto returnProfile(String token) {
         // Remove the "Bearer " prefix if it exists
@@ -98,7 +97,14 @@ public class UserService implements IUserService, UserDetailsService {
         }
 
         TokenDto tokenDto = jwtService.extractTokenData(token);
-        return null;
+        User user = (User) loadUserByUsername(tokenDto.getEmail());
+        Profile2Dto profile2Dto = new Profile2Dto();
+        profile2Dto.setId(user.getId());
+        profile2Dto.setName(user.getProfile().getName());
+        profile2Dto.setEmail(user.getEmail());
+        profile2Dto.setBornDate(user.getProfile().getBornDate());
+
+        return profile2Dto;
     }
 
 

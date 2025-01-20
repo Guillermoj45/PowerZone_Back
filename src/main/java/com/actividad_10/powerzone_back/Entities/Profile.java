@@ -2,20 +2,23 @@ package com.actividad_10.powerzone_back.Entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @Entity
-@ToString
 @Table(name = "profile")
 public class Profile implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private User user;
 
     @Column(name = "name", nullable = false)
     private String name;
