@@ -1,5 +1,7 @@
 package com.actividad_10.powerzone_back.Entities.Ids;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.Getter;
 import lombok.Setter;
 

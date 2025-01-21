@@ -25,13 +25,12 @@ public class PostController {
     public ResponseEntity<String> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
 
         postService.createPost(token,post);
-
         return ResponseEntity.status(HttpStatus.CREATED).body("Post creado exitosamente");
     }
 
     @DeleteMapping("/delete")
-    ResponseEntity<Void> deletePost(@RequestBody Post deletePost) {
-        postService.deletePost(deletePost.getId());
+    ResponseEntity<Void> deletePost(@RequestHeader("Authorization") String token, @RequestBody Post deletePost) {
+        postService.deletePost(token,deletePost);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getall")

@@ -10,10 +10,10 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "post")
-@IdClass(PostId.class)
 public class Post implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -23,7 +23,6 @@ public class Post implements Serializable {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Id
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
