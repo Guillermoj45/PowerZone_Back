@@ -1,6 +1,7 @@
 create database powerzone;
 
-
+set search_path to powerzone;
+set search_path = "public";
 
 create table diet (
                       id bigserial primary key,
@@ -42,13 +43,14 @@ create table alimentacion_ingredients(
 create table "users" (
                         id bigserial primary key,
                         email varchar(50) not null unique,
-                        password varchar(50) not null,
+                        password varchar(100) not null,
                         role smallint not null default 0
 );
 
 create table "profile" (
                            id bigint primary key,
                            name varchar(50) not null,
+                           nickname varchar(50) not null unique,
                            avatar varchar(200) not null default 'https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png',
                            born_date date not null,
                            ban_at timestamp,
@@ -69,7 +71,6 @@ create table "follower" (
 
 create table "post" (
                         id bigserial not null,
-                        title varchar(50) not null,
                         content text not null,
                         created_at timestamp not null default now(),
                         user_id bigint not null,
@@ -77,6 +78,8 @@ create table "post" (
                         primary key (id, created_at),
                         constraint fk_post_user foreign key (user_id) references "users" (id) on delete cascade
 ) partition by RANGE (created_at);
+
+create index idx_post_content on post (content);
 
 create table post_2025 partition of post
     for values from ('2025-01-01') to ('2026-01-01');
@@ -96,6 +99,7 @@ create table image (
     id bigint not null,
     post_created_at timestamp not null,
     image varchar(200) not null,
+    type smallint not null,
     primary key (id, post_created_at, image),
     constraint fk_image_post foreign key (id, post_created_at) references post (id, created_at) on delete cascade
 );

@@ -16,7 +16,5 @@ public class CreacionPerfilDto {
     private String avatar;
     private LocalDate bornDate;
     private Boolean activo;
-
 }
-
 

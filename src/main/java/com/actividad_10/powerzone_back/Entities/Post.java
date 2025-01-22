@@ -1,11 +1,12 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import com.actividad_10.powerzone_back.Entities.Ids.PostId;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
+
 
 @Data
 @Entity
@@ -16,9 +17,6 @@ public class Post implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Column(name = "title", nullable = false)
-    private String title;
 
     @Column(name = "content", nullable = false)
     private String content;
