@@ -72,4 +72,12 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public String desEncriptToken(String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+        return token;
+    }
+
 }

@@ -27,22 +27,46 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    private static void IsEmailValid(CreacionPerfilDto nuevoPerfil) {
-        // Validar datos del DTO
-        if (nuevoPerfil.getEmail() == null || nuevoPerfil.getPassword() == null || nuevoPerfil.getName() == null) {
-            throw new BlankInfo("Email, password y nombre son obligatorios.");
+
+    private boolean isEmailPasswordNull(String email, String password){
+        return email == null || password == null;
+    }
+
+    @Override
+    @Transactional
+    public void createUser(CreacionPerfilDto nuevoPerfil) {
+        validateEmailAndPassword(nuevoPerfil.getEmail(), nuevoPerfil.getPassword());
+        checkIfEmailExists(nuevoPerfil.getEmail());
+
+        User user = buildUser(nuevoPerfil);
+        userRepository.save(user);
+    }
+
+    private void validateEmailAndPassword(String email, String password) {
+        if (isEmailPasswordNull(email, password)) {
+            throw new BlankInfo("Email y password son obligatorios.");
         }
     }
 
-    private static User createProfileAndUser(CreacionPerfilDto nuevoPerfil) {
-        // Crear usuario
+    private void checkIfEmailExists(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new ExistingField("El email ya está en uso.");
+        }
+    }
+
+    private User buildUser(CreacionPerfilDto nuevoPerfil) {
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
         user.setPassword(new BCryptPasswordEncoder().encode(nuevoPerfil.getPassword()));
-        //Como todos son ususarios a no ser que lo modifiquemos en la base de datos, lo hardcodeamos
         user.setRole(Rol.USER);
 
-        // Crear perfil asociado
+        Profile profile = buildProfile(nuevoPerfil);
+        user.setProfile(profile);
+
+        return user;
+    }
+
+    private Profile buildProfile(CreacionPerfilDto nuevoPerfil) {
         Profile profile = new Profile();
         profile.setName(nuevoPerfil.getName());
         profile.setAvatar(nuevoPerfil.getAvatar() != null ? nuevoPerfil.getAvatar() :
@@ -51,35 +75,12 @@ public class UserService implements IUserService, UserDetailsService {
         profile.setCreatedAt(LocalDate.now());
         profile.setActivo(nuevoPerfil.getActivo() != null ? nuevoPerfil.getActivo() : true);
 
-        // Asignar el perfil al usuario
-        user.setProfile(profile);
-        return user;
+        return profile;
     }
-
-    @Override
-    @Transactional
-    public void createUser(CreacionPerfilDto nuevoPerfil) {
-        IsEmailValid(nuevoPerfil);
-
-        // Verificar si el email ya existe
-        if (userRepository.findByEmail(nuevoPerfil.getEmail()).isPresent()) {
-            throw new ExistingField("El email ya está en uso.");
-        }
-        User user = createProfileAndUser(nuevoPerfil);
-
-        // Guardar usuario (el perfil se guarda automáticamente)
-        userRepository.save(user);
-    }
-
-
-
 
     @Override
     public ResponseEntity<RespuestaDto> LoginUser(LoginDto loginDto) {
-
-        if (loginDto.getEmail() == null || loginDto.getPassword() == null) {
-            throw new BlankInfo("Email y password son obligatorios.");
-        }
+        validateEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new BlankInfo("Email o password incorrectos."));
         isPasswordValid(loginDto, user);
@@ -100,14 +101,7 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
-    //Metodo que me devuelve un perfil concreto
-    @Override
-    public Profile2Dto returnProfile(String token) {
-        // Remove the "Bearer " prefix if it exists
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7).trim();
-        }
-
+    private Profile2Dto getProfile2Dto(String token) {
         TokenDto tokenDto = jwtService.extractTokenData(token);
         User user = (User) loadUserByUsername(tokenDto.getEmail());
         Profile2Dto profile2Dto = new Profile2Dto();
@@ -119,12 +113,18 @@ public class UserService implements IUserService, UserDetailsService {
         return profile2Dto;
     }
 
+    //Metodo que me devuelve un perfil concreto
+    @Override
+    public Profile2Dto returnProfile(String token) {
+        token = jwtService.desEncriptToken(token);
+        return getProfile2Dto(token);
+    }
+
 
     //Metodo que me encuentra el email
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElse(null);
     }
-
 
 }
