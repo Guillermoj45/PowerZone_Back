@@ -38,11 +38,7 @@ public class PostController {
         postService.findallPost(userPosts);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping("/getitle")
-    ResponseEntity<Void> getPostByName(@RequestParam String name) {
-        postService.findByTitle(name);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+
 
 
 }

@@ -74,9 +74,7 @@ public class PostService implements IPostService {
     public void findallPost(Post userPosts) {
         postRepository.findAll();
     }
-    @Override
-    public Optional<Post> findByTitle(String namePost) {
-        return postRepository.findByTitle(namePost);
-    }
+
+
 
 }

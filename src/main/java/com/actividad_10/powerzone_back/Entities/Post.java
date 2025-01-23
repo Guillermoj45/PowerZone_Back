@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 
 
@@ -29,5 +31,8 @@ public class Post implements Serializable {
 
     @Column(name = "delete")
     private Boolean delete = false;
+
+    
+
 
 }
