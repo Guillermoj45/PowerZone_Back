@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
+import java.util.Set;
 
 
 @Data
@@ -28,6 +28,13 @@ public class Post implements Serializable {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @OneToMany(
+            mappedBy = "image",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private Set<Image> images;
 
     @Column(name = "delete")
     private Boolean delete = false;

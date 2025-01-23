@@ -96,12 +96,13 @@ create table default_post partition of post
 create index idx_post_created_at on post (created_at);
 
 create table image (
-    id bigint not null,
+    id bigserial not null,
+    id_post bigint not null ,
     post_created_at timestamp not null,
     image varchar(200) not null,
     type smallint not null,
-    primary key (id, post_created_at, image),
-    constraint fk_image_post foreign key (id, post_created_at) references post (id, created_at) on delete cascade
+    primary key (id),
+    constraint fk_image_post foreign key (id_post, post_created_at) references post (id, created_at) on delete cascade
 );
 
 create table comment (

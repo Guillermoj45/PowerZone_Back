@@ -10,13 +10,15 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "image")
-@IdClass(Image.class)
 public class Image implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "id_post")
+    private Long idPost;
 
     @Column(name = "post_created_at", nullable = false)
     private LocalDate postCreatedAt;
@@ -25,7 +27,6 @@ public class Image implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private MultimediaType type = MultimediaType.IMAGE;
 
-    @Id
     @Column(name = "image", nullable = false)
     private String image;
 
