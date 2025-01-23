@@ -23,6 +23,9 @@ public class Profile implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
+
     @Column(name = "avatar", nullable = false, length = 200, columnDefinition = "varchar(200) default 'https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png'")
     private String avatar = "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png";
 

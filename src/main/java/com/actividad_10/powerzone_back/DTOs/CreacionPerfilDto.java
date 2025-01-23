@@ -11,10 +11,10 @@ import java.time.LocalDate;
 public class CreacionPerfilDto {
     private String name;
     private String email;
+    private String nickname; // Ensure this field is present
     private String password;
     private Rol role;
     private String avatar;
     private LocalDate bornDate;
     private Boolean activo;
 }
-

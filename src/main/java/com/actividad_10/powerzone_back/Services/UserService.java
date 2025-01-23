@@ -44,7 +44,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     private void validateEmailAndPassword(String email, String password) {
         if (isEmailPasswordNull(email, password)) {
-            throw new BlankInfo("Email y password son obligatorios.");
+            throw new BlankInfo("Email y password son obligatory.");
         }
     }
 
@@ -69,6 +69,7 @@ public class UserService implements IUserService, UserDetailsService {
     private Profile buildProfile(CreacionPerfilDto nuevoPerfil) {
         Profile profile = new Profile();
         profile.setName(nuevoPerfil.getName());
+        profile.setNickname(nuevoPerfil.getNickname());
         profile.setAvatar(nuevoPerfil.getAvatar() != null ? nuevoPerfil.getAvatar() :
                 "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png");
         profile.setBornDate(nuevoPerfil.getBornDate());
