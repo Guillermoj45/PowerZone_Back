@@ -33,6 +33,15 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
 
         // Si la ruta enviada por el http tiene /auth se salta el filtro
+
+        String servletPath = request.getServletPath();
+        if (servletPath.startsWith("/auth/forgot-password") || servletPath.startsWith("/api/forgot-password")
+        || servletPath.startsWith("/api/auth/forgot-password")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         if( request.getServletPath().contains("/auth")){
             filterChain.doFilter(request, response);
             return;
