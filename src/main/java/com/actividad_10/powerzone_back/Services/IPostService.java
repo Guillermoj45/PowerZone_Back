@@ -9,5 +9,5 @@ public interface IPostService {
     Post createPost(String token, Post newPost);
     void deletePost(String token, Post deletePost);
     void findallPost(Post userPosts);
-
+    void safePost(Post post);
 }

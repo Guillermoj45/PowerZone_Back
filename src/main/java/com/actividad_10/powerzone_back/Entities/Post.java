@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class Post implements Serializable {
     private String content;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

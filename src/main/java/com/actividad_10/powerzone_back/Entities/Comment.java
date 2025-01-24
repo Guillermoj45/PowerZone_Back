@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class Comment implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -28,7 +29,5 @@ public class Comment implements Serializable {
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
-    @Column(name = "post_created_at", nullable = false)
-    private LocalDate postCreatedAt;
 
 }

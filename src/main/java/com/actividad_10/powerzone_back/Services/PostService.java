@@ -1,7 +1,9 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.Entities.Booksmarks;
 import com.actividad_10.powerzone_back.Entities.Post;
+import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -9,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -20,9 +23,12 @@ public class PostService implements IPostService {
 
     private final JwtService jwtService;
 
+    private BooksmarksRepository booksmarksRepository;
+
     public PostService(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -37,7 +43,7 @@ public class PostService implements IPostService {
 
         // Asignar el ID del usuario y la fecha de creación al nuevo post
         newPost.setUserId(userId);
-        newPost.setCreatedAt(java.time.LocalDate.now());
+        newPost.setCreatedAt(LocalDateTime.now());
 
         // Guardar el nuevo post
         postRepository.save(newPost);
@@ -75,6 +81,13 @@ public class PostService implements IPostService {
         postRepository.findAll();
     }
 
+    public void safePost(Post post) {
 
+    }
 
+    public void likePost(String token, Long postId) {
+    }
+
+    public void sharePost(String token, Long postId) {
+    }
 }

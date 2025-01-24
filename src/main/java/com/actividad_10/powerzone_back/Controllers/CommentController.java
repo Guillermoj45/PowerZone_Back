@@ -3,10 +3,7 @@ package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.Entities.Comment;
 import com.actividad_10.powerzone_back.Services.CommentService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comment")
@@ -14,8 +11,8 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/create")
-    void createComment(@RequestBody Comment newComment) {
-        commentService.createComment(newComment);
+    void createComment(@RequestHeader("Authorization") String token, @RequestBody Comment newComment) {
+        commentService.createComment(token,newComment);
     }
     @PostMapping("/delete")
     void deleteComment(@RequestBody Comment deleteComment) {
