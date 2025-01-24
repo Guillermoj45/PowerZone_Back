@@ -28,10 +28,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().hasAnyAuthority("USER", "ADMIN"))
+                        .requestMatchers("/auth/**", "/api/auth/forgot-password").permitAll()
+                        .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class);
+
 
         return httpSecurity.build();
     }
