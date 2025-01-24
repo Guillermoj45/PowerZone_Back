@@ -22,17 +22,14 @@ public class PasswordRecoveryController {
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email) {
         if (userService.exists(email)) {
-            // Generar token único
-            String token = TokenGenerator.generateToken();
+            // Generar código de 6 dígitos
+            String code = String.format("%06d", new java.util.Random().nextInt(999999));
             // Simular almacenamiento en DB
-            userTokens.put(email, token);
-
-            // Enlace de recuperación
-            String resetLink = "https://www.youtube.com/watch?v=WQbc2izxuVg" + token;
+            userTokens.put(email, code);
 
             // Enviar correo
             emailService.sendEmail(email, "Recuperación de contraseña",
-                    "No compartas esto con nadie, tu contraseña es: " + resetLink);
+                    "No compartas esto con nadie, tu código de recuperación es: " + code);
 
             return "Correo de recuperación enviado a: " + email;
         }
@@ -40,20 +37,21 @@ public class PasswordRecoveryController {
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        // Buscar email por token
+    public String resetPassword(@RequestParam String code, @RequestParam String newPassword) {
+        // Verificar si el código es válido
         String email = userTokens.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(token))
+                .filter(entry -> entry.getValue().equals(code))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
 
-        if (email == null) {
-            return "Token inválido o expirado.";
+        if (email != null) {
+            // Actualizar la contraseña del usuario
+            userService.updatePassword(email, newPassword);
+            // Eliminar el código usado
+            userTokens.remove(email);
+            return "Contraseña actualizada correctamente.";
         }
-
-        // Actualizar contraseña (simulación)
-        // Aquí deberías actualizar la contraseña en la base de datos
-        return "Contraseña actualizada correctamente para el usuario: " + email;
+        return "Código inválido o expirado.";
     }
 }

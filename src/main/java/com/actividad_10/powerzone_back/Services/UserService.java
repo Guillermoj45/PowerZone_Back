@@ -133,4 +133,11 @@ public class UserService implements IUserService, UserDetailsService {
         return userRepository.existsUserByEmail(email);
     }
 
+    public void updatePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
+        user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userRepository.save(user);
+    }
+
 }
