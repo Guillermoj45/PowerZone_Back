@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class CreacionPerfilDto {
     private String name;
     private String email;
-    private String nickname; // Ensure this field is present
+    private String nickname;
     private String password;
     private String avatar;
     private LocalDate bornDate;

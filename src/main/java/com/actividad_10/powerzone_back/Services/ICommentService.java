@@ -4,7 +4,7 @@ import com.actividad_10.powerzone_back.Entities.Comment;
 
 public interface ICommentService {
     Comment createComment(String token, Comment newComment);
-     void deleteComment(Long idComment);
+    void deleteComment(String token, Comment deleteComment);
 
     void getCommentByUserName(Comment userComments);
 }
