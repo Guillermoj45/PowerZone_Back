@@ -1,9 +1,7 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.actividad_10.powerzone_back.Entities.emun.ReportState;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,7 +17,7 @@ public class Reports implements Serializable {
     private Long id;
 
     @Column(name = "type", nullable = false)
-    private Integer type;
+    private ReportState type;
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -31,7 +29,8 @@ public class Reports implements Serializable {
     private Long userId;
 
     @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @OneToMany()
+    private Post post;
 
     @Column(name = "created_at_post", nullable = false)
     private LocalDate createdAtPost;
