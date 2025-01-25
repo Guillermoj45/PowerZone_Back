@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -23,12 +24,18 @@ public class Reports implements Serializable {
     private String content;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @JoinColumn(name = "reported", nullable = false)
+    @ManyToOne
+    private User reported;
 
-    @ManyToOne()
+    @JoinColumn(name = "reporter", nullable = false)
+    @ManyToOne
+    private User reporter;
+
+    @JoinColumn(name = "post_id")
+    @ManyToOne
     private Post post;
 
     @Column(name = "created_at_post", nullable = false)
