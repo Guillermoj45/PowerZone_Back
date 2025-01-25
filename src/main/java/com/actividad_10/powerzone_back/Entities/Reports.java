@@ -28,8 +28,7 @@ public class Reports implements Serializable {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "post_id", nullable = false)
-    @OneToMany()
+    @ManyToOne()
     private Post post;
 
     @Column(name = "created_at_post", nullable = false)
