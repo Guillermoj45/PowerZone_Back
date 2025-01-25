@@ -28,7 +28,7 @@ public class PostService implements IPostService {
     public PostService(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
-        this.postRepository = postRepository;
+
     }
 
     @Override

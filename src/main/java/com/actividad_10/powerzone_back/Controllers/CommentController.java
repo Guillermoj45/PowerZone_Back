@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
-    private CommentService commentService;
-
+    private final CommentService commentService;
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
     @PostMapping("/create")
-    void createComment(@RequestHeader("Authorization") String token, @RequestBody Comment newComment) {
-        commentService.createComment(token,newComment);
+    public Comment createComment(@RequestHeader("Authorization") String token, @RequestBody Comment comment) {
+        return commentService.createComment(token, comment);
     }
     @PostMapping("/delete")
     void deleteComment(@RequestBody Comment deleteComment) {

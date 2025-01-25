@@ -22,9 +22,9 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
-        postService.createPost(token,post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post creado exitosamente");
+    public ResponseEntity<Post> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+        Post createdPost = postService.createPost(token, post);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
     @DeleteMapping("/delete")
