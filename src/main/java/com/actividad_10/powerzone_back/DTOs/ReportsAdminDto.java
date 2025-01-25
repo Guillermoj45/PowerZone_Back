@@ -1,15 +1,17 @@
 package com.actividad_10.powerzone_back.DTOs;
 
+import com.actividad_10.powerzone_back.Entities.emun.ReportState;
 import lombok.Builder;
 import lombok.Data;
 
 @Builder
 @Data
 public class ReportsAdminDto {
-    Integer id;
+    Long id;
     String reporter;
-    String report;
+    String reported;
+    String avatarReported;
     String reason;
-    Integer idPost;
-
+    Long idPost;
+    ReportState state;
 }
