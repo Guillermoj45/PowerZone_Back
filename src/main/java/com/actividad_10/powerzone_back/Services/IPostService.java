@@ -1,13 +1,14 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Entities.Post;
-import jakarta.transaction.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface IPostService {
     Post createPost(String token, Post newPost);
     void deletePost(String token, Post deletePost);
-    void findallPost(Post userPosts);
-    void safePost(Post post);
+    List<Post> finduserPost(Post userPosts);
+    List<Post> findbestPost();
+    void savePost(String token, Post post);
+    void unsavePost(String token, Post post);
 }

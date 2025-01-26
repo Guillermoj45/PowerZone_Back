@@ -2,8 +2,10 @@ package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.Entities.Booksmarks;
+import com.actividad_10.powerzone_back.Entities.LikePost;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
+import com.actividad_10.powerzone_back.Repositories.LikePostRepository;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -12,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class PostService implements IPostService {
@@ -24,6 +26,8 @@ public class PostService implements IPostService {
     private final JwtService jwtService;
 
     private BooksmarksRepository booksmarksRepository;
+
+    private LikePostRepository likePostRepository;
 
     public PostService(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
@@ -77,17 +81,70 @@ public class PostService implements IPostService {
 
     }
 
-    public void findallPost(Post userPosts) {
-        postRepository.findAll();
-    }
-
-    public void safePost(Post post) {
+    public List<Post> findbestPost() {
+        return postRepository.findPostsWithMostLikes();
 
     }
+    public List<Post> finduserPost(String token) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
 
-    public void likePost(String token, Long postId) {
+
+        // Obtener el ID del usuario a partir del email
+        Long userId = extractUserIdFromEmail(email);
+        return postRepository.findAllByUserId(userId);
+    }
+
+    public void savePost(String token, Post post) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
+        Booksmarks booksmarks = new Booksmarks();
+        booksmarks.setUserId(userId);
+        booksmarks.setPostId(post.getId());
+        booksmarks.setCreatedAtPost(postRepository.findCreatedAtById(post.getId()).get());
+        booksmarksRepository.save(booksmarks);
+
+    }
+
+    @Override
+    public void unsavePost(String token, Post post) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
+        booksmarksRepository.deleteById(userId, post.getId());
+    }
+
+    public void likePost(String token, Post post) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
+        LikePost likePost = new LikePost();
+        likePost.setUserId(userId);
+        likePost.setPostId(post.getId());
+        likePost.setCreatedAtPost(postRepository.findCreatedAtById(post.getId()).get());
+        likePostRepository.save(likePost);
+
+    }
+    public void unlikePost(String token, Post post) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
+        likePostRepository.deleteById(userId, post.getId());
+
     }
 
     public void sharePost(String token, Long postId) {
     }
+
+
 }

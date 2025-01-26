@@ -7,8 +7,10 @@ import com.actividad_10.powerzone_back.Services.PostService;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,7 +24,7 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Post> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+    ResponseEntity<Post> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
         Post createdPost = postService.createPost(token, post);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
@@ -32,25 +34,41 @@ public class PostController {
         postService.deletePost(token,deletePost);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping("/getall")
-    ResponseEntity<Void> getallPost(@RequestBody Post userPosts) {
-        postService.findallPost(userPosts);
+    @GetMapping("/getbest")
+    ResponseEntity<Void> getbestPost() {
+        postService.findbestPost();
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @PostMapping("/safe")
-    ResponseEntity<Void> safePost(@RequestBody Post post) {
-        postService.safePost(post);
+    @GetMapping("/userposts")
+    ResponseEntity<List<Post>> getUserPosts(@RequestHeader("Authorization") String token) {
+        List<Post> userPosts = postService.finduserPost(token);
+        return ResponseEntity.status(HttpStatus.OK).body(userPosts);
+    }
+    @PostMapping("/save")
+    ResponseEntity<Void> savePost(@RequestHeader("Authorization") String token,@RequestBody Post post) {
+        postService.savePost(token,post);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping("/unsave")
+    ResponseEntity<Void> unsavePost(@RequestHeader("Authorization") String token,@RequestBody Post post) {
+        postService.unsavePost(token,post);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/like")
-    public ResponseEntity<String> likePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> like) {
-        postService.likePost(token, like.get("postId"));
+    ResponseEntity<String> likePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+        postService.likePost(token, post);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post liked");
+    }
+    @PostMapping("/unlike")
+    ResponseEntity<String> unlikePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+        postService.unlikePost(token, post);
         return ResponseEntity.status(HttpStatus.CREATED).body("Post liked");
     }
 
+
     @PostMapping("/share")
-    public ResponseEntity<String> sharePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> share) {
+    ResponseEntity<String> sharePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> share) {
         postService.sharePost(token, share.get("postId"));
         return ResponseEntity.status(HttpStatus.CREATED).body("Post shared");
     }
