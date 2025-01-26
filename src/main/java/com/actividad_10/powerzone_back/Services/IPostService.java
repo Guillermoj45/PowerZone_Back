@@ -7,7 +7,7 @@ import java.util.List;
 public interface IPostService {
     Post createPost(String token, Post newPost);
     void deletePost(String token, Post deletePost);
-    List<Post> finduserPost(Post userPosts);
+
     List<Post> findbestPost();
     void savePost(String token, Post post);
     void unsavePost(String token, Post post);
