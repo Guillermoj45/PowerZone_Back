@@ -1,5 +1,7 @@
 package com.actividad_10.powerzone_back.Entities.emun;
 
 public enum ReportState {
-    UNSOLVED, REVISION, SOLVED
+    UNSOLVED,
+    SANCTIONED,
+    SOLVED
 }

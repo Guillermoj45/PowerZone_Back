@@ -8,6 +8,7 @@ import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PostService implements IPostService {
-    @Autowired
+
     private PostRepository postRepository;
 
     private UserRepository userRepository;
@@ -25,11 +27,6 @@ public class PostService implements IPostService {
 
     private BooksmarksRepository booksmarksRepository;
 
-    public PostService(JwtService jwtService, UserRepository userRepository) {
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-    }
 
     @Override
     public Post createPost(String token, Post newPost) {
