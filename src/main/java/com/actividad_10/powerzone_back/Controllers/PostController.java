@@ -45,14 +45,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(userPosts);
     }
     @PostMapping("/save")
-    ResponseEntity<Void> savePost(@RequestHeader("Authorization") String token,@RequestBody Post post) {
+    ResponseEntity<String> savePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
         postService.savePost(token,post);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post save");
     }
     @PostMapping("/unsave")
-    ResponseEntity<Void> unsavePost(@RequestHeader("Authorization") String token,@RequestBody Post post) {
+    ResponseEntity<String> unsavePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
         postService.unsavePost(token,post);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post unsave");
     }
 
     @PostMapping("/like")
@@ -63,7 +63,7 @@ public class PostController {
     @PostMapping("/unlike")
     ResponseEntity<String> unlikePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
         postService.unlikePost(token, post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post liked");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post unliked");
     }
 
 

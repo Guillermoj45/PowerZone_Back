@@ -20,19 +20,20 @@ import java.util.List;
 public class PostService implements IPostService {
     @Autowired
     private PostRepository postRepository;
-
+    @Autowired
     private UserRepository userRepository;
-
+    @Autowired
     private final JwtService jwtService;
-
+    @Autowired
     private BooksmarksRepository booksmarksRepository;
-
+    @Autowired
     private LikePostRepository likePostRepository;
 
-    public PostService(JwtService jwtService, UserRepository userRepository) {
+    public PostService(JwtService jwtService, UserRepository userRepository, PostRepository postRepository, BooksmarksRepository booksmarksRepository, LikePostRepository likePostRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
-
+        this.likePostRepository = likePostRepository;
+        this.booksmarksRepository = booksmarksRepository;
     }
 
     @Override
