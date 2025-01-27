@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.CommentDto;
 import com.actividad_10.powerzone_back.Entities.Comment;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Entities.User;
@@ -30,23 +31,20 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public Comment createComment(String token, Comment newComment) {
+    public CommentDto createComment(String token, Comment newComment) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
-
-        // Obtener el ID del usuario a partir del email
         Long userId = extractUserIdFromEmail(email);
 
-        // Asignar el ID del usuario al comentario
         newComment.setUser(userRepository.findById(userId).get());
 
-        // Verificar que el objeto Post no sea nulo
+
         if (newComment.getPost() == null || newComment.getPost().getId() == null) {
             throw new RuntimeException("Post ID is required");
         }
 
-        // Obtener el Post usando el post_id
+
         Optional<Post> post = postRepository.findById(newComment.getPost().getId());
         if (post.isPresent()) {
             Post existingPost = post.get();
@@ -58,9 +56,17 @@ public class CommentService implements ICommentService {
         }
 
         newComment.setCreatedAt(LocalDateTime.now());
-        // Guardar el nuevo comentario
+
         commentRepository.save(newComment);
-        return newComment;
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(newComment.getId());
+        commentDto.setCreatedAt(newComment.getCreatedAt());
+        commentDto.setContent(newComment.getContent());
+        commentDto.setPostId(newComment.getPost().getId());
+        commentDto.setUserId(newComment.getUser().getId());
+
+        return commentDto;
     }
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();

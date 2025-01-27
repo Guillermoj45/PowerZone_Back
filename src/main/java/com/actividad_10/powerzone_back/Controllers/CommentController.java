@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Controllers;
 
 
+import com.actividad_10.powerzone_back.DTOs.CommentDto;
 import com.actividad_10.powerzone_back.Entities.Comment;
 import com.actividad_10.powerzone_back.Services.CommentService;
 import org.springframework.http.HttpStatus;
@@ -15,11 +16,12 @@ public class CommentController {
         this.commentService = commentService;
     }
     @PostMapping("/create")
-    public Comment createComment(@RequestHeader("Authorization") String token, @RequestBody Comment comment) {
-        return commentService.createComment(token, comment);
+    ResponseEntity<CommentDto> createComment(@RequestHeader("Authorization") String token, @RequestBody Comment comment) {
+        CommentDto createdComment = commentService.createComment(token, comment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteComment(@RequestHeader("Authorization") String token, @RequestBody Comment deleteComment) {
+    ResponseEntity<Void> deleteComment(@RequestHeader("Authorization") String token, @RequestBody Comment deleteComment) {
         commentService.deleteComment(token, deleteComment);
         return new ResponseEntity<>(HttpStatus.OK);
     }
