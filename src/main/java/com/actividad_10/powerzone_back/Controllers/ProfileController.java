@@ -18,4 +18,10 @@ public class ProfileController {
     ResponseEntity<Profile2Dto> getProfile(@RequestHeader("Authorization") String token){
         return new ResponseEntity<>(userService.returnProfile(token), HttpStatus.OK);
     }
+
+    @PostMapping("/updateData")
+    HttpStatus updateData(@RequestHeader("Authorization") String token, @RequestBody Profile2Dto profile2Dto){
+        userService.updateProfile(token ,profile2Dto);
+        return HttpStatus.OK;
+    }
 }

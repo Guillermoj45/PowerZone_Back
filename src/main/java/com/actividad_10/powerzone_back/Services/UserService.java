@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.*;
 import com.actividad_10.powerzone_back.Entities.Profile;
@@ -18,8 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +28,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final CloudinaryService cloudinaryService;
 
 
     private boolean isEmailPasswordNull(String email, String password){
@@ -39,7 +41,12 @@ public class UserService implements IUserService, UserDetailsService {
         validateEmailAndPassword(nuevoPerfil.getEmail(), nuevoPerfil.getPassword());
         checkIfEmailExists(nuevoPerfil.getEmail());
 
-        User user = buildUser(nuevoPerfil);
+        User user = null;
+        try {
+            user = buildUser(nuevoPerfil);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         userRepository.save(user);
     }
 
@@ -55,7 +62,7 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
-    private User buildUser(CreacionPerfilDto nuevoPerfil) {
+    private User buildUser(CreacionPerfilDto nuevoPerfil) throws IOException {
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
         user.setPassword(new BCryptPasswordEncoder().encode(nuevoPerfil.getPassword()));
@@ -67,12 +74,15 @@ public class UserService implements IUserService, UserDetailsService {
         return user;
     }
 
-    private Profile buildProfile(CreacionPerfilDto nuevoPerfil) {
+    private Profile buildProfile(CreacionPerfilDto nuevoPerfil) throws IOException {
         Profile profile = new Profile();
         profile.setName(nuevoPerfil.getName());
         profile.setNickname(nuevoPerfil.getNickname());
-        profile.setAvatar(nuevoPerfil.getAvatar() != null ? nuevoPerfil.getAvatar() :
-                "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png");
+
+        // Subir el avatar (Base64 o MultipartFile)
+        String img = cloudinaryService.uploadFile(nuevoPerfil.getAvatar(), "avatar");
+        profile.setAvatar(img);
+
         profile.setBornDate(nuevoPerfil.getBornDate());
         profile.setCreatedAt(LocalDate.now());
         profile.setActivo(nuevoPerfil.getActivo() != null ? nuevoPerfil.getActivo() : true);
@@ -110,7 +120,9 @@ public class UserService implements IUserService, UserDetailsService {
         profile2Dto.setId(user.getId());
         profile2Dto.setName(user.getProfile().getName());
         profile2Dto.setEmail(user.getEmail());
+        profile2Dto.setAvatar(user.getProfile().getAvatar());
         profile2Dto.setBornDate(user.getProfile().getBornDate());
+        profile2Dto.setNickName(user.getProfile().getNickname());
 
         return profile2Dto;
     }
@@ -137,6 +149,25 @@ public class UserService implements IUserService, UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
         user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public void updateProfile(String token, Profile2Dto profile2Dto) {
+        token = jwtService.desEncriptToken(token);
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+        User user = (User) loadUserByUsername(tokenDto.getEmail());
+
+        Profile profile = user.getProfile();
+
+        if (profile2Dto.getName() == null || profile2Dto.getName().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+
+        profile.setName(profile2Dto.getName());
+        profile.setAvatar(profile2Dto.getAvatar());
+        profile.setBornDate(profile2Dto.getBornDate());
+        profile.setNickname(profile2Dto.getNickName());
+
         userRepository.save(user);
     }
 
