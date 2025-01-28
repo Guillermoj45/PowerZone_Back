@@ -29,7 +29,7 @@ public interface ReportsRepository extends JpaRepository<Reports, Long> {
             set R.type = :state
             where R.id = :id
             """)
-    Integer updateState(int id, ReportState state);
+    void updateState(Long id, int state);
 
     /**
      * Devuelve los usuarios sancionados

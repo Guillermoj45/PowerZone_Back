@@ -39,6 +39,6 @@ public class Reports implements Serializable {
     private Post post;
 
     @Column(name = "created_at_post", nullable = false)
-    private LocalDate createdAtPost;
+    private LocalDateTime createdAtPost;
 
 }

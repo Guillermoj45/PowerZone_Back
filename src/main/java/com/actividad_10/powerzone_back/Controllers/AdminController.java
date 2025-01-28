@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.ChangeStateReportDto;
 import com.actividad_10.powerzone_back.DTOs.ReportsAdminDto;
 import com.actividad_10.powerzone_back.Entities.emun.Rol;
 import com.actividad_10.powerzone_back.Exceptions.NoAdmin;
@@ -25,6 +26,19 @@ public class AdminController {
 
         if (rol.equals(Rol.ADMIN.toString())){
             return reportService.getReports(offset);
+        }
+        throw new NoAdmin("Necesitas ser administrador para esto");
+    }
+
+    @PutMapping("/report")
+    public void updateState(@RequestHeader("Authorization") String token, @RequestBody ChangeStateReportDto changeStateReportDto){
+        String jwt = token.replace("Bearer ", "");
+        String rol = jwtService.extractTokenData(jwt).getRol();
+
+
+        if (rol.equals(Rol.ADMIN.toString())){
+            reportService.updateState(changeStateReportDto);
+            return;
         }
         throw new NoAdmin("Necesitas ser administrador para esto");
     }

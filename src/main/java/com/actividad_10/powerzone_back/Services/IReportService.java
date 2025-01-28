@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.DTOs.ChangeStateReportDto;
 import com.actividad_10.powerzone_back.DTOs.ReportsAdminDto;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Entities.emun.ReportState;
@@ -10,7 +11,7 @@ public interface IReportService {
 
     List<ReportsAdminDto> getReports(int offset);
 
-    Integer updateState(int id, ReportState state);
+    Integer updateState(ChangeStateReportDto dto);
 
     List<User> getUserWarning(int offset);
 

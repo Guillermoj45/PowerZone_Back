@@ -1,6 +1,8 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.DTOs.ChangeStateReportDto;
 import com.actividad_10.powerzone_back.DTOs.ReportsAdminDto;
+import com.actividad_10.powerzone_back.Entities.Reports;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Entities.emun.ReportState;
 import com.actividad_10.powerzone_back.Repositories.ReportsRepository;
@@ -43,13 +45,15 @@ public class ReportService implements IReportService {
 
     /**
      * Actualiza el estado de un reporte
-     * @param id del reporte
-     * @param state nuevo estado
+     * @param dto dto con el id del reporte y el estado al que se cambiara
      * @return 1 si se actualizo correctamente
      */
     @Override
-    public Integer updateState(int id, ReportState state) {
-        return reportsRepository.updateState(id, state);
+    public Integer updateState(ChangeStateReportDto dto) {
+        Reports report = reportsRepository.getReferenceById(dto.getId());
+        report.setType(dto.getState());
+        reportsRepository.save(report);
+        return 1;
     }
 
     /**
