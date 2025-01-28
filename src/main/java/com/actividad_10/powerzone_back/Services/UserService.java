@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Service
@@ -40,7 +41,12 @@ public class UserService implements IUserService, UserDetailsService {
         validateEmailAndPassword(nuevoPerfil.getEmail(), nuevoPerfil.getPassword());
         checkIfEmailExists(nuevoPerfil.getEmail());
 
-        User user = buildUser(nuevoPerfil);
+        User user = null;
+        try {
+            user = buildUser(nuevoPerfil);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         userRepository.save(user);
     }
 
@@ -56,7 +62,7 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
-    private User buildUser(CreacionPerfilDto nuevoPerfil) {
+    private User buildUser(CreacionPerfilDto nuevoPerfil) throws IOException {
         User user = new User();
         user.setEmail(nuevoPerfil.getEmail());
         user.setPassword(new BCryptPasswordEncoder().encode(nuevoPerfil.getPassword()));
@@ -68,13 +74,15 @@ public class UserService implements IUserService, UserDetailsService {
         return user;
     }
 
-    private Profile buildProfile(CreacionPerfilDto nuevoPerfil) {
+    private Profile buildProfile(CreacionPerfilDto nuevoPerfil) throws IOException {
         Profile profile = new Profile();
         profile.setName(nuevoPerfil.getName());
         profile.setNickname(nuevoPerfil.getNickname());
 
-        profile.setAvatar(nuevoPerfil.getAvatar() != null ? nuevoPerfil.getAvatar() :
-                "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png");
+        // Subir el avatar (Base64 o MultipartFile)
+        String img = cloudinaryService.uploadFile(nuevoPerfil.getAvatar(), "avatar");
+        profile.setAvatar(img);
+
         profile.setBornDate(nuevoPerfil.getBornDate());
         profile.setCreatedAt(LocalDate.now());
         profile.setActivo(nuevoPerfil.getActivo() != null ? nuevoPerfil.getActivo() : true);
