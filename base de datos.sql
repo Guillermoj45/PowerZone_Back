@@ -172,10 +172,10 @@ create table reports (
     type smallint not null,
     content text not null,
     created_at timestamp not null default now(),
-    user_id bigint not null,
+    reporter bigint not null,
     post_id bigint not null,
     created_at_post timestamp not null,
-    constraint fk_reports_user foreign key (user_id) references "users" (id) on delete cascade,
+    constraint fk_reports_reporter foreign key (reporter) references "users" (id) on delete cascade,
     constraint fk_reports_post foreign key (post_id, created_at_post) references post (id, created_at) on delete cascade
 );
 

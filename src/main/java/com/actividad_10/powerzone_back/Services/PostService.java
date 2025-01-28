@@ -12,6 +12,7 @@ import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,24 +21,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PostService implements IPostService {
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private final JwtService jwtService;
-    @Autowired
-    private BooksmarksRepository booksmarksRepository;
-    @Autowired
-    private LikePostRepository likePostRepository;
 
-    public PostService(JwtService jwtService, UserRepository userRepository, PostRepository postRepository, BooksmarksRepository booksmarksRepository, LikePostRepository likePostRepository) {
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-        this.likePostRepository = likePostRepository;
-        this.booksmarksRepository = booksmarksRepository;
-    }
+    private PostRepository postRepository;
+
+    private UserRepository userRepository;
+
+    private final JwtService jwtService;
+
+    private BooksmarksRepository booksmarksRepository;
+
 
     @Override
     public PostDto createPost(String token, Post newPost) {
@@ -47,10 +41,10 @@ public class PostService implements IPostService {
         String email = claims.get("email", String.class);
 
         // Obtener el ID del usuario a partir del email
-        Long userId = extractUserIdFromEmail(email);
+        User user = extractUserIdFromEmail(email);
 
         // Asignar el ID del usuario y la fecha de creación al nuevo post
-        newPost.setUserId(userId);
+        newPost.setUser(user);
         newPost.setCreatedAt(LocalDateTime.now());
 
         // Guardar el nuevo post
@@ -67,6 +61,11 @@ public class PostService implements IPostService {
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
     }
+
+    private User extractUserFromEmail(String email) {
+        return userRepository.findByEmail(email).get();
+    }
+
     @Transactional
     @Override
     public void deletePost(String token, Post deletePost) {
@@ -77,10 +76,10 @@ public class PostService implements IPostService {
         String rol = claims.get("rol", String.class);
 
         // Obtener el ID del usuario a partir del email
-        Long userId = extractUserIdFromEmail(email);
+        User user = extractUserIdFromEmail(email);
 
         // Verificar que el post pertenece al usuario
-        if (deletePost.getUserId().equals(userId)) {
+        if (deletePost.getUser().getId().equals(user.getId())) {
             postRepository.deleteById(deletePost.getId());
         } else if(rol.equals("ADMIN")) {
             deletePost.setDelete(true);
@@ -91,6 +90,12 @@ public class PostService implements IPostService {
 
     }
 
+    public Post findaById(Long postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
+
+    public void findallPost(Post userPosts) {
+        postRepository.findAll();
     public List<Post> findbestPost() {
         return postRepository.findPostsWithMostLikes();
 

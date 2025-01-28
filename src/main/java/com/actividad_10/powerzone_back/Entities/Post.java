@@ -27,8 +27,9 @@ public class Post implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(
             mappedBy = "post",
@@ -40,7 +41,7 @@ public class Post implements Serializable {
     @Column(name = "delete")
     private Boolean delete = false;
 
-    
+
 
 
 }
