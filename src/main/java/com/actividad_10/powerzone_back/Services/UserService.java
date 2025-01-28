@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.*;
 import com.actividad_10.powerzone_back.Entities.Profile;
@@ -27,6 +28,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final CloudinaryService cloudinaryService;
 
 
     private boolean isEmailPasswordNull(String email, String password){
@@ -71,6 +73,10 @@ public class UserService implements IUserService, UserDetailsService {
         Profile profile = new Profile();
         profile.setName(nuevoPerfil.getName());
         profile.setNickname(nuevoPerfil.getNickname());
+
+
+
+
         profile.setAvatar(nuevoPerfil.getAvatar() != null ? nuevoPerfil.getAvatar() :
                 "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png");
         profile.setBornDate(nuevoPerfil.getBornDate());
