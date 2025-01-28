@@ -3,6 +3,7 @@ package com.actividad_10.powerzone_back.Services;
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.Entities.Booksmarks;
 import com.actividad_10.powerzone_back.Entities.Post;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
@@ -36,10 +37,10 @@ public class PostService implements IPostService {
         String email = claims.get("email", String.class);
 
         // Obtener el ID del usuario a partir del email
-        Long userId = extractUserIdFromEmail(email);
+        User user = extractUserIdFromEmail(email);
 
         // Asignar el ID del usuario y la fecha de creación al nuevo post
-        newPost.setUserId(userId);
+        newPost.setUser(user);
         newPost.setCreatedAt(LocalDateTime.now());
 
         // Guardar el nuevo post
@@ -47,8 +48,8 @@ public class PostService implements IPostService {
         return newPost;
     }
     
-    private Long extractUserIdFromEmail(String email) {
-        return userRepository.findByEmail(email).get().getId();
+    private User extractUserIdFromEmail(String email) {
+        return userRepository.findByEmail(email).get();
     }
     @Transactional
     @Override
@@ -60,10 +61,10 @@ public class PostService implements IPostService {
         String rol = claims.get("rol", String.class);
 
         // Obtener el ID del usuario a partir del email
-        Long userId = extractUserIdFromEmail(email);
+        User user = extractUserIdFromEmail(email);
 
         // Verificar que el post pertenece al usuario
-        if (deletePost.getUserId().equals(userId)) {
+        if (deletePost.getUser().getId().equals(user.getId())) {
             postRepository.deleteById(deletePost.getId());
         } else if(rol.equals("ADMIN")) {
             deletePost.setDelete(true);
