@@ -1,9 +1,8 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.DTOs.ChangeStateReportDto;
+import com.actividad_10.powerzone_back.DTOs.ReportCountDto;
 import com.actividad_10.powerzone_back.DTOs.ReportsAdminDto;
-import com.actividad_10.powerzone_back.Entities.User;
-import com.actividad_10.powerzone_back.Entities.emun.ReportState;
 
 import java.util.List;
 
@@ -13,8 +12,8 @@ public interface IReportService {
 
     Integer updateState(ChangeStateReportDto dto);
 
-    List<User> getUserWarning(int offset);
+    List<ReportCountDto> getUserWarning(int offset);
 
-    List<User> getUserBanned(int offset);
+    List<ReportCountDto> getUserBanned(int offset);
 
 }

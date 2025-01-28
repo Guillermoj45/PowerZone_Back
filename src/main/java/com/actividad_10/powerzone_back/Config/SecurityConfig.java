@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/**", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
-                        .anyRequest().authenticated())
+                        // .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class);
 
