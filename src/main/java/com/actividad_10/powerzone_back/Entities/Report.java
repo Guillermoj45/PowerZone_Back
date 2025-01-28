@@ -2,18 +2,21 @@ package com.actividad_10.powerzone_back.Entities;
 
 import com.actividad_10.powerzone_back.Entities.emun.ReportState;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "reports")
-public class Reports implements Serializable {
+public class Report implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -25,10 +28,6 @@ public class Reports implements Serializable {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @JoinColumn(name = "reported", nullable = false)
-    @ManyToOne
-    private User reported;
 
     @JoinColumn(name = "reporter", nullable = false)
     @ManyToOne

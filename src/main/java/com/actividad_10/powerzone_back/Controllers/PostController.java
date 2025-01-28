@@ -2,24 +2,30 @@ package com.actividad_10.powerzone_back.Controllers;
 
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.CreateReportDTO;
+import com.actividad_10.powerzone_back.DTOs.TokenDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Services.PostService;
+import com.actividad_10.powerzone_back.Services.ReportService;
 import io.jsonwebtoken.Claims;
+import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/post")
+@AllArgsConstructor
 public class PostController {
 
     private PostService postService;
+    private ReportService reportService;
+    private JwtService jwtService;
 
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<String> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
@@ -55,6 +61,11 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Post shared");
     }
 
+    @PostMapping("/report")
+    public ResponseEntity<String> reportPost(@RequestBody CreateReportDTO report, Principal principal) {
+        reportService.reportPost(report, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post reported");
+    }
 
 
 }

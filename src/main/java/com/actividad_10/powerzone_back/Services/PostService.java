@@ -75,6 +75,10 @@ public class PostService implements IPostService {
 
     }
 
+    public Post findaById(Long postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
+
     public void findallPost(Post userPosts) {
         postRepository.findAll();
     }

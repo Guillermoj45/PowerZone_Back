@@ -1,8 +1,7 @@
 package com.actividad_10.powerzone_back.Repositories;
 
 import com.actividad_10.powerzone_back.DTOs.ReportCountDto;
-import com.actividad_10.powerzone_back.Entities.Reports;
-import com.actividad_10.powerzone_back.Entities.User;
+import com.actividad_10.powerzone_back.Entities.Report;
 import com.actividad_10.powerzone_back.Entities.emun.ReportState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,20 +12,20 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReportsRepository extends JpaRepository<Reports, Long> {
+public interface ReportsRepository extends JpaRepository<Report, Long> {
 
     @Query("""
             select R
-            from Reports R
+            from Report R
             order by R.type
             limit 50
             offset :offset
             """)
-    List<Reports> getReports(@Param("offset")int offset);
+    List<Report> getReports(@Param("offset")int offset);
 
     @Modifying
     @Query("""
-            update Reports R
+            update Report R
             set R.type = :state
             where R.id = :id
             """)

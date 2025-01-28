@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.util.Optional;
 @Repository
-public interface PostRepository extends JpaRepository<Post, Date>{
+public interface PostRepository extends JpaRepository<Post, Long>{
     void deleteById(Long idPost);
 
 }

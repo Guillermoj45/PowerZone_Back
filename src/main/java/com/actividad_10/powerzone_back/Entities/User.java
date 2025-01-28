@@ -50,7 +50,7 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(this.role.name()));
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.toString()));
     }
 
     @Override
