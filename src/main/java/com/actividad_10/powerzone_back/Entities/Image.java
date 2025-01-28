@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Entities;
 
+import com.actividad_10.powerzone_back.Entities.emun.MultimediaType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,8 +20,9 @@ public class Image implements Serializable {
     @Column(name = "image", nullable = false)
     private String image;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", nullable = false)
-    private String type;
+    private MultimediaType type;
 
     @Column(name = "post_created_at", nullable = false)
     private LocalDateTime postCreatedAt;

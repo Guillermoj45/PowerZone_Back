@@ -2,6 +2,7 @@ package com.actividad_10.powerzone_back.Controllers;
 
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Services.PostService;
 import io.jsonwebtoken.Claims;
@@ -24,8 +25,8 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    ResponseEntity<Post> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
-        Post createdPost = postService.createPost(token, post);
+    ResponseEntity<PostDto> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+        PostDto createdPost = postService.createPost(token, post);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
@@ -35,9 +36,15 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getbest")
-    ResponseEntity<Void> getbestPost() {
-        postService.findbestPost();
-        return new ResponseEntity<>(HttpStatus.OK);
+    ResponseEntity<List<Post>> getbestPost(@RequestHeader("Authorization") String token) {
+        List<Post> bestPosts = postService.findbestPost();
+        return ResponseEntity.status(HttpStatus.OK).body(bestPosts);
+    }
+
+    @GetMapping("/all")
+    ResponseEntity<List<PostDto>> getAllPosts() {
+        List<PostDto> allPosts = postService.getAllPosts();
+        return ResponseEntity.status(HttpStatus.OK).body(allPosts);
     }
     @GetMapping("/userposts")
     ResponseEntity<List<Post>> getUserPosts(@RequestHeader("Authorization") String token) {

@@ -1,9 +1,11 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Booksmarks;
 import com.actividad_10.powerzone_back.Entities.LikePost;
 import com.actividad_10.powerzone_back.Entities.Post;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
 import com.actividad_10.powerzone_back.Repositories.LikePostRepository;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService implements IPostService {
@@ -37,7 +40,7 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public Post createPost(String token, Post newPost) {
+    public PostDto createPost(String token, Post newPost) {
         // Extraer datos del usuario desde el token
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -52,9 +55,15 @@ public class PostService implements IPostService {
 
         // Guardar el nuevo post
         postRepository.save(newPost);
-        return newPost;
+
+        // Obtener el perfil del usuario
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        String avatar = user.getProfile().getAvatar();
+        String nickname = user.getProfile().getNickname();
+
+        // Crear y devolver el DTO
+        return new PostDto(newPost, avatar, nickname);
     }
-    
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
     }
@@ -85,6 +94,15 @@ public class PostService implements IPostService {
     public List<Post> findbestPost() {
         return postRepository.findPostsWithMostLikes();
 
+    }
+    public List<PostDto> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream().map(post -> {
+            User user = userRepository.findById(post.getUserId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String avatar = user.getProfile().getAvatar();
+            String nickname = user.getProfile().getNickname();
+            return new PostDto(post, avatar, nickname);
+        }).collect(Collectors.toList());
     }
 
     public List<Post> finduserPost(String token) {

@@ -31,7 +31,7 @@ public class Post implements Serializable {
     private Long userId;
 
     @OneToMany(
-            mappedBy = "image",
+            mappedBy = "post",
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
