@@ -1,11 +1,10 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
-import com.actividad_10.powerzone_back.Entities.Booksmarks;
-import com.actividad_10.powerzone_back.Entities.LikePost;
-import com.actividad_10.powerzone_back.Entities.Post;
-import com.actividad_10.powerzone_back.Entities.User;
+import com.actividad_10.powerzone_back.Entities.*;
+import com.actividad_10.powerzone_back.Entities.emun.MultimediaType;
 import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
 import com.actividad_10.powerzone_back.Repositories.LikePostRepository;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
@@ -15,9 +14,12 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,9 +36,9 @@ public class PostService implements IPostService {
 
     private BooksmarksRepository booksmarksRepository;
 
-
+    private final CloudinaryService cloudinaryService;
     @Override
-    public PostDto createPost(String token, Post newPost) {
+    public PostDto createPost(String token, Post newPost, MultipartFile image) {
         // Extraer datos del usuario desde el token
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -48,6 +50,20 @@ public class PostService implements IPostService {
         // Asignar el ID del usuario y la fecha de creación al nuevo post
         newPost.setUser(user);
         newPost.setCreatedAt(LocalDateTime.now());
+
+        // Subir la imagen a Cloudinary y obtener la URL si la imagen está presente
+        if (image != null && !image.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadFile(image, "posts");
+                Image img = new Image();
+                img.setImage(imageUrl);
+                img.setType(MultimediaType.IMAGE); // Asumiendo que MultimediaType.IMAGE es el tipo correcto
+                img.setPostCreatedAt(LocalDateTime.now());
+                newPost.setImages(Set.of(img));
+            } catch (IOException e) {
+                throw new RuntimeException("Error al subir la imagen", e);
+            }
+        }
 
         // Guardar el nuevo post
         postRepository.save(newPost);

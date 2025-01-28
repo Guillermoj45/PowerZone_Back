@@ -3,36 +3,44 @@ package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
-import com.actividad_10.powerzone_back.DTOs.CreateReportDTO;
-import com.actividad_10.powerzone_back.DTOs.TokenDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Services.PostService;
-import com.actividad_10.powerzone_back.Services.ReportService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/post")
-@AllArgsConstructor
 public class PostController {
 
-    private PostService postService;
-    private ReportService reportService;
-    private JwtService jwtService;
+    private final PostService postService;
+    private final ObjectMapper objectMapper; // Para convertir JSON a objeto Java
+
+    public PostController(PostService postService, ObjectMapper objectMapper) {
+        this.postService = postService;
+        this.objectMapper = objectMapper;
+    }
+
+    @PostMapping(value = "/create")
+    public ResponseEntity<PostDto> createPost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Post post
+
+    ) {
+        System.out.println("Token recibido: " + token);
+        System.out.println("Post recibido: " + post);
+        // Convertir el JSON en un objeto Post
 
 
-    @PostMapping("/create")
-    ResponseEntity<PostDto> createPost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
-        PostDto createdPost = postService.createPost(token, post);
+        // Llamar al servicio para guardar el post y la imagen
+        PostDto createdPost = postService.createPost(token, post, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
@@ -86,11 +94,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Post shared");
     }
 
-    @PostMapping("/report")
-    public ResponseEntity<String> reportPost(@RequestBody CreateReportDTO report, Principal principal) {
-        reportService.reportPost(report, principal.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post reported");
-    }
 
 
 }
