@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -74,9 +73,6 @@ public class UserService implements IUserService, UserDetailsService {
         profile.setName(nuevoPerfil.getName());
         profile.setNickname(nuevoPerfil.getNickname());
 
-
-
-
         profile.setAvatar(nuevoPerfil.getAvatar() != null ? nuevoPerfil.getAvatar() :
                 "https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png");
         profile.setBornDate(nuevoPerfil.getBornDate());
@@ -116,7 +112,9 @@ public class UserService implements IUserService, UserDetailsService {
         profile2Dto.setId(user.getId());
         profile2Dto.setName(user.getProfile().getName());
         profile2Dto.setEmail(user.getEmail());
+        profile2Dto.setAvatar(user.getProfile().getAvatar());
         profile2Dto.setBornDate(user.getProfile().getBornDate());
+        profile2Dto.setNickName(user.getProfile().getNickname());
 
         return profile2Dto;
     }
@@ -143,6 +141,25 @@ public class UserService implements IUserService, UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
         user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public void updateProfile(String token, Profile2Dto profile2Dto) {
+        token = jwtService.desEncriptToken(token);
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+        User user = (User) loadUserByUsername(tokenDto.getEmail());
+
+        Profile profile = user.getProfile();
+
+        if (profile2Dto.getName() == null || profile2Dto.getName().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+
+        profile.setName(profile2Dto.getName());
+        profile.setAvatar(profile2Dto.getAvatar());
+        profile.setBornDate(profile2Dto.getBornDate());
+        profile.setNickname(profile2Dto.getNickName());
+
         userRepository.save(user);
     }
 

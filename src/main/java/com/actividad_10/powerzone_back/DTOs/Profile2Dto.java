@@ -13,4 +13,6 @@ public class Profile2Dto {
     private String name;
     private String email;
     private LocalDate bornDate;
+    private String nickName;
+    private String avatar;
 }
