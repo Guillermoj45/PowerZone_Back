@@ -30,6 +30,8 @@ public class PostService implements IPostService {
 
     private final JwtService jwtService;
 
+    private LikePostRepository likePostRepository;
+
     private BooksmarksRepository booksmarksRepository;
 
 
@@ -41,7 +43,7 @@ public class PostService implements IPostService {
         String email = claims.get("email", String.class);
 
         // Obtener el ID del usuario a partir del email
-        User user = extractUserIdFromEmail(email);
+        User user = extractUserFromEmail(email);
 
         // Asignar el ID del usuario y la fecha de creación al nuevo post
         newPost.setUser(user);
@@ -51,7 +53,6 @@ public class PostService implements IPostService {
         postRepository.save(newPost);
 
         // Obtener el perfil del usuario
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         String avatar = user.getProfile().getAvatar();
         String nickname = user.getProfile().getNickname();
 
@@ -76,7 +77,7 @@ public class PostService implements IPostService {
         String rol = claims.get("rol", String.class);
 
         // Obtener el ID del usuario a partir del email
-        User user = extractUserIdFromEmail(email);
+        User user = extractUserFromEmail(email);
 
         // Verificar que el post pertenece al usuario
         if (deletePost.getUser().getId().equals(user.getId())) {
@@ -96,14 +97,17 @@ public class PostService implements IPostService {
 
     public void findallPost(Post userPosts) {
         postRepository.findAll();
+    }
+
     public List<Post> findbestPost() {
         return postRepository.findPostsWithMostLikes();
 
     }
+
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> {
-            User user = userRepository.findById(post.getUserId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             String avatar = user.getProfile().getAvatar();
             String nickname = user.getProfile().getNickname();
             return new PostDto(post, avatar, nickname);
