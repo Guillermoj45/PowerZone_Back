@@ -23,7 +23,7 @@ UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     ResponseEntity<RespuestaDto> loginUser(@RequestBody LoginDto loginDto) {
         return userService.LoginUser(loginDto);
     }
