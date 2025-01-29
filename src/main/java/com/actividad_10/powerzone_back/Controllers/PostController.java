@@ -64,7 +64,7 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<PostDto>> getAllPosts() {
+    ResponseEntity<List<PostDto>> getAllPosts(@RequestHeader("Authorization") String token) {
         List<PostDto> allPosts = postService.getAllPosts();
         return ResponseEntity.status(HttpStatus.OK).body(allPosts);
     }

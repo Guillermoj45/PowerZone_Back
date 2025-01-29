@@ -134,17 +134,19 @@ public class PostService implements IPostService {
 
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        Post2Dto post2Dto = new Post2Dto();
-        post2Dto.setId(posts.get(0).getId());
-        post2Dto.setContent(posts.get(0).getContent());
-        post2Dto.setCreatedAt(posts.get(0).getCreatedAt());
-        post2Dto.setImages(posts.get(0).getImages());
-        post2Dto.setUserId(posts.get(0).getUser().getId());
-        post2Dto.setDelete(posts.get(0).getDelete());
         return posts.stream().map(post -> {
+            Post2Dto post2Dto = new Post2Dto();
+            post2Dto.setId(post.getId());
+            post2Dto.setContent(post.getContent());
+            post2Dto.setCreatedAt(post.getCreatedAt());
+            post2Dto.setImages(post.getImages());
+            post2Dto.setUserId(post.getUser().getId());
+            post2Dto.setDelete(post.getDelete());
+
             User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             String avatar = user.getProfile().getAvatar();
             String nickname = user.getProfile().getNickname();
+
             return new PostDto(post2Dto, avatar, nickname);
         }).collect(Collectors.toList());
     }
