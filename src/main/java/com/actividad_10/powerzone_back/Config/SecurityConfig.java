@@ -25,8 +25,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                // Deshabilitar CSRF y CORS (si es necesario)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
+
+                // Configuración de rutas y permisos
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("**").permitAll()
+                        .anyRequest().authenticated() // Autenticar cualquier otra ruta
+                )
+
+                // Configurar autenticación y filtros
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/**", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                         // .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -34,7 +43,6 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class);
-
 
         return httpSecurity.build();
     }
