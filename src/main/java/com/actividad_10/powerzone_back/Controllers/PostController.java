@@ -74,9 +74,16 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(userPosts);
     }
     @PostMapping("/save")
-    ResponseEntity<String> savePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
-        postService.savePost(token,post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post save");
+    public ResponseEntity<String> savePost(@RequestHeader("Authorization") String token,
+                                           @RequestBody Map<String, Long> postIdMap) {
+        System.out.println("Token recibido: " + token);
+        Long postId = postIdMap.get("postId");
+        if (postId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Post ID is required");
+        }
+        Post post = postService.findaById(postId);
+        postService.savePost(token, post);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post saved");
     }
     @PostMapping("/unsave")
     ResponseEntity<String> unsavePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
