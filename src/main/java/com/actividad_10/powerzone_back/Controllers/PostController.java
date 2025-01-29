@@ -85,7 +85,18 @@ public class PostController {
     }
 
     @PostMapping("/like")
-    ResponseEntity<String> likePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+    public ResponseEntity<String> likePost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody  Long postId) {
+        System.out.println("Token recibido: " + token);
+
+
+
+        Post post = postService.findaById(postId);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
         postService.likePost(token, post);
         return ResponseEntity.status(HttpStatus.CREATED).body("Post liked");
     }
