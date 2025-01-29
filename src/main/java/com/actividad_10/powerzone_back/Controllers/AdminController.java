@@ -47,7 +47,7 @@ public class AdminController {
     }
 
     @GetMapping("/userBanned")
-    public List<ReportCountDto> getUserBanned(@RequestParam(value = "offser", defaultValue = "0") int offset){
+        public List<ReportCountDto> getUserBanned(@RequestParam(value = "offser", defaultValue = "0") int offset){
         return reportService.getUserBanned(offset);
     }
 
