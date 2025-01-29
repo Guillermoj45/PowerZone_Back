@@ -6,10 +6,7 @@ import com.actividad_10.powerzone_back.DTOs.Post2Dto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.*;
 import com.actividad_10.powerzone_back.Entities.emun.MultimediaType;
-import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
-import com.actividad_10.powerzone_back.Repositories.LikePostRepository;
-import com.actividad_10.powerzone_back.Repositories.PostRepository;
-import com.actividad_10.powerzone_back.Repositories.UserRepository;
+import com.actividad_10.powerzone_back.Repositories.*;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,6 +24,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostService implements IPostService {
 
+    private final ImageRepository imageRepository;
     private PostRepository postRepository;
 
     private UserRepository userRepository;
@@ -39,20 +37,25 @@ public class PostService implements IPostService {
 
     private final CloudinaryService cloudinaryService;
     @Override
+    @Transactional
     public PostDto createPost(String token, Post newPost, MultipartFile image) {
-        // Extraer datos del usuario desde el token
+        // Extract user data from the token
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
 
-        // Obtener el ID del usuario a partir del email
+        // Get the user ID from the email
         User user = extractUserFromEmail(email);
 
-        // Asignar el ID del usuario y la fecha de creación al nuevo post
+        // Set user and creation date for the new post
         newPost.setUser(user);
         newPost.setCreatedAt(LocalDateTime.now());
         newPost.setDelete(false);
-        // Subir la imagen a Cloudinary y obtener la URL si la imagen está presente
+
+        // Save the new post first
+        Post savedPost = postRepository.save(newPost);
+
+        // Upload the image to Cloudinary and get the URL if the image is present
         if (image != null && !image.isEmpty()) {
             try {
                 String imageUrl = cloudinaryService.uploadFile(image, "posts");
@@ -60,29 +63,28 @@ public class PostService implements IPostService {
                 img.setImage(imageUrl);
                 img.setType(MultimediaType.IMAGE);
                 img.setPostCreatedAt(LocalDateTime.now());
-                newPost.setImages(Set.of(img));
+                img.setPost(savedPost);
+
+                imageRepository.save(img);
             } catch (IOException e) {
-                throw new RuntimeException("Error al subir la imagen", e);
+                throw new RuntimeException("Error uploading the image", e);
             }
         }
 
-        // Guardar el nuevo post
-        postRepository.save(newPost);
-
-        // Crear Post2Dto
+        // Create Post2Dto
         Post2Dto post2Dto = new Post2Dto();
-        post2Dto.setId(newPost.getId());
-        post2Dto.setContent(newPost.getContent());
-        post2Dto.setCreatedAt(newPost.getCreatedAt());
-        post2Dto.setImages(newPost.getImages());
-        post2Dto.setUserId(newPost.getUser().getId());
-        post2Dto.setDelete(newPost.getDelete());
+        post2Dto.setId(savedPost.getId());
+        post2Dto.setContent(savedPost.getContent());
+        post2Dto.setCreatedAt(savedPost.getCreatedAt());
+        post2Dto.setImages(savedPost.getImages());
+        post2Dto.setUserId(savedPost.getUser().getId());
+        post2Dto.setDelete(savedPost.getDelete());
 
-        // Obtener el perfil del usuario
+        // Get the user's profile
         String avatar = user.getProfile().getAvatar();
         String nickname = user.getProfile().getNickname();
 
-        // Crear y devolver el DTO
+        // Create and return the DTO
         return new PostDto(post2Dto, avatar, nickname);
     }
     private Long extractUserIdFromEmail(String email) {

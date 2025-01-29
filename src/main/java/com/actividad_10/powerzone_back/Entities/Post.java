@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -31,16 +32,11 @@ public class Post implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(
-            mappedBy = "post",
-            cascade = CascadeType.PERSIST,
-            orphanRemoval = true
-    )
-    private Set<Image> images;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Image> images = new HashSet<>();
 
     @Column(name = "delete")
     private Boolean delete = false;
-
 
 
 

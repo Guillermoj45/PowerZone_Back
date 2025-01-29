@@ -32,7 +32,11 @@ public class User implements Serializable, UserDetails {
     @Column(name = "role", nullable = false, columnDefinition = "0")
     private Rol role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "id", referencedColumnName = "id")
     private Profile profile;
 
     @ManyToMany
@@ -42,11 +46,6 @@ public class User implements Serializable, UserDetails {
     )
     private Set<User> followers;
 
-    // Método para asociar el perfil
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-        profile.setUser(this); // Configura la relación bidireccional
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

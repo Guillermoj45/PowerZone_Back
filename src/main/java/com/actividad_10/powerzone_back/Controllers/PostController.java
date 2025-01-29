@@ -5,6 +5,7 @@ import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Services.PostService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
@@ -28,19 +29,28 @@ public class PostController {
         this.objectMapper = objectMapper;
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     public ResponseEntity<PostDto> createPost(
             @RequestHeader("Authorization") String token,
-            @RequestBody Post post
-    ) {
-        System.out.println("Token recibido: " + token);
-        System.out.println("Post recibido: " + post);
-        // Convertir el JSON en un objeto Post
+            @RequestPart("post") String postJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        // Llamar al servicio para guardar el post y la imagen
-        PostDto createdPost = postService.createPost(token, post, null);
+        System.out.println("Token recibido: " + token);
+        System.out.println("Post recibido en JSON: " + postJson);
+
+        // Convertir JSON a objeto Post
+        Post post;
+        try {
+            post = objectMapper.readValue(postJson, Post.class);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        // Llamar al servicio
+        PostDto createdPost = postService.createPost(token, post, file);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
+
 
     @DeleteMapping("/delete")
     ResponseEntity<Void> deletePost(@RequestHeader("Authorization") String token, @RequestBody Post deletePost) {
