@@ -29,15 +29,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
 
-                // Configuración de rutas y permisos
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("**").permitAll()
-                        .anyRequest().authenticated() // Autenticar cualquier otra ruta
-                )
-
                 // Configurar autenticación y filtros
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/auth/**", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
+                        .requestMatchers("**").permitAll()
+                        //.requestMatchers("/auth/**", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                         // .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
