@@ -32,12 +32,10 @@ public class PostController {
     public ResponseEntity<PostDto> createPost(
             @RequestHeader("Authorization") String token,
             @RequestBody Post post
-
     ) {
         System.out.println("Token recibido: " + token);
         System.out.println("Post recibido: " + post);
         // Convertir el JSON en un objeto Post
-
 
         // Llamar al servicio para guardar el post y la imagen
         PostDto createdPost = postService.createPost(token, post, null);

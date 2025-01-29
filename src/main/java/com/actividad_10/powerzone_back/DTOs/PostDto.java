@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDto {
-    private Post post;
+    private Post2Dto post;
     private String avatar;
     private String nickname;
 }

@@ -2,6 +2,7 @@ package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.Post2Dto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.*;
 import com.actividad_10.powerzone_back.Entities.emun.MultimediaType;
@@ -50,14 +51,14 @@ public class PostService implements IPostService {
         // Asignar el ID del usuario y la fecha de creación al nuevo post
         newPost.setUser(user);
         newPost.setCreatedAt(LocalDateTime.now());
-
+        newPost.setDelete(false);
         // Subir la imagen a Cloudinary y obtener la URL si la imagen está presente
         if (image != null && !image.isEmpty()) {
             try {
                 String imageUrl = cloudinaryService.uploadFile(image, "posts");
                 Image img = new Image();
                 img.setImage(imageUrl);
-                img.setType(MultimediaType.IMAGE); // Asumiendo que MultimediaType.IMAGE es el tipo correcto
+                img.setType(MultimediaType.IMAGE);
                 img.setPostCreatedAt(LocalDateTime.now());
                 newPost.setImages(Set.of(img));
             } catch (IOException e) {
@@ -68,12 +69,21 @@ public class PostService implements IPostService {
         // Guardar el nuevo post
         postRepository.save(newPost);
 
+        // Crear Post2Dto
+        Post2Dto post2Dto = new Post2Dto();
+        post2Dto.setId(newPost.getId());
+        post2Dto.setContent(newPost.getContent());
+        post2Dto.setCreatedAt(newPost.getCreatedAt());
+        post2Dto.setImages(newPost.getImages());
+        post2Dto.setUserId(newPost.getUser().getId());
+        post2Dto.setDelete(newPost.getDelete());
+
         // Obtener el perfil del usuario
         String avatar = user.getProfile().getAvatar();
         String nickname = user.getProfile().getNickname();
 
         // Crear y devolver el DTO
-        return new PostDto(newPost, avatar, nickname);
+        return new PostDto(post2Dto, avatar, nickname);
     }
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
@@ -122,11 +132,18 @@ public class PostService implements IPostService {
 
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
+        Post2Dto post2Dto = new Post2Dto();
+        post2Dto.setId(posts.get(0).getId());
+        post2Dto.setContent(posts.get(0).getContent());
+        post2Dto.setCreatedAt(posts.get(0).getCreatedAt());
+        post2Dto.setImages(posts.get(0).getImages());
+        post2Dto.setUserId(posts.get(0).getUser().getId());
+        post2Dto.setDelete(posts.get(0).getDelete());
         return posts.stream().map(post -> {
             User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             String avatar = user.getProfile().getAvatar();
             String nickname = user.getProfile().getNickname();
-            return new PostDto(post, avatar, nickname);
+            return new PostDto(post2Dto, avatar, nickname);
         }).collect(Collectors.toList());
     }
 
