@@ -32,12 +32,13 @@ public class User implements Serializable, UserDetails {
     @Column(name = "role", nullable = false, columnDefinition = "0")
     private Rol role;
 
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JoinColumn(name = "id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+        profile.setUser(this); // Configura la relación bidireccional
+    }
 
     @ManyToMany
     @JoinTable(name = "follower",

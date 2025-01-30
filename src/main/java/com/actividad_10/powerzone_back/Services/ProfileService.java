@@ -52,4 +52,8 @@ public class ProfileService {
         return dto;
     }
 
+    public Profile save(Profile profile) {
+        return profileRepository.save(profile);
+    }
+
 }

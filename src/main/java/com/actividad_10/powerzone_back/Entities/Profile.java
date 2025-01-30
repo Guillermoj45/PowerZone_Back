@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class Profile implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -38,4 +39,9 @@ public class Profile implements Serializable {
 
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private User user;
 }
