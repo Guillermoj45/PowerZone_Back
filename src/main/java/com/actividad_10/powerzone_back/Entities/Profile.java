@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -40,6 +41,7 @@ public class Profile implements Serializable {
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
+    @JsonIgnore
     @OneToOne
     @MapsId
     @JoinColumn(name = "id", referencedColumnName = "id")

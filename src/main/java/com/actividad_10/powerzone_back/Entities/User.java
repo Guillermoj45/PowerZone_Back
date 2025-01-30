@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Entities;
 
 import com.actividad_10.powerzone_back.Entities.emun.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"password", "authorities", "enabled", "credentialsNonExpired", "accountNonExpired", "accountNonLocked"})
 public class User implements Serializable, UserDetails {
 
     @Id

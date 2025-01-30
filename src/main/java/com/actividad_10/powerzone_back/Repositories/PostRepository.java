@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>{
+    List<Post> findByUserId(Long userId);
     void deleteById(Long idPost);
     @Query("SELECT p.createdAt FROM Post p WHERE p.id = :id")
     Optional<LocalDateTime> findCreatedAtById(Long id);

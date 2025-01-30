@@ -1,16 +1,14 @@
 package com.actividad_10.powerzone_back.Controllers;
 
-
-import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Post;
+import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Services.PostService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +18,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/post")
 public class PostController {
+
+    @Autowired
+    private PostRepository postRepository;
 
     private final PostService postService;
     private final ObjectMapper objectMapper; // Para convertir JSON a objeto Java
@@ -118,6 +119,19 @@ public class PostController {
     ResponseEntity<String> sharePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> share) {
         postService.sharePost(token, share.get("postId"));
         return ResponseEntity.status(HttpStatus.CREATED).body("Post shared");
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Post> getPostsByUser(@PathVariable Long userId) {
+        return postRepository.findByUserId(userId);
+    }
+
+    @GetMapping("/userposts/{userId}")
+    public ResponseEntity<List<Post>> getPostsByUserId(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String token) {
+        List<Post> posts = postService.getPostsByUserId(userId);
+        return ResponseEntity.ok(posts);
     }
 
 

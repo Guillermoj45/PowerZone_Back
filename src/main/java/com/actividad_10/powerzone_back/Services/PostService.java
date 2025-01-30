@@ -215,5 +215,10 @@ public class PostService implements IPostService {
     public void sharePost(String token, Long postId) {
     }
 
+    public List<Post> getPostsByUserId(Long userId) {
+        return postRepository.findByUserId(userId);
+    }
+
+
 
 }
