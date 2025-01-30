@@ -47,6 +47,7 @@ public class ProfileService {
         dto.setAvatar(profile.getAvatar());
         dto.setBornDate(profile.getBornDate());
         dto.setActivo(profile.getActivo());
+        dto.setNickname(profile.getNickname());
 
         return dto;
     }

@@ -133,7 +133,10 @@ public class PostService implements IPostService {
     }
 
     public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
+        List<Post> posts = postRepository.findAll().stream()
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .collect(Collectors.toList());
+
         return posts.stream().map(post -> {
             Post2Dto post2Dto = new Post2Dto();
             post2Dto.setId(post.getId());

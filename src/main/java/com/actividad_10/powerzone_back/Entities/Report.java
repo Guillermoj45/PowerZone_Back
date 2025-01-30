@@ -29,7 +29,7 @@ public class Report implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @JoinColumn(name = "reporter", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne
     private User reporter;
 
