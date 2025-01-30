@@ -15,11 +15,6 @@ public class Profile implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private User user;
-
     @Column(name = "name", nullable = false)
     private String name;
 

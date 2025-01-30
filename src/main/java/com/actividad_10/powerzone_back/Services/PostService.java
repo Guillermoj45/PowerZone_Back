@@ -1,29 +1,30 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.Post2Dto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
-import com.actividad_10.powerzone_back.Entities.Booksmarks;
-import com.actividad_10.powerzone_back.Entities.LikePost;
-import com.actividad_10.powerzone_back.Entities.Post;
-import com.actividad_10.powerzone_back.Entities.User;
-import com.actividad_10.powerzone_back.Repositories.BooksmarksRepository;
-import com.actividad_10.powerzone_back.Repositories.LikePostRepository;
-import com.actividad_10.powerzone_back.Repositories.PostRepository;
-import com.actividad_10.powerzone_back.Repositories.UserRepository;
+import com.actividad_10.powerzone_back.Entities.*;
+import com.actividad_10.powerzone_back.Entities.emun.MultimediaType;
+import com.actividad_10.powerzone_back.Repositories.*;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PostService implements IPostService {
 
+    private final ImageRepository imageRepository;
     private PostRepository postRepository;
 
     private UserRepository userRepository;
@@ -34,30 +35,57 @@ public class PostService implements IPostService {
 
     private BooksmarksRepository booksmarksRepository;
 
-
+    private final CloudinaryService cloudinaryService;
     @Override
-    public PostDto createPost(String token, Post newPost) {
-        // Extraer datos del usuario desde el token
+    @Transactional
+    public PostDto createPost(String token, Post newPost, MultipartFile image) {
+        // Extract user data from the token
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
 
-        // Obtener el ID del usuario a partir del email
+        // Get the user ID from the email
         User user = extractUserFromEmail(email);
 
-        // Asignar el ID del usuario y la fecha de creación al nuevo post
+        // Set user and creation date for the new post
         newPost.setUser(user);
         newPost.setCreatedAt(LocalDateTime.now());
+        newPost.setDelete(false);
 
-        // Guardar el nuevo post
-        postRepository.save(newPost);
+        // Save the new post first
+        Post savedPost = postRepository.save(newPost);
 
-        // Obtener el perfil del usuario
+        // Upload the image to Cloudinary and get the URL if the image is present
+        if (image != null && !image.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadFile(image, "posts");
+                Image img = new Image();
+                img.setImage(imageUrl);
+                img.setType(MultimediaType.IMAGE);
+                img.setPostCreatedAt(LocalDateTime.now());
+                img.setPost(savedPost);
+
+                imageRepository.save(img);
+            } catch (IOException e) {
+                throw new RuntimeException("Error uploading the image", e);
+            }
+        }
+
+        // Create Post2Dto
+        Post2Dto post2Dto = new Post2Dto();
+        post2Dto.setId(savedPost.getId());
+        post2Dto.setContent(savedPost.getContent());
+        post2Dto.setCreatedAt(savedPost.getCreatedAt());
+        post2Dto.setImages(savedPost.getImages());
+        post2Dto.setUserId(savedPost.getUser().getId());
+        post2Dto.setDelete(savedPost.getDelete());
+
+        // Get the user's profile
         String avatar = user.getProfile().getAvatar();
         String nickname = user.getProfile().getNickname();
 
-        // Crear y devolver el DTO
-        return new PostDto(newPost, avatar, nickname);
+        // Create and return the DTO
+        return new PostDto(post2Dto, avatar, nickname);
     }
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
@@ -107,10 +135,19 @@ public class PostService implements IPostService {
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> {
+            Post2Dto post2Dto = new Post2Dto();
+            post2Dto.setId(post.getId());
+            post2Dto.setContent(post.getContent());
+            post2Dto.setCreatedAt(post.getCreatedAt());
+            post2Dto.setImages(post.getImages());
+            post2Dto.setUserId(post.getUser().getId());
+            post2Dto.setDelete(post.getDelete());
+
             User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             String avatar = user.getProfile().getAvatar();
             String nickname = user.getProfile().getNickname();
-            return new PostDto(post, avatar, nickname);
+
+            return new PostDto(post2Dto, avatar, nickname);
         }).collect(Collectors.toList());
     }
 
