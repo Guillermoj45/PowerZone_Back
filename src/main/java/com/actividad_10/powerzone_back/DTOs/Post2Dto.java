@@ -15,7 +15,7 @@ public class Post2Dto {
     private Long id;
     private String content;
     private LocalDateTime createdAt;
-    private Set<Image> images;
+    private String images;
     private Boolean delete;
     private Long userId;
 }
