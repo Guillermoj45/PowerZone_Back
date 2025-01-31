@@ -121,7 +121,8 @@ public class PostService implements IPostService {
     }
 
     private User extractUserFromEmail(String email) {
-        return userRepository.findByEmail(email).get();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
     @Transactional
@@ -182,7 +183,13 @@ public class PostService implements IPostService {
             Long numlikes = postRepository.countLikesByPostId(post.getId());
             Optional<CommentDetailsDto> firstCommentDetails = postRepository.findFirstCommentDetailsByPostId(post.getId());
 
-            PostDto postDto = new PostDto();
+            // Construcción de la URL de Cloudinary
+            String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
+
+            Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
+            String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
+
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
             if (firstCommentDetails.isPresent()) {
                 CommentDetailsDto commentDetails = firstCommentDetails.get();
                 postDto.setFirstcomment(commentDetails.getContent());
@@ -193,15 +200,11 @@ public class PostService implements IPostService {
                 postDto.setNicknamecomment("Usuario1");
                 postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
             }
-            postDto.setPost(post2Dto);
-            postDto.setAvatar(avatar);
-            postDto.setNickname(nickname);
-            postDto.setNumcomments(numcomments);
-            postDto.setNumlikes(numlikes);
 
             return postDto;
         }).collect(Collectors.toList());
     }
+
     public List<Post> finduserPost(String token) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);

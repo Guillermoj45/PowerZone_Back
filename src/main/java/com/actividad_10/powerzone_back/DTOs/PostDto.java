@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostDto {
     private Post2Dto post;
+    private String image_post;
     private String avatar;
     private String nickname;
     private Long numlikes = 0L;

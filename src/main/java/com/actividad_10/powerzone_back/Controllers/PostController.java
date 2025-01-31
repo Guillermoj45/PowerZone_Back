@@ -52,7 +52,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
-
     @DeleteMapping("/delete")
     ResponseEntity<Void> deletePost(@RequestHeader("Authorization") String token, @RequestBody Post deletePost) {
         postService.deletePost(token,deletePost);
