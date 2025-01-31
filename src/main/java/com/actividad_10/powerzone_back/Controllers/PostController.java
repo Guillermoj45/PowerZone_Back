@@ -69,6 +69,13 @@ public class PostController {
         List<PostDto> allPosts = postService.getAllPosts();
         return ResponseEntity.status(HttpStatus.OK).body(allPosts);
     }
+    @GetMapping("/hasLiked")
+    public ResponseEntity<Boolean> hasUserLikedPost(
+            @RequestHeader("Authorization") String token,
+            @RequestParam Long postId) {
+        boolean hasLiked = postService.hasUserLikedPost(token, postId);
+        return ResponseEntity.status(HttpStatus.OK).body(hasLiked);
+    }
     @GetMapping("/userposts")
     ResponseEntity<List<Post>> getUserPosts(@RequestHeader("Authorization") String token) {
         List<Post> userPosts = postService.finduserPost(token);

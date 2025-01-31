@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
+import com.actividad_10.powerzone_back.Cloudinary.UploadResult;
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.Post2Dto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
@@ -36,8 +37,9 @@ public class PostService implements IPostService {
     private BooksmarksRepository booksmarksRepository;
 
     private final CloudinaryService cloudinaryService;
-    @Override
+
     @Transactional
+    @Override
     public PostDto createPost(String token, Post newPost, MultipartFile image) {
         // Extract user data from the token
         String jwt = token.replace("Bearer ", "");
@@ -58,11 +60,11 @@ public class PostService implements IPostService {
         // Upload the image to Cloudinary and get the URL if the image is present
         if (image != null && !image.isEmpty()) {
             try {
-                String imageUrl = cloudinaryService.uploadFile(image, "posts");
+                UploadResult uploadResult = cloudinaryService.uploadFilePV(image, "posts");
                 Image img = new Image();
-                img.setImage(imageUrl);
-                img.setType(MultimediaType.IMAGE);
-                img.setPostCreatedAt(LocalDateTime.now());
+                img.setImage(uploadResult.getPublicId());
+                img.setType(MultimediaType.valueOf(uploadResult.getResourceType().toUpperCase()));
+                img.setPostCreatedAt(savedPost.getCreatedAt());
                 img.setPost(savedPost);
 
                 imageRepository.save(img);
@@ -211,7 +213,18 @@ public class PostService implements IPostService {
         likePostRepository.deleteById(userId, post.getId());
 
     }
+    public boolean hasUserLikedPost(String token, Long postId) {
+        // Extract user data from the token
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
 
+        // Get the user ID from the email
+        Long userId = extractUserIdFromEmail(email);
+
+        // Check if the user has liked the post
+        return likePostRepository.existsByUserIdAndPostId(userId, postId);
+    }
     public void sharePost(String token, Long postId) {
     }
 

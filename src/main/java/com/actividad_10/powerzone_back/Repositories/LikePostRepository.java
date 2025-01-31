@@ -13,4 +13,7 @@ public interface LikePostRepository extends JpaRepository<LikePost, Long>{
     @Transactional
     @Query("DELETE FROM LikePost l WHERE l.userId = :userId AND l.postId = :postId")
     void deleteById(Long userId, Long postId);
+
+    @Query("SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END FROM LikePost l WHERE l.userId = :userId AND l.postId = :postId")
+    boolean existsByUserIdAndPostId(Long userId, Long postId);
 }
