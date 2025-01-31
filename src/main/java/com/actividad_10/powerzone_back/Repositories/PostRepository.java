@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Repositories;
 
+import com.actividad_10.powerzone_back.DTOs.CommentDetailsDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,13 @@ public interface PostRepository extends JpaRepository<Post, Long>{
 
     @Query("SELECT p FROM Post p WHERE p.user.id = :userId")
     List<Post> findAllByUserId(Long userId);
+    @Query("SELECT COUNT(l) FROM LikePost l WHERE l.postId = :postId")
+    Long countLikesByPostId(Long postId);
+
+    @Query("SELECT COUNT(c) FROM Comment c WHERE c.post.id = :postId")
+    Long countCommentsByPostId(Long postId);
+
+    @Query("SELECT new com.actividad_10.powerzone_back.DTOs.CommentDetailsDto(c.content, u.profile.nickname, u.profile.avatar) " +
+            "FROM Comment c JOIN c.user u WHERE c.post.id = :postId ORDER BY c.createdAt ASC")
+    Optional<CommentDetailsDto> findFirstCommentDetailsByPostId(Long postId);
 }

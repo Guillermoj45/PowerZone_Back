@@ -3,6 +3,7 @@ package com.actividad_10.powerzone_back.Services;
 import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
 import com.actividad_10.powerzone_back.Cloudinary.UploadResult;
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.CommentDetailsDto;
 import com.actividad_10.powerzone_back.DTOs.Post2Dto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.*;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,7 +80,6 @@ public class PostService implements IPostService {
         post2Dto.setId(savedPost.getId());
         post2Dto.setContent(savedPost.getContent());
         post2Dto.setCreatedAt(savedPost.getCreatedAt());
-        post2Dto.setImages(savedPost.getImages());
         post2Dto.setUserId(savedPost.getUser().getId());
         post2Dto.setDelete(savedPost.getDelete());
 
@@ -86,9 +87,35 @@ public class PostService implements IPostService {
         String avatar = user.getProfile().getAvatar();
         String nickname = user.getProfile().getNickname();
 
+        Long numcomments = postRepository.countCommentsByPostId(savedPost.getId());
+        Long numlikes = postRepository.countLikesByPostId(savedPost.getId());
+        Optional<CommentDetailsDto> firstCommentDetails = postRepository.findFirstCommentDetailsByPostId(savedPost.getId());
+
         // Create and return the DTO
-        return new PostDto(post2Dto, avatar, nickname);
+        PostDto postDto = new PostDto();
+        if (firstCommentDetails.isPresent()) {
+            CommentDetailsDto commentDetails = firstCommentDetails.get();
+            postDto.setFirstcomment(commentDetails.getContent());
+            postDto.setNicknamecomment(commentDetails.getNickname());
+            postDto.setAvatarcomment(commentDetails.getAvatar());
+        } else {
+            postDto.setFirstcomment("Se el primero en comentar esta publicación");
+            postDto.setNicknamecomment("Usuario1");
+            postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+        }
+        postDto.setPost(post2Dto);
+        postDto.setAvatar(avatar);
+        postDto.setNickname(nickname);
+        postDto.setNumcomments(numcomments);
+        postDto.setNumlikes(numlikes);
+
+        return postDto;
     }
+
+
+
+
+
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
     }
@@ -144,7 +171,6 @@ public class PostService implements IPostService {
             post2Dto.setId(post.getId());
             post2Dto.setContent(post.getContent());
             post2Dto.setCreatedAt(post.getCreatedAt());
-            post2Dto.setImages(post.getImages());
             post2Dto.setUserId(post.getUser().getId());
             post2Dto.setDelete(post.getDelete());
 
@@ -152,10 +178,30 @@ public class PostService implements IPostService {
             String avatar = user.getProfile().getAvatar();
             String nickname = user.getProfile().getNickname();
 
-            return new PostDto(post2Dto, avatar, nickname);
+            Long numcomments = postRepository.countCommentsByPostId(post.getId());
+            Long numlikes = postRepository.countLikesByPostId(post.getId());
+            Optional<CommentDetailsDto> firstCommentDetails = postRepository.findFirstCommentDetailsByPostId(post.getId());
+
+            PostDto postDto = new PostDto();
+            if (firstCommentDetails.isPresent()) {
+                CommentDetailsDto commentDetails = firstCommentDetails.get();
+                postDto.setFirstcomment(commentDetails.getContent());
+                postDto.setNicknamecomment(commentDetails.getNickname());
+                postDto.setAvatarcomment(commentDetails.getAvatar());
+            } else {
+                postDto.setFirstcomment("Se el primero en comentar esta publicación");
+                postDto.setNicknamecomment("Usuario1");
+                postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+            }
+            postDto.setPost(post2Dto);
+            postDto.setAvatar(avatar);
+            postDto.setNickname(nickname);
+            postDto.setNumcomments(numcomments);
+            postDto.setNumlikes(numlikes);
+
+            return postDto;
         }).collect(Collectors.toList());
     }
-
     public List<Post> finduserPost(String token) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);

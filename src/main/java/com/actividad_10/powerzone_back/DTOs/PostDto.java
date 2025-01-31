@@ -12,4 +12,10 @@ public class PostDto {
     private Post2Dto post;
     private String avatar;
     private String nickname;
+    private Long numlikes = 0L;
+    private Long numcomments = 0L;
+    private String avatarcomment = "https://picsum.photos/800/400?random=1";
+    private String nicknamecomment = "Usuario1";
+    private String firstcomment = "Se el primero en comentar esta publicación";
+
 }

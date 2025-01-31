@@ -32,8 +32,6 @@ public class Post implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Image> images = new HashSet<>();
 
     @Column(name = "delete")
     private Boolean delete = false;
