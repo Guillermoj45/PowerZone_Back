@@ -152,7 +152,7 @@ public class UserService implements IUserService, UserDetailsService {
         userRepository.save(user);
     }
 
-    public void updateProfile(String token, Profile2Dto profile2Dto) {
+    public void updateProfile(String token, Profile2Dto profile2Dto) throws IOException {
         token = jwtService.desEncriptToken(token);
         TokenDto tokenDto = jwtService.extractTokenData(token);
         User user = (User) loadUserByUsername(tokenDto.getEmail());
@@ -164,7 +164,10 @@ public class UserService implements IUserService, UserDetailsService {
         }
 
         profile.setName(profile2Dto.getName());
-        profile.setAvatar(profile2Dto.getAvatar());
+
+        String img = cloudinaryService.uploadFile(profile2Dto.getAvatar(), "avatar");
+        profile.setAvatar(img);
+
         profile.setBornDate(profile2Dto.getBornDate());
         profile.setNickname(profile2Dto.getNickName());
 
