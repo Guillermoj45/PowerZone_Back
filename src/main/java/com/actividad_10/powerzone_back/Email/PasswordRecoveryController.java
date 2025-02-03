@@ -19,6 +19,19 @@ public class PasswordRecoveryController {
     // Simulación de base de datos
     private Map<String, String> userTokens = new HashMap<>();
 
+    @PostMapping("/welcome")
+    public String sendWelComeEmail(String email) {
+        if (userService.exists(email)) {
+            // Enviar correo
+            emailService.sendEmail(email, "Bienvenid@ a PowerZone",
+                    "Estamos encantados de que hayas confiado en nosotros como red social Fitness" +
+                            "\uD83D\uDCAA\uD83D\uDCAA \nhttps://ih1.redbubble.net/image.1385783302.1793/flat,750x,075,f-pad,750x1000,f8f8f8.jpg");
+
+            return "Correo de bienvenida enviado a: " + email;
+        }
+        return "Error al encontrar email";
+    }
+
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email) {
         if (userService.exists(email)) {
