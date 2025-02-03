@@ -13,8 +13,11 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Pageable;
+
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -89,7 +92,9 @@ public class PostService implements IPostService {
 
         Long numcomments = postRepository.countCommentsByPostId(savedPost.getId());
         Long numlikes = postRepository.countLikesByPostId(savedPost.getId());
-        Optional<CommentDetailsDto> firstCommentDetails = postRepository.findFirstCommentDetailsByPostId(savedPost.getId());
+        Pageable pageable = PageRequest.of(0, 1);
+        List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(savedPost.getId(), pageable);
+        Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
 
         // Create and return the DTO
         PostDto postDto = new PostDto();
@@ -181,7 +186,9 @@ public class PostService implements IPostService {
 
             Long numcomments = postRepository.countCommentsByPostId(post.getId());
             Long numlikes = postRepository.countLikesByPostId(post.getId());
-            Optional<CommentDetailsDto> firstCommentDetails = postRepository.findFirstCommentDetailsByPostId(post.getId());
+            Pageable pageable = PageRequest.of(0, 1);
+            List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
+            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
 
             // Construcción de la URL de Cloudinary
             String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
