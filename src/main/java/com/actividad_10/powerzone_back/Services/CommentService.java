@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class CommentService implements ICommentService {
+public class
+CommentService implements ICommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
@@ -39,23 +40,20 @@ public class CommentService implements ICommentService {
 
         newComment.setUser(userRepository.findById(userId).get());
 
-
         if (newComment.getPost() == null || newComment.getPost().getId() == null) {
             throw new RuntimeException("Post ID is required");
         }
 
-
-        Optional<Post> post = postRepository.findById(newComment.getPost().getId());
-        if (post.isPresent()) {
-            Post existingPost = post.get();
-            newComment.setPost(existingPost);
-            // Asignar la fecha de creación del Post al comentario
-            newComment.setPostCreatedAt(existingPost.getCreatedAt());
-        } else {
+        Optional<Post> postOptional = postRepository.findById(newComment.getPost().getId());
+        if (!postOptional.isPresent()) {
             throw new RuntimeException("Post not found");
         }
 
+        Post post = postOptional.get();
+        newComment.setPost(post);
+        newComment.setPostCreatedAt(post.getCreatedAt());
         newComment.setCreatedAt(LocalDateTime.now());
+
 
         commentRepository.save(newComment);
 

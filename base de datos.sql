@@ -106,14 +106,15 @@ create table image (
 );
 
 create table comment (
-    id bigserial primary key,
-    content text not null,
-    created_at timestamp not null default now(),
-    user_id bigint not null,
-    post_id bigint not null,
-    post_created_at timestamp not null,
-    constraint fk_comment_user foreign key (user_id) references "users" (id) on delete cascade,
-    constraint fk_comment_post foreign key (post_id, post_created_at) references post (id, created_at) on delete cascade
+                         id bigserial primary key,
+                         content text not null,
+                         created_at timestamp not null default now(),
+                         user_id bigint not null,
+                         post_id bigint not null,
+                         post_created_at timestamp not null,
+                         delete boolean not null default false,
+                         constraint fk_comment_user foreign key (user_id) references "users" (id) on delete cascade,
+                         constraint fk_comment_post foreign key (post_id, post_created_at) references post (id, created_at) on delete cascade
 );
 
 create table like_post (
