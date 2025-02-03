@@ -99,27 +99,45 @@ public class PostController {
     }
 
     @PostMapping("/like")
-    public ResponseEntity<String> likePost(
+    public ResponseEntity<Map<String, String>> likePost(
             @RequestHeader("Authorization") String token,
-            @RequestBody  Long postId) {
-        System.out.println("Token recibido: " + token);
-
-
+            @RequestBody Long postId) {
 
         Post post = postService.findaById(postId);
         if (post == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Post not found"));
         }
 
         postService.likePost(token, post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post liked");
-    }
-    @PostMapping("/unlike")
-    ResponseEntity<String> unlikePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
-        postService.unlikePost(token, post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post unliked");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("message", "Post liked"));
     }
 
+    @PostMapping("/unlike")
+    public ResponseEntity<Map<String, String>> unlikePost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Long postId) {
+
+        Post post = postService.findaById(postId);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Post not found"));
+        }
+
+        postService.unlikePost(token, post);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("message", "Post unliked"));
+    }
+
+
+    @PostMapping("/hasLiked")
+    public ResponseEntity<Boolean> hasLikedPost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Long postId) {
+        boolean hasLiked = postService.hasUserLikedPost(token, postId);
+        return ResponseEntity.ok(hasLiked);
+    }
 
     @PostMapping("/share")
     ResponseEntity<String> sharePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> share) {
