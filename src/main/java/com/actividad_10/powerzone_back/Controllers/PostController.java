@@ -166,7 +166,11 @@ public class PostController {
         boolean hasSaved = postService.hasUserSavedPost(token, postId);
         return ResponseEntity.ok(hasSaved);
     }
-
+    @GetMapping("/user/saved")
+    public ResponseEntity<List<PostDto>> getAllSavedPosts(@RequestHeader("Authorization") String token) {
+        List<PostDto> savedPosts = postService.getAllSavedPosts(token);
+        return ResponseEntity.status(HttpStatus.OK).body(savedPosts);
+    }
     @PostMapping("/share")
     ResponseEntity<String> sharePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> share) {
         postService.sharePost(token, share.get("postId"));
