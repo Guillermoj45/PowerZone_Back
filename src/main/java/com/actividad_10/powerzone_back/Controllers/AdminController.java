@@ -47,12 +47,27 @@ public class AdminController {
     }
 
     @GetMapping("/userBanned")
-        public List<ReportCountDto> getUserBanned(@RequestParam(value = "offser", defaultValue = "0") int offset){
-        return reportService.getUserBanned(offset);
+        public List<ReportCountDto> getUserBanned(@RequestHeader("Authorization") String token,@RequestParam(value = "offser", defaultValue = "0") int offset){
+        String jwt = token.replace("Bearer ", "");
+        String rol = jwtService.extractTokenData(jwt).getRol();
+
+
+        if (rol.equals(Rol.ADMIN.toString())){
+            return reportService.getUserBanned(offset);
+        }
+        throw new NoAdmin("Necesitas ser administrador para esto");
     }
 
     @GetMapping("/userWarning")
-    public List<ReportCountDto> getUserWarning(@RequestParam(value = "offser", defaultValue = "0") int offset){
-        return reportService.getUserWarning(offset);
+    public List<ReportCountDto> getUserWarning(@RequestHeader("Authorization") String token, @RequestParam(value = "offser", defaultValue = "0") int offset){
+        String jwt = token.replace("Bearer ", "");
+        String rol = jwtService.extractTokenData(jwt).getRol();
+
+
+        if (rol.equals(Rol.ADMIN.toString())){
+            return reportService.getUserWarning(offset);
+        }
+
+        throw new NoAdmin("Necesitas ser administrador para esto");
     }
 }
