@@ -81,22 +81,43 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(userPosts);
     }
     @PostMapping("/save")
-    public ResponseEntity<String> savePost(@RequestHeader("Authorization") String token,
-                                           @RequestBody Map<String, Long> postIdMap) {
+    public ResponseEntity<Map<String, String>> savePost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Map<String, Long> postIdMap) {
         System.out.println("Token recibido: " + token);
         Long postId = postIdMap.get("postId");
+        System.out.println("Post ID recibido: " + postId);
+
         if (postId == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Post ID is required");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Post ID is required"));
         }
         Post post = postService.findaById(postId);
         postService.savePost(token, post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post saved");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of("message", "Post saved"));
     }
+
     @PostMapping("/unsave")
-    ResponseEntity<String> unsavePost(@RequestHeader("Authorization") String token, @RequestBody Post post) {
-        postService.unsavePost(token,post);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Post unsave");
+    public ResponseEntity<Map<String, String>> unsavePost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Map<String, Long> postIdMap) {
+        System.out.println("Token recibido: " + token);
+        Long postId = postIdMap.get("postId");
+        if (postId == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Post ID is required"));
+        }
+        Post post = postService.findaById(postId);
+        postService.unsavePost(token, post);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of("message", "Post unsaved"));
     }
+
 
     @PostMapping("/like")
     public ResponseEntity<Map<String, String>> likePost(
@@ -137,6 +158,13 @@ public class PostController {
             @RequestBody Long postId) {
         boolean hasLiked = postService.hasUserLikedPost(token, postId);
         return ResponseEntity.ok(hasLiked);
+    }
+    @PostMapping("/hasSaved")
+    public ResponseEntity<Boolean> hasSavedPost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Long postId) {
+        boolean hasSaved = postService.hasUserSavedPost(token, postId);
+        return ResponseEntity.ok(hasSaved);
     }
 
     @PostMapping("/share")
