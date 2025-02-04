@@ -1,8 +1,10 @@
 package com.actividad_10.powerzone_back.Controllers;
 
+import com.actividad_10.powerzone_back.DTOs.CommentDetailsDto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
+import com.actividad_10.powerzone_back.Services.CommentService;
 import com.actividad_10.powerzone_back.Services.PostService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,9 +23,12 @@ public class PostController {
 
     @Autowired
     private PostRepository postRepository;
-
+    @Autowired
     private final PostService postService;
     private final ObjectMapper objectMapper; // Para convertir JSON a objeto Java
+
+    @Autowired
+    private CommentService commentService;
 
     public PostController(PostService postService, ObjectMapper objectMapper) {
         this.postService = postService;
@@ -176,7 +181,20 @@ public class PostController {
         postService.sharePost(token, share.get("postId"));
         return ResponseEntity.status(HttpStatus.CREATED).body("Post shared");
     }
-
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDto> getPostById(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long postId) {
+        PostDto postDto = postService.getPostById(token, postId);
+        return ResponseEntity.ok(postDto);
+    }
+    @GetMapping("/{postId}/comments")
+    public ResponseEntity<List<CommentDetailsDto>> getAllCommentsByPostId(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long postId) {
+        List<CommentDetailsDto> comments = commentService.getAllCommentsByPostId(postId);
+        return ResponseEntity.ok(comments);
+    }
     @GetMapping("/user/{userId}")
     public List<Post> getPostsByUser(@PathVariable Long userId) {
         return postRepository.findByUserId(userId);

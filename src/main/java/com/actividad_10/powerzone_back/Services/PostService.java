@@ -341,6 +341,54 @@ public class PostService implements IPostService {
     public void sharePost(String token, Long postId) {
     }
 
+    public PostDto getPostById(String token, Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (!postOptional.isPresent()) {
+            throw new RuntimeException("Post not found");
+        }
+        Post post = postOptional.get();
+
+        // Create Post2Dto
+        Post2Dto post2Dto = new Post2Dto();
+        post2Dto.setId(post.getId());
+        post2Dto.setContent(post.getContent());
+        post2Dto.setCreatedAt(post.getCreatedAt());
+        post2Dto.setUserId(post.getUser().getId());
+        post2Dto.setDelete(post.getDelete());
+
+        // Get the user's profile
+        User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        String avatar = user.getProfile().getAvatar();
+        String nickname = user.getProfile().getNickname();
+
+        Long numcomments = postRepository.countCommentsByPostId(post.getId());
+        Long numlikes = postRepository.countLikesByPostId(post.getId());
+        Pageable pageable = PageRequest.of(0, 1);
+        List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
+        Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
+
+        // Construcción de la URL de Cloudinary
+        String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
+
+        Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
+        String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
+
+        // Create and return the DTO
+        PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+        if (firstCommentDetails.isPresent()) {
+            CommentDetailsDto commentDetails = firstCommentDetails.get();
+            postDto.setFirstcomment(commentDetails.getContent());
+            postDto.setNicknamecomment(commentDetails.getNickname());
+            postDto.setAvatarcomment(commentDetails.getAvatar());
+        } else {
+            postDto.setFirstcomment("Se el primero en comentar esta publicación");
+            postDto.setNicknamecomment("Usuario1");
+            postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+        }
+
+        return postDto;
+    }
+
     public List<Post> getPostsByUserId(Long userId) {
         return postRepository.findByUserId(userId);
     }

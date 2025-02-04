@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
+import com.actividad_10.powerzone_back.DTOs.CommentDetailsDto;
 import com.actividad_10.powerzone_back.DTOs.CommentDto;
 import com.actividad_10.powerzone_back.Entities.Comment;
 import com.actividad_10.powerzone_back.Entities.Post;
@@ -13,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -91,7 +93,9 @@ CommentService implements ICommentService {
             throw new RuntimeException("No tienes permiso para eliminar este comentario");
         }
     }
-
+    public List<CommentDetailsDto> getAllCommentsByPostId(Long postId) {
+        return commentRepository.findAllCommentDetailsByPostId(postId);
+    }
     @Override
     public void getCommentByUserName(Comment userComments) {
         User userId = userComments.getUser();
