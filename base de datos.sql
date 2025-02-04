@@ -212,4 +212,5 @@ create table training_exercises(
     constraint fk_training_exercises_exercises foreign key (exercises_id) references exercises (id) on delete cascade,
     constraint pk_training_exercises primary key (training_id, exercises_id)
 );
-
+ALTER TABLE profile DROP COLUMN is_new_user;
+ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;

@@ -32,6 +32,9 @@ public class Profile implements Serializable {
     @Column(name = "ban_at")
     private LocalDate banAt;
 
+    @Column(name = "is_new_user", nullable = false, columnDefinition = "boolean default true")
+    private boolean isNewUser = true;
+
     @Column(name = "diet")
     private Long diet;
 

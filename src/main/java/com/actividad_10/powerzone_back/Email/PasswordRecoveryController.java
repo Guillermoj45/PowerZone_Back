@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Email;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,17 +20,15 @@ public class PasswordRecoveryController {
     // Simulación de base de datos
     private Map<String, String> userTokens = new HashMap<>();
 
-    @PostMapping("/welcome")
+    @Async
     public String sendWelComeEmail(String email) {
         if (userService.exists(email)) {
             // Enviar correo
             emailService.sendEmail(email, "Bienvenid@ a PowerZone",
                     "Estamos encantados de que hayas confiado en nosotros como red social Fitness" +
                             "\uD83D\uDCAA\uD83D\uDCAA \nhttps://ih1.redbubble.net/image.1385783302.1793/flat,750x,075,f-pad,750x1000,f8f8f8.jpg");
-
-            return "Correo de bienvenida enviado a: " + email;
         }
-        return "Error al encontrar email";
+        return email;
     }
 
     @PostMapping("/forgot-password")
