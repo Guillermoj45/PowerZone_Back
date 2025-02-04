@@ -13,4 +13,7 @@ public interface BooksmarksRepository extends JpaRepository<Booksmarks, Long> {
     @Transactional
     @Query("DELETE FROM Booksmarks b WHERE b.userId = :userId AND b.postId = :postId")
     void deleteById(Long userId, Long postId);
+
+    @Query("SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END FROM Booksmarks b WHERE b.userId = :userId AND b.postId = :postId")
+    boolean existsByUserIdAndPostId(Long userId, Long postId);
 }

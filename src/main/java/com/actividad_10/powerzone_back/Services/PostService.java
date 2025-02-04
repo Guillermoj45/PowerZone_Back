@@ -281,6 +281,18 @@ public class PostService implements IPostService {
         // Check if the user has liked the post
         return likePostRepository.existsByUserIdAndPostId(userId, postId);
     }
+    public boolean hasUserSavedPost(String token, Long postId) {
+        // Extract user data from the token
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        // Get the user ID from the email
+        Long userId = extractUserIdFromEmail(email);
+
+        // Check if the user has saved the post
+        return booksmarksRepository.existsByUserIdAndPostId(userId, postId);
+    }
     public void sharePost(String token, Long postId) {
     }
 
