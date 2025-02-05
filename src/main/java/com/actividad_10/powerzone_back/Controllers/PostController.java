@@ -80,11 +80,7 @@ public class PostController {
         boolean hasLiked = postService.hasUserLikedPost(token, postId);
         return ResponseEntity.status(HttpStatus.OK).body(hasLiked);
     }
-    @GetMapping("/userposts")
-    ResponseEntity<List<Post>> getUserPosts(@RequestHeader("Authorization") String token) {
-        List<Post> userPosts = postService.finduserPost(token);
-        return ResponseEntity.status(HttpStatus.OK).body(userPosts);
-    }
+
     @PostMapping("/save")
     public ResponseEntity<Map<String, String>> savePost(
             @RequestHeader("Authorization") String token,
@@ -199,7 +195,11 @@ public class PostController {
     public List<Post> getPostsByUser(@PathVariable Long userId) {
         return postRepository.findByUserId(userId);
     }
-
+    @GetMapping("/userposts")
+    public ResponseEntity<List<PostDto>> getUserPosts(@RequestHeader("Authorization") String token) {
+        List<PostDto> userPosts = postService.getUserPosts(token);
+        return ResponseEntity.status(HttpStatus.OK).body(userPosts);
+    }
     @GetMapping("/userposts/{userId}")
     public ResponseEntity<List<Post>> getPostsByUserId(
             @PathVariable Long userId,
