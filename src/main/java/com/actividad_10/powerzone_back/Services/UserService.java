@@ -174,4 +174,24 @@ public class UserService implements IUserService, UserDetailsService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void tutorialDone(String token) {
+        token = jwtService.desEncriptToken(token);
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+        User user = userRepository.findByEmail(tokenDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + tokenDto.getEmail()));
+
+        user.getProfile().setNewUser(false);
+        userRepository.save(user);
+    }
+
+    public boolean isTutorialDone(String token) {
+        token = jwtService.desEncriptToken(token);
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+        User user = userRepository.findByEmail(tokenDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + tokenDto.getEmail()));
+
+        return user.getProfile().isNewUser();
+    }
+
 }

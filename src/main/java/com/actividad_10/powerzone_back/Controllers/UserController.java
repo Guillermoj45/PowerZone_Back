@@ -21,16 +21,26 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<Void> createUser(@RequestBody CreacionPerfilDto nuevoPerfil) {
         userService.createUser(nuevoPerfil);
-        String emailResponse = passwordRecoveryController.sendWelComeEmail(nuevoPerfil.getEmail());
-        if (emailResponse.startsWith("Correo de bienvenida enviado")) {
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        passwordRecoveryController.sendWelComeEmail(nuevoPerfil.getEmail());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 
     @PostMapping("/login")
     ResponseEntity<RespuestaDto> loginUser(@RequestBody LoginDto loginDto) {
         return userService.LoginUser(loginDto);
+    }
+
+
+    @PostMapping("/isTutorialComplete")
+    ResponseEntity<Boolean> IsmarkTutorialDone(@RequestHeader("Authorization") String token) {
+        boolean isNewUser = userService.isTutorialDone(token);
+        return new ResponseEntity<>(isNewUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/tutorialComplete")
+    ResponseEntity<?> markTutorialDone(@RequestHeader("Authorization") String token){
+        userService.tutorialDone(token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
