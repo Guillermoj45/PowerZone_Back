@@ -160,6 +160,7 @@ public class PostController {
         boolean hasLiked = postService.hasUserLikedPost(token, postId);
         return ResponseEntity.ok(hasLiked);
     }
+
     @PostMapping("/hasSaved")
     public ResponseEntity<Boolean> hasSavedPost(
             @RequestHeader("Authorization") String token,
@@ -167,16 +168,19 @@ public class PostController {
         boolean hasSaved = postService.hasUserSavedPost(token, postId);
         return ResponseEntity.ok(hasSaved);
     }
+
     @GetMapping("/user/saved")
     public ResponseEntity<List<PostDto>> getAllSavedPosts(@RequestHeader("Authorization") String token) {
         List<PostDto> savedPosts = postService.getAllSavedPosts(token);
         return ResponseEntity.status(HttpStatus.OK).body(savedPosts);
     }
+
     @PostMapping("/share")
     ResponseEntity<String> sharePost(@RequestHeader("Authorization") String token, @RequestBody Map<String, Long> share) {
         postService.sharePost(token, share.get("postId"));
         return ResponseEntity.status(HttpStatus.CREATED).body("Post shared");
     }
+
     @GetMapping("/{postId}")
     public ResponseEntity<PostDto> getPostById(
             @RequestHeader("Authorization") String token,
@@ -184,6 +188,7 @@ public class PostController {
         PostDto postDto = postService.getPostById(token, postId);
         return ResponseEntity.ok(postDto);
     }
+
     @GetMapping("/{postId}/comments")
     public ResponseEntity<List<CommentDetailsDto>> getAllCommentsByPostId(
             @RequestHeader("Authorization") String token,
@@ -191,15 +196,18 @@ public class PostController {
         List<CommentDetailsDto> comments = commentService.getAllCommentsByPostId(postId);
         return ResponseEntity.ok(comments);
     }
+
     @GetMapping("/user/{userId}")
     public List<Post> getPostsByUser(@PathVariable Long userId) {
         return postRepository.findByUserId(userId);
     }
+
     @GetMapping("/userposts")
     public ResponseEntity<List<PostDto>> getUserPosts(@RequestHeader("Authorization") String token) {
         List<PostDto> userPosts = postService.getUserPosts(token);
         return ResponseEntity.status(HttpStatus.OK).body(userPosts);
     }
+
     @GetMapping("/userposts/{userId}")
     public ResponseEntity<List<Post>> getPostsByUserId(
             @PathVariable Long userId,
