@@ -71,6 +71,7 @@ public class PostController {
         List<PostDto> allPosts = postService.getAllPosts();
         return ResponseEntity.status(HttpStatus.OK).body(allPosts);
     }
+
     @GetMapping("/hasLiked")
     public ResponseEntity<Boolean> hasUserLikedPost(
             @RequestHeader("Authorization") String token,
@@ -78,6 +79,7 @@ public class PostController {
         boolean hasLiked = postService.hasUserLikedPost(token, postId);
         return ResponseEntity.status(HttpStatus.OK).body(hasLiked);
     }
+
 
     @PostMapping("/save")
     public ResponseEntity<Map<String, String>> savePost(

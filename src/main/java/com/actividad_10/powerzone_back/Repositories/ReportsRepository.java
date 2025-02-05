@@ -65,4 +65,6 @@ public interface ReportsRepository extends JpaRepository<Report, Long> {
             offset :offset;
             """, nativeQuery = true)
     List<ReportCountDto> userBanner(int offset, ReportState state);
+
+    public List<Report> findByPost_Id(Long id);
 }
