@@ -17,7 +17,7 @@ public interface ReportsRepository extends JpaRepository<Report, Long> {
     @Query("""
             select R
             from Report R
-            order by R.type
+            order by R.type, R.createdAt desc
             limit 50
             offset :offset
             """)

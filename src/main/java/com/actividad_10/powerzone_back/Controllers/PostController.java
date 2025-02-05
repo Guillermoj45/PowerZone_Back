@@ -1,13 +1,17 @@
 package com.actividad_10.powerzone_back.Controllers;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.CommentDetailsDto;
+import com.actividad_10.powerzone_back.DTOs.CreateReportDTO;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Services.CommentService;
 import com.actividad_10.powerzone_back.Services.PostService;
+import com.actividad_10.powerzone_back.Services.ReportService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,21 +23,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/post")
+@AllArgsConstructor
 public class PostController {
-
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
+    private final PostRepository postRepository;
     private final PostService postService;
     private final ObjectMapper objectMapper; // Para convertir JSON a objeto Java
+    private final CommentService commentService;
+    private final ReportService reportService;
+    private final JwtService jwtService;
 
-    @Autowired
-    private CommentService commentService;
-
-    public PostController(PostService postService, ObjectMapper objectMapper) {
-        this.postService = postService;
-        this.objectMapper = objectMapper;
-    }
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     public ResponseEntity<PostDto> createPost(
@@ -216,6 +214,17 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    @PostMapping("/report")
+    public ResponseEntity<String> reportPost(
+            @RequestHeader("Authorization") String token,
+            @RequestBody CreateReportDTO report) {
+
+        String jwt = token.replace("Bearer ", "");
+        String email = jwtService.extractTokenData(jwt).getEmail();
+
+        reportService.reportPost(report,email);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Post reported");
+    }
 
 
 }

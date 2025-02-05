@@ -88,6 +88,7 @@ public class ReportService implements IReportService {
     @Transactional
     public void reportPost(CreateReportDTO report, String emailUsername) {
         Post post = postService.findaById(report.getPostId());
+
         User reporter = (User) userService.loadUserByUsername(emailUsername);
 
         Report newReport = Report.builder()
