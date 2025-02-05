@@ -201,10 +201,10 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(userPosts);
     }
     @GetMapping("/userposts/{userId}")
-    public ResponseEntity<List<Post>> getPostsByUserId(
+    public ResponseEntity<List<PostDto>> getPostsByUserId(
             @PathVariable Long userId,
             @RequestHeader("Authorization") String token) {
-        List<Post> posts = postService.getPostsByUserId(userId);
+        List<PostDto> posts = postService.getPostsByUserId(userId);
         return ResponseEntity.ok(posts);
     }
 
