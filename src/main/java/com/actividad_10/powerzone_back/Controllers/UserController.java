@@ -32,13 +32,13 @@ public class UserController {
     }
 
 
-    @PostMapping("/is_tutorial_complete")
+    @PostMapping("/isTutorialComplete")
     ResponseEntity<Boolean> IsmarkTutorialDone(@RequestHeader("Authorization") String token) {
         boolean isNewUser = userService.isTutorialDone(token);
         return new ResponseEntity<>(isNewUser, HttpStatus.OK);
     }
 
-    @PostMapping("/tutorial_complete")
+    @PostMapping("/tutorialComplete")
     ResponseEntity<?> markTutorialDone(@RequestHeader("Authorization") String token){
         userService.tutorialDone(token);
         return new ResponseEntity<>(HttpStatus.OK);
