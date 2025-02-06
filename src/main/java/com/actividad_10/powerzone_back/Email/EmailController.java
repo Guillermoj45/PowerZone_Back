@@ -1,15 +1,16 @@
 package com.actividad_10.powerzone_back.Email;
 
+import com.actividad_10.powerzone_back.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
-import com.actividad_10.powerzone_back.Services.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
-public class PasswordRecoveryController {
+public class EmailController {
 
     @Autowired
     private EmailService emailService;
@@ -17,35 +18,29 @@ public class PasswordRecoveryController {
     @Autowired
     private UserService userService;
 
-    // Simulación de base de datos
-    private Map<String, String> userTokens = new HashMap<>();
+    // Simulación de base de datos para tokens de recuperación
+    private final Map<String, String> userTokens = new HashMap<>();
 
     @Async
-    public String sendWelComeEmail(String email) {
+    public void sendWelcomeEmail(String email) {
         if (userService.exists(email)) {
-            // Enviar correo
-            emailService.sendEmail(email, "Bienvenid@ a PowerZone",
-                    "Estamos encantados de que hayas confiado en nosotros como red social Fitness" +
-                            "\uD83D\uDCAA\uD83D\uDCAA \nhttps://ih1.redbubble.net/image.1385783302.1793/flat,750x,075,f-pad,750x1000,f8f8f8.jpg");
+            emailService.sendWelcomeEmail(email);
         }
-        return email;
     }
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email) {
         if (userService.exists(email)) {
             // Generar código de 6 dígitos
-            String code = String.format("%06d", new java.util.Random().nextInt(999999));
-            // Simular almacenamiento en DB
-            userTokens.put(email, code);
+            String recoveryCode = String.format("%06d", new java.util.Random().nextInt(999999));
+            userTokens.put(email, recoveryCode); // Simular almacenamiento en DB
 
-            // Enviar correo
-            emailService.sendEmail(email, "Recuperación de contraseña",
-                    "No compartas esto con nadie, tu código de recuperación es: " + code);
+            // Enviar correo de recuperación
+            emailService.sendRecoveryEmail(email, recoveryCode);
 
             return "Correo de recuperación enviado a: " + email;
         }
-        return "Visita la vida en 3d.";
+        return "El correo no está registrado.";
     }
 
     @PostMapping("/reset-password")
@@ -60,8 +55,7 @@ public class PasswordRecoveryController {
         if (email != null) {
             // Actualizar la contraseña del usuario
             userService.updatePassword(email, newPassword);
-            // Eliminar el código usado
-            userTokens.remove(email);
+            userTokens.remove(email); // Eliminar el código usado
             return "Contraseña actualizada correctamente.";
         }
         return "Código inválido o expirado.";

@@ -3,7 +3,7 @@ package com.actividad_10.powerzone_back.Controllers;
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDto;
 import com.actividad_10.powerzone_back.DTOs.LoginDto;
 import com.actividad_10.powerzone_back.DTOs.RespuestaDto;
-import com.actividad_10.powerzone_back.Email.PasswordRecoveryController;
+import com.actividad_10.powerzone_back.Email.EmailController;
 import com.actividad_10.powerzone_back.Services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private UserService userService;
-    private PasswordRecoveryController passwordRecoveryController;
+    private EmailController emailController;
 
     @PostMapping("/create")
     public ResponseEntity<Void> createUser(@RequestBody CreacionPerfilDto nuevoPerfil) {
         userService.createUser(nuevoPerfil);
-        passwordRecoveryController.sendWelComeEmail(nuevoPerfil.getEmail());
+        emailController.sendWelcomeEmail(nuevoPerfil.getEmail());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
