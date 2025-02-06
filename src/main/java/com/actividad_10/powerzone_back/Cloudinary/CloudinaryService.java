@@ -43,8 +43,14 @@ public class CloudinaryService {
         } else if (file instanceof String) {
             String base64File = (String) file;
 
+
             // Eliminar el prefijo Base64 (data:image/...)
-            String base64Data = base64File.split(",")[1];
+            String base64Data ="";
+            try {
+                base64Data = base64File.split(",")[1];
+            } catch (Exception e) {
+                return null;
+            }
 
             // Decodificar el archivo Base64 a bytes
             byte[] fileBytes = Base64.getDecoder().decode(base64Data);

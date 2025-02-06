@@ -81,6 +81,7 @@ public class UserService implements IUserService, UserDetailsService {
 
         // Subir el avatar (Base64 o MultipartFile)
         String img = cloudinaryService.uploadFile(nuevoPerfil.getAvatar(), "avatar");
+
         profile.setAvatar(img);
 
         profile.setBornDate(nuevoPerfil.getBornDate());
@@ -166,7 +167,8 @@ public class UserService implements IUserService, UserDetailsService {
         profile.setName(profile2Dto.getName());
 
         String img = cloudinaryService.uploadFile(profile2Dto.getAvatar(), "avatar");
-        profile.setAvatar(img);
+        if (img != null)
+            profile.setAvatar(img);
 
         profile.setBornDate(profile2Dto.getBornDate());
         profile.setNickname(profile2Dto.getNickName());
