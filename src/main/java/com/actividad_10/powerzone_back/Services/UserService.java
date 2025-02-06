@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -195,5 +196,34 @@ public class UserService implements IUserService, UserDetailsService {
 
         return user.getProfile().isNewUser();
     }
+    // Seguir a un usuario
+    @Transactional
+    public boolean followUser(Long userId, Long followUserId) {
+        Optional<UserIdDto> userOptional = userRepository.findByUserId(userId);
+        Optional<UserIdDto> followUserOptional = userRepository.findByUserId(followUserId);
 
+        if (userOptional.isPresent() && followUserOptional.isPresent()) {
+            userRepository.followUser(userId, followUserId);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Transactional
+    public boolean unfollowUser(Long userId, Long unfollowUserId) {
+        Optional<UserIdDto> userOptional = userRepository.findByUserId(userId);
+        Optional<UserIdDto> unfollowUserOptional = userRepository.findByUserId(unfollowUserId);
+
+        if (userOptional.isPresent() && unfollowUserOptional.isPresent()) {
+            userRepository.unfollowUser(userId, unfollowUserId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isFollowing(Long userId, Long followUserId) {
+
+        return userRepository.isFollowing(userId, followUserId);
+    }
 }

@@ -26,13 +26,13 @@ public class ProfileController {
     }
 
     @PostMapping("/getData")
-    ResponseEntity<Profile2Dto> getProfile(@RequestHeader("Authorization") String token){
+    ResponseEntity<Profile2Dto> getProfile(@RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(userService.returnProfile(token), HttpStatus.OK);
     }
 
     @PostMapping("/updateData")
     HttpStatus updateData(@RequestHeader("Authorization") String token, @RequestBody Profile2Dto profile2Dto) throws IOException {
-        userService.updateProfile(token ,profile2Dto);
+        userService.updateProfile(token, profile2Dto);
         return HttpStatus.OK;
     }
 
@@ -46,4 +46,38 @@ public class ProfileController {
         return profileService.getUserById(id);
     }
 
+    @PostMapping("/{userId}/follow/{followUserId}")
+    public ResponseEntity<String> followUser(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long userId,
+            @PathVariable Long followUserId) {
+        boolean followed = userService.followUser(userId, followUserId);
+        if (followed) {
+            return new ResponseEntity<>("Followed successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Unable to follow", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{userId}/unfollow/{unfollowUserId}")
+    public ResponseEntity<String> unfollowUser(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long userId,
+            @PathVariable Long unfollowUserId) {
+        boolean unfollowed = userService.unfollowUser(userId, unfollowUserId);
+        if (unfollowed) {
+            return new ResponseEntity<>("Unfollowed successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Unable to unfollow", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{userId}/isFollowing/{followUserId}")
+    public ResponseEntity<Boolean> isFollowing(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long userId,
+            @PathVariable Long followUserId) {
+        boolean isFollowing = userService.isFollowing(userId, followUserId);
+        return new ResponseEntity<>(isFollowing, HttpStatus.OK);
+    }
 }
