@@ -12,4 +12,6 @@ public class ProfileDto {
     private LocalDate bornDate;
     private Boolean activo;
     private String nickname;
+    private int followers;
+    private int following;
 }

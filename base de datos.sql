@@ -214,3 +214,12 @@ create table training_exercises(
 );
 ALTER TABLE profile DROP COLUMN is_new_user;
 ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;
+
+DROP TABLE IF EXISTS follower;
+CREATE TABLE follower (
+                          profile_id BIGINT NOT NULL,
+                          follower_id BIGINT NOT NULL,
+                          CONSTRAINT pk_follower PRIMARY KEY (profile_id, follower_id),
+                          CONSTRAINT fk_follower_profile FOREIGN KEY (profile_id) REFERENCES profile (id) ON DELETE CASCADE,
+                          CONSTRAINT fk_follower_follower FOREIGN KEY (follower_id) REFERENCES profile (id) ON DELETE CASCADE
+);

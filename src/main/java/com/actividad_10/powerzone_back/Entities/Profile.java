@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Entity
@@ -49,4 +50,17 @@ public class Profile implements Serializable {
     @MapsId
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user;
+
+    // Relación de perfiles que siguen a este perfil (followers)
+    @ManyToMany
+    @JoinTable(
+            name = "follower",
+            joinColumns = @JoinColumn(name = "profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<Profile> followers;
+
+    // Relación inversa: perfiles a los que este perfil sigue (following)
+    @ManyToMany(mappedBy = "followers")
+    private Set<Profile> following;
 }

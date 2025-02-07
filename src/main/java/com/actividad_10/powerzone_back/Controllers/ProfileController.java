@@ -53,7 +53,7 @@ public class ProfileController {
             @RequestHeader("Authorization") String token,
             @PathVariable Long userId,
             @PathVariable Long followUserId) {
-        boolean followed = userService.followUser(userId, followUserId);
+        boolean followed = userService.followUser(token, followUserId);
         Map<String, String> response = new HashMap<>();
         if (followed) {
             response.put("message", "Followed successfully");
@@ -69,7 +69,7 @@ public class ProfileController {
             @RequestHeader("Authorization") String token,
             @PathVariable Long userId,
             @PathVariable Long unfollowUserId) {
-        boolean unfollowed = userService.unfollowUser(userId, unfollowUserId);
+        boolean unfollowed = userService.unfollowUser(token, unfollowUserId);
         Map<String, String> response = new HashMap<>();
         if (unfollowed) {
             response.put("message", "Unfollowed successfully");
@@ -86,7 +86,7 @@ public class ProfileController {
             @RequestHeader("Authorization") String token,
             @PathVariable Long userId,
             @PathVariable Long followUserId) {
-        boolean isFollowing = userService.isFollowing(userId, followUserId);
+        boolean isFollowing = userService.isFollowing(token, followUserId);
         return new ResponseEntity<>(isFollowing, HttpStatus.OK);
     }
 }

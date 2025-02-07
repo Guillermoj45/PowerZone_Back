@@ -1,6 +1,7 @@
 package com.actividad_10.powerzone_back.Entities;
 
 import com.actividad_10.powerzone_back.Entities.emun.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -34,6 +35,7 @@ public class User implements Serializable, UserDetails {
     @Column(name = "role", nullable = false, columnDefinition = "0")
     private Rol role;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 
@@ -41,13 +43,6 @@ public class User implements Serializable, UserDetails {
         this.profile = profile;
         profile.setUser(this); // Configura la relación bidireccional
     }
-
-    @ManyToMany
-    @JoinTable(name = "follower",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "follower_id")}
-    )
-    private Set<User> followers;
 
 
     @Override

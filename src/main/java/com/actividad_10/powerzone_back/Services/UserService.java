@@ -9,6 +9,7 @@ import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final CloudinaryService cloudinaryService;
+
 
 
     private boolean isEmailPasswordNull(String email, String password){
@@ -125,7 +127,6 @@ public class UserService implements IUserService, UserDetailsService {
         profile2Dto.setAvatar(user.getProfile().getAvatar());
         profile2Dto.setBornDate(user.getProfile().getBornDate());
         profile2Dto.setNickName(user.getProfile().getNickname());
-
         return profile2Dto;
     }
 
@@ -198,7 +199,12 @@ public class UserService implements IUserService, UserDetailsService {
     }
     // Seguir a un usuario
     @Transactional
-    public boolean followUser(Long userId, Long followUserId) {
+    public boolean followUser(String token, Long followUserId) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
         Optional<UserIdDto> userOptional = userRepository.findByUserId(userId);
         Optional<UserIdDto> followUserOptional = userRepository.findByUserId(followUserId);
 
@@ -210,8 +216,14 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
 
+
     @Transactional
-    public boolean unfollowUser(Long userId, Long unfollowUserId) {
+    public boolean unfollowUser(String token, Long unfollowUserId) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
         Optional<UserIdDto> userOptional = userRepository.findByUserId(userId);
         Optional<UserIdDto> unfollowUserOptional = userRepository.findByUserId(unfollowUserId);
 
@@ -222,8 +234,18 @@ public class UserService implements IUserService, UserDetailsService {
         return false;
     }
 
-    public boolean isFollowing(Long userId, Long followUserId) {
+    public boolean isFollowing(String token, Long followUserId) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
 
+        Long userId = extractUserIdFromEmail(email);
         return userRepository.isFollowing(userId, followUserId);
+    }
+
+    private Long extractUserIdFromEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
+        return user.getId();
     }
 }

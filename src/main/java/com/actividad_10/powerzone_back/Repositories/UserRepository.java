@@ -23,13 +23,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT new com.actividad_10.powerzone_back.DTOs.UserIdDto(u.id) FROM User u WHERE u.id = :id")
     Optional<UserIdDto> findByUserId(Long id);
     @Modifying
-    @Query(value = "INSERT INTO follower (user_id, follower_id) VALUES (:userId, :followerId)", nativeQuery = true)
+    @Query(value = "INSERT INTO follower (profile_id, follower_id) VALUES (:userId, :followerId)", nativeQuery = true)
     void followUser(@Param("userId") Long userId, @Param("followerId") Long followerId);
 
     @Modifying
-    @Query(value = "DELETE FROM follower WHERE user_id = :userId AND follower_id = :followerId", nativeQuery = true)
+    @Query(value = "DELETE FROM follower WHERE profile_id = :userId AND follower_id = :followerId", nativeQuery = true)
     void unfollowUser(@Param("userId") Long userId, @Param("followerId") Long followerId);
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM follower WHERE user_id = :userId AND follower_id = :followerId)", nativeQuery = true)
+
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM follower WHERE profile_id = :userId AND follower_id = :followerId)", nativeQuery = true)
     boolean isFollowing(@Param("userId") Long userId, @Param("followerId") Long followerId);
 
 }

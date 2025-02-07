@@ -48,7 +48,8 @@ public class ProfileService {
         dto.setBornDate(profile.getBornDate());
         dto.setActivo(profile.getActivo());
         dto.setNickname(profile.getNickname());
-
+        dto.setFollowers(profileRepository.countFollowersByProfileId(profile.getId()));
+        dto.setFollowing(profileRepository.countFollowingByProfileId(profile.getId()));
         return dto;
     }
 
