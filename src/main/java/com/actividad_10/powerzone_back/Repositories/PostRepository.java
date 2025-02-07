@@ -22,6 +22,14 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     @Query("SELECT p FROM Post p JOIN LikePost l ON p.id = l.postId GROUP BY p.id ORDER BY COUNT(l.userId) DESC")
     List<Post> findPostsWithMostLikes();
 
+    @Query("""
+        select p
+        from Post p
+        where p.delete = false
+        order by p.createdAt desc
+        """)
+    List<Post> findAllPosts();
+
     @Query("SELECT p FROM Post p WHERE p.user.id = :userId")
     List<Post> findAllByUserId(Long userId);
     @Query("SELECT COUNT(l) FROM LikePost l WHERE l.postId = :postId")

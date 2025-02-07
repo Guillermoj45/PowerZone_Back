@@ -117,10 +117,6 @@ public class PostService implements IPostService {
         return postDto;
     }
 
-
-
-
-
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
     }
@@ -154,8 +150,8 @@ public class PostService implements IPostService {
 
     }
 
-    public void updatePost(Post post) {
-        postRepository.save(post);
+    public Post updatePost(Post post) {
+        return postRepository.save(post);
     }
 
     public Post findaById(Long postId) {
@@ -172,9 +168,7 @@ public class PostService implements IPostService {
     }
 
     public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll().stream()
-                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .collect(Collectors.toList());
+        List<Post> posts = postRepository.findAllPosts();
 
         return posts.stream().map(post -> {
             Post2Dto post2Dto = new Post2Dto();
@@ -192,7 +186,7 @@ public class PostService implements IPostService {
             Long numlikes = postRepository.countLikesByPostId(post.getId());
             Pageable pageable = PageRequest.of(0, 1);
             List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
-            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
+            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.getFirst());
 
             // Construcción de la URL de Cloudinary
             String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
