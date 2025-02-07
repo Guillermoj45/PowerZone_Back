@@ -56,10 +56,20 @@ public class ReportService implements IReportService {
      */
     @Override
     public Integer updateState(ChangeStateReportDto dto) {
-        Report report = reportsRepository.getReferenceById(dto.getId());
-        report.setType(dto.getState());
-        reportsRepository.save(report);
-        return 1;
+
+        List<Report> report = reportsRepository.findByPost_Id(dto.getId());
+        report.stream().forEach((report1) -> {
+            report1.setType(dto.getState());
+            reportsRepository.save(report1);
+        });
+
+        if (dto.getState() == ReportState.SANCTIONED){
+            Post post = report.getFirst().getPost();
+            post.setDelete(true);
+
+            postService.updatePost(post);
+        }
+         return 1;
     }
 
     /**
@@ -88,6 +98,7 @@ public class ReportService implements IReportService {
     @Transactional
     public void reportPost(CreateReportDTO report, String emailUsername) {
         Post post = postService.findaById(report.getPostId());
+
         User reporter = (User) userService.loadUserByUsername(emailUsername);
 
         Report newReport = Report.builder()

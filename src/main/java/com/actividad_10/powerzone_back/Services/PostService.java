@@ -154,6 +154,10 @@ public class PostService implements IPostService {
 
     }
 
+    public void updatePost(Post post) {
+        postRepository.save(post);
+    }
+
     public Post findaById(Long postId) {
         return postRepository.findById(postId).orElse(null);
     }

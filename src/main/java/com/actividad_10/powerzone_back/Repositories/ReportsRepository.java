@@ -17,7 +17,7 @@ public interface ReportsRepository extends JpaRepository<Report, Long> {
     @Query("""
             select R
             from Report R
-            order by R.type
+            order by R.type, R.createdAt desc
             limit 50
             offset :offset
             """)
@@ -65,4 +65,6 @@ public interface ReportsRepository extends JpaRepository<Report, Long> {
             offset :offset;
             """, nativeQuery = true)
     List<ReportCountDto> userBanner(int offset, ReportState state);
+
+    public List<Report> findByPost_Id(Long id);
 }

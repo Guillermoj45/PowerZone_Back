@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Controllers;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDto;
 import com.actividad_10.powerzone_back.DTOs.LoginDto;
 import com.actividad_10.powerzone_back.DTOs.RespuestaDto;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private UserService userService;
+    private PasswordRecoveryController passwordRecoveryController;
+    private JwtService jwtService;
     private EmailController emailController;
 
     @PostMapping("/create")
@@ -42,5 +45,16 @@ public class UserController {
     ResponseEntity<?> markTutorialDone(@RequestHeader("Authorization") String token){
         userService.tutorialDone(token);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/ImAdmin")
+    ResponseEntity<Boolean> ImAdmin(@RequestHeader(value = "Authorization", defaultValue = "Hola") String token) {
+        String jwt = token.replace("Bearer ", "");
+        String rol = jwtService.extractTokenData(jwt).getRol();
+        if (rol.equals("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(false);
     }
 }
