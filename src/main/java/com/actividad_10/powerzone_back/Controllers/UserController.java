@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private UserService userService;
-    private PasswordRecoveryController passwordRecoveryController;
     private JwtService jwtService;
     private EmailController emailController;
 
