@@ -15,4 +15,6 @@ public class Profile2Dto {
     private LocalDate bornDate;
     private String nickName;
     private String avatar;
+    private int followers;
+    private int following;
 }

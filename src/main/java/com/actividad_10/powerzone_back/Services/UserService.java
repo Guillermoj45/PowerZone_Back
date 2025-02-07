@@ -8,6 +8,7 @@ import com.actividad_10.powerzone_back.Entities.emun.Rol;
 import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Exceptions.BlankInfo;
 import com.actividad_10.powerzone_back.Exceptions.ExistingField;
+import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final CloudinaryService cloudinaryService;
+    private final ProfileRepository profileRepository;
 
 
 
@@ -127,6 +129,8 @@ public class UserService implements IUserService, UserDetailsService {
         profile2Dto.setAvatar(user.getProfile().getAvatar());
         profile2Dto.setBornDate(user.getProfile().getBornDate());
         profile2Dto.setNickName(user.getProfile().getNickname());
+        profile2Dto.setFollowers(profileRepository.countFollowersByProfileId(user.getProfile().getId()));
+        profile2Dto.setFollowing(profileRepository.countFollowingByProfileId(user.getProfile().getId()));
         return profile2Dto;
     }
 
