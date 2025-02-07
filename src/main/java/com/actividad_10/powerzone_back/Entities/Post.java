@@ -36,6 +36,13 @@ public class Post implements Serializable {
     @Column(name = "delete")
     private Boolean delete = false;
 
-
-
+    @Override
+    public String toString() {
+        return "Post{" +
+                "delete=" + delete +
+                ", id=" + id +
+                ", createdAt=" + createdAt +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

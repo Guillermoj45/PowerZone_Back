@@ -64,10 +64,10 @@ public class ReportService implements IReportService {
         });
 
         if (dto.getState() == ReportState.SANCTIONED){
-            Post post = report.getFirst().getPost();
+            Post post = postService.findaById(dto.getId());
             post.setDelete(true);
 
-            postService.updatePost(post);
+            System.out.println(postService.updatePost(post));
         }
          return 1;
     }
