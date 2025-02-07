@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/profile")
@@ -47,30 +49,37 @@ public class ProfileController {
     }
 
     @PostMapping("/{userId}/follow/{followUserId}")
-    public ResponseEntity<String> followUser(
+    public ResponseEntity<Map<String, String>> followUser(
             @RequestHeader("Authorization") String token,
             @PathVariable Long userId,
             @PathVariable Long followUserId) {
         boolean followed = userService.followUser(userId, followUserId);
+        Map<String, String> response = new HashMap<>();
         if (followed) {
-            return new ResponseEntity<>("Followed successfully", HttpStatus.OK);
+            response.put("message", "Followed successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Unable to follow", HttpStatus.BAD_REQUEST);
+            response.put("message", "Unable to follow");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/{userId}/unfollow/{unfollowUserId}")
-    public ResponseEntity<String> unfollowUser(
+    public ResponseEntity<Map<String, String>> unfollowUser(
             @RequestHeader("Authorization") String token,
             @PathVariable Long userId,
             @PathVariable Long unfollowUserId) {
         boolean unfollowed = userService.unfollowUser(userId, unfollowUserId);
+        Map<String, String> response = new HashMap<>();
         if (unfollowed) {
-            return new ResponseEntity<>("Unfollowed successfully", HttpStatus.OK);
+            response.put("message", "Unfollowed successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Unable to unfollow", HttpStatus.BAD_REQUEST);
+            response.put("message", "Unable to unfollow");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping("/{userId}/isFollowing/{followUserId}")
     public ResponseEntity<Boolean> isFollowing(
