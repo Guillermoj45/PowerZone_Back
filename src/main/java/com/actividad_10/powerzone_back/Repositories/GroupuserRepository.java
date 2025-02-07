@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GroupuserRepository extends JpaRepository<Groupuser, Long>{
+    Groupuser findByUserIdAndGroupId(Long userId, Long groupId);
+    boolean existsByUserIdAndGroupId(Long userId, Long groupId);
 
 }

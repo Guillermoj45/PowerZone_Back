@@ -4,8 +4,10 @@ import lombok.Data;
 
 @Data
 public class ChatMessage {
-    private String sender;   // Nombre del usuario que envía el mensaje
-    private String content;  // Contenido del mensaje
-    private Long timestamp;  // Marca de tiempo del mensaje
-    private String groupId;  // Id del nombre del grupo
+    private String sender;
+    private String content;
+    private Long timestamp;
+    private Long groupId;
+    private Long userId;
+
 }

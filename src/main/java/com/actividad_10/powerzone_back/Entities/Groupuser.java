@@ -8,18 +8,28 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "groupuser")
-@IdClass(Groupuser.class)
+
 public class Groupuser implements Serializable {
 
-    @Column(name = "id", nullable = false)
-    private Long id;
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Id
+
     @Column(name = "group_id", nullable = false)
     private Long groupId;
+
+    public Groupuser() {
+
+    }
+
+    public Groupuser(Long userId, Long groupId) {
+        this.userId = userId;
+        this.groupId = groupId;
+    }
+
 
 }
