@@ -215,6 +215,7 @@ create table training_exercises(
 ALTER TABLE profile DROP COLUMN is_new_user;
 ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;
 ALTER TABLE reports rename column user_id to reporter;
+alter table reports drop column reason;
 
 DROP TABLE IF EXISTS follower;
 CREATE TABLE follower (

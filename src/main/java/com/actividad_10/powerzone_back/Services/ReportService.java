@@ -68,6 +68,11 @@ public class ReportService implements IReportService {
             post.setDelete(true);
 
             System.out.println(postService.updatePost(post));
+        } else {
+            Post post = postService.findaById(dto.getId());
+            post.setDelete(false);
+
+            System.out.println(postService.updatePost(post));
         }
          return 1;
     }
