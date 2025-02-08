@@ -23,7 +23,7 @@ public class AdminController {
     private JwtService jwtService;
 
     @GetMapping()
-    public List<ReportsAdminDto> getReports(@RequestHeader("Authorization") String token, @RequestParam(value = "offser", defaultValue = "0") int offset, Principal principal){
+    public List<ReportsAdminDto> getReports(@RequestHeader("Authorization") String token, @RequestParam(value = "offset", defaultValue = "0") int offset, Principal principal){
         String jwt = token.replace("Bearer ", "");
         String rol = jwtService.extractTokenData(jwt).getRol();
 
