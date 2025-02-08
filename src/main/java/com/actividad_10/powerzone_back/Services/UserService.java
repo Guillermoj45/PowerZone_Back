@@ -92,6 +92,7 @@ public class UserService implements IUserService, UserDetailsService {
         profile.setBornDate(nuevoPerfil.getBornDate());
         profile.setCreatedAt(LocalDate.now());
         profile.setActivo(nuevoPerfil.getActivo() != null ? nuevoPerfil.getActivo() : true);
+        profile.setNewUser(true);
 
         return profile;
     }
