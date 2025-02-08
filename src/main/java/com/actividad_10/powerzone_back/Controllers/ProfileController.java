@@ -89,4 +89,9 @@ public class ProfileController {
         boolean isFollowing = userService.isFollowing(token, followUserId);
         return new ResponseEntity<>(isFollowing, HttpStatus.OK);
     }
+
+    @GetMapping("/recommended")
+    public List<ProfileDto> getRecommendedProfiles(@RequestHeader("Authorization") String token) {
+        return profileService.getRecommendedProfiles(userService.returnProfile(token).getId());
+    }
 }
