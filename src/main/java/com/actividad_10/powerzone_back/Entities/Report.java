@@ -29,6 +29,9 @@ public class Report implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "reason", nullable = false)
+    private String reason;
+    
     @JoinColumn(name = "reporter", nullable = false)
     @ManyToOne
     private User reporter;

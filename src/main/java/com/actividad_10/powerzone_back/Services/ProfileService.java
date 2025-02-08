@@ -6,6 +6,7 @@ import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,23 @@ public class ProfileService {
                 .orElseThrow(() -> new RuntimeException("Profile not found with id: " + id));
 
         // Convertir la entidad Profile a ProfileDto
+        return trasformateProfileToDto(profile);
+    }
+
+    public Profile save(Profile profile) {
+        return profileRepository.save(profile);
+    }
+
+    public List<ProfileDto> getRecommendedProfiles(Long profileId) {
+        List<ProfileDto> recommendedProfiles = new ArrayList<>();
+        profileRepository.getRecommendedProfiles(profileId).forEach(profile -> {
+            ProfileDto dto = trasformateProfileToDto(profile);
+            recommendedProfiles.add(dto);
+        });
+        return recommendedProfiles;
+    }
+
+    private ProfileDto trasformateProfileToDto(Profile profile) {
         ProfileDto dto = new ProfileDto();
         dto.setId(profile.getId());
         dto.setName(profile.getName());
@@ -51,10 +69,6 @@ public class ProfileService {
         dto.setFollowers(profileRepository.countFollowersByProfileId(profile.getId()));
         dto.setFollowing(profileRepository.countFollowingByProfileId(profile.getId()));
         return dto;
-    }
-
-    public Profile save(Profile profile) {
-        return profileRepository.save(profile);
     }
 
 }
