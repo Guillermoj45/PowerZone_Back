@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "groupname")
-public class Groupname implements Serializable {
+public class GroupName implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)

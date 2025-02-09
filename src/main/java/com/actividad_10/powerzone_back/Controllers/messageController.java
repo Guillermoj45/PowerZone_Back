@@ -2,55 +2,56 @@ package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.DTOs.ChatMessage;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
-import com.actividad_10.powerzone_back.Entities.Groupname;
-import com.actividad_10.powerzone_back.Entities.Groupuser;
-import com.actividad_10.powerzone_back.Repositories.GroupmessengerRepository;
-import com.actividad_10.powerzone_back.Repositories.GroupnameRepository;
-import com.actividad_10.powerzone_back.Repositories.GroupuserRepository;
+import com.actividad_10.powerzone_back.Entities.GroupName;
+import com.actividad_10.powerzone_back.Entities.GroupUser;
+import com.actividad_10.powerzone_back.Repositories.GroupMessengerRepository;
+import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
+import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
+import com.actividad_10.powerzone_back.Services.MessageService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/messages")
+@AllArgsConstructor
 public class messageController {
 
-    @Autowired
-    private GroupmessengerRepository groupMessengerRepository;
-
-    @Autowired
-    private GroupuserRepository groupUserRepository;
-
-    @Autowired
-    private GroupnameRepository groupNameRepository;
+    private GroupMessengerRepository groupMessengerRepository;
+    private GroupUserRepository groupUserRepository;
+    private GroupNameRepository groupNameRepository;
+    private MessageService messageService;
 
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/chat/{roomId}") // Los clientes envían mensajes a /app/chat
     @SendTo("/topic/messages/{roomId}") // Los mensajes se envían a los suscriptores de /topic/messages
     public ChatMessage send(@DestinationVariable String roomId, ChatMessage message) {
         // Aquí puedes guardar el mensaje en la base de datos si es necesario
-        message.setTimestamp(System.currentTimeMillis());
+        // message.setTimestamp(System.currentTimeMillis());
+        messageService.saveMessage(message);
+        System.out.println("Mensaje recibido en el servidor: " + message);
         return message; // El mensaje se retransmite a todos los suscriptores
     }
 
     @PostMapping("/send")
     public ResponseEntity<ChatMessage> sendMessage(@RequestBody ChatMessage message) {
         // Obtén el groupUser con user_id y group_id
-        Groupuser groupUser = groupUserRepository.findByUserIdAndGroupId(message.getUserId(), message.getGroupId());
+        GroupUser groupUser = groupUserRepository.findByUserIdAndGroupId(message.getUserId(), message.getGroupId());
 
         if (groupUser == null) {
             return ResponseEntity.badRequest().body(null);
         }
 
         // Verifica que el grupo exista
-        Groupname group = groupNameRepository.findById(message.getGroupId()).orElse(null);
+        GroupName group = groupNameRepository.findById(message.getGroupId()).orElse(null);
         if (group == null) {
             return ResponseEntity.badRequest().body(null); // No existe el grupo
         }
@@ -59,18 +60,18 @@ public class messageController {
         GroupMessenger groupMessage = new GroupMessenger();
         groupMessage.setMessage(message.getContent());
         groupMessage.setGrupouser(groupUser); // Asigna la instancia completa
-        groupMessage.setCreatedAt(LocalDate.now());
+        groupMessage.setCreatedAt(LocalDateTime.now());
         groupMessengerRepository.save(groupMessage);
 
         // Retorna el mensaje para confirmar
-        message.setTimestamp(System.currentTimeMillis());
+        message.setTimestamp(String.valueOf(System.currentTimeMillis()));
         return ResponseEntity.ok(message);
     }
 
 
     // Crear un nuevo grupo
     @PostMapping("/create")
-    public ResponseEntity<Groupname> createGroup(@RequestBody Groupname newGroup) {
+    public ResponseEntity<GroupName> createGroup(@RequestBody GroupName newGroup) {
         System.out.println("Recibido: " + newGroup);  // Verifica que se recibe el JSON correctamente
 
         // Revisa si el grupo existe
@@ -82,7 +83,7 @@ public class messageController {
         }
 
         try {
-            Groupname savedGroup = groupNameRepository.save(newGroup);
+            GroupName savedGroup = groupNameRepository.save(newGroup);
             System.out.println("Grupo guardado: " + savedGroup);
             return ResponseEntity.ok(savedGroup); // Retorna el grupo guardado
         } catch (Exception e) {
@@ -109,8 +110,8 @@ public class messageController {
         }
 
         // Añadir ambos usuarios al grupo
-        Groupuser user1 = new Groupuser(userId1, groupId);
-        Groupuser user2 = new Groupuser(userId2, groupId);
+        GroupUser user1 = new GroupUser(userId1, groupId);
+        GroupUser user2 = new GroupUser(userId2, groupId);
 
         groupUserRepository.save(user1);
         groupUserRepository.save(user2);
@@ -119,7 +120,7 @@ public class messageController {
     }
 
     @GetMapping("/checkGroup")
-    public ResponseEntity<Groupname> checkGroup(
+    public ResponseEntity<GroupName> checkGroup(
             @RequestParam Long userId1,
             @RequestParam Long userId2) {
         // Busca todos los grupos donde pertenece el primer usuario
@@ -131,7 +132,7 @@ public class messageController {
         for (Long groupId : user1GroupIds) {
             if (user2GroupIds.contains(groupId)) {
                 // Obtén el grupo común
-                Groupname commonGroup = groupNameRepository.findById(groupId).orElse(null);
+                GroupName commonGroup = groupNameRepository.findById(groupId).orElse(null);
                 if (commonGroup != null) {
                     return ResponseEntity.ok(commonGroup);
                 }
