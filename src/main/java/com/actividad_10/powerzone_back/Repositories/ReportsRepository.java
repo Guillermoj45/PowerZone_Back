@@ -37,14 +37,14 @@ public interface ReportsRepository extends JpaRepository<Report, Long> {
      * @return los siguientes 50 usuarios sancionados
      */
     @Query(value = """
-            select PR.nickname, PR.avatar, count(R.*) as reports_count
+            select PR.nickname, PR.avatar, count(distinct P.id) as reports_count
             from reports R
                 join post P on R.post_id = P.id and R.created_at_post = P.created_at
                 join users U on P.user_id = U.id
                 join profile PR on U.id = PR.id
             where R.type = 1
             group by PR.nickname, PR.avatar
-            having 6 > count(R.*)
+            having 6 > count(distinct P.id)
             limit 50
             offset :offset;
             """, nativeQuery = true)
@@ -53,18 +53,26 @@ public interface ReportsRepository extends JpaRepository<Report, Long> {
 
 
     @Query(value = """
-            select PR.nickname, PR.avatar, count(R.*) as reports_count
+            select PR.nickname, PR.avatar, count(distinct P.id) as reports_count
             from reports R
                 join post P on R.post_id = P.id and R.created_at_post = P.created_at
                 join users U on P.user_id = U.id
                 join profile PR on U.id = PR.id
             where R.type = 1
             group by PR.nickname, PR.avatar
-            having count(R.*) > 5
+            having count(distinct P.id) > 5
             limit 50
             offset :offset;
             """, nativeQuery = true)
     List<ReportCountDto> userBanner(int offset, ReportState state);
 
     public List<Report> findByPost_Id(Long id);
+
+    @Query(value = """
+            select count(distinct p.id) as num_reports
+             from reports r
+                 join post p on r.created_at_post = p.created_at and r.post_id = p.id
+             where p.user_id = :id_user and r.type = 1;
+            """, nativeQuery = true)
+    Integer countReports(@Param("id_user") Long id);
 }

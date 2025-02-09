@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReportService implements IReportService {
 
+    private final ProfileService profileService;
     private ReportsRepository reportsRepository;
     private PostService postService;
     private UserService userService;
@@ -58,23 +60,30 @@ public class ReportService implements IReportService {
     public Integer updateState(ChangeStateReportDto dto) {
 
         List<Report> report = reportsRepository.findByPost_Id(dto.getId());
-        report.stream().forEach((report1) -> {
-            report1.setType(dto.getState());
-            reportsRepository.save(report1);
+        report.forEach((report1) -> {
+            new Thread(() -> {
+                report1.setType(dto.getState());
+                reportsRepository.save(report1);
+            }).start();
         });
 
+        Post post = postService.findaById(dto.getId());
         if (dto.getState() == ReportState.SANCTIONED){
-            Post post = postService.findaById(dto.getId());
             post.setDelete(true);
 
-            System.out.println(postService.updatePost(post));
         } else {
-            Post post = postService.findaById(dto.getId());
             post.setDelete(false);
 
-            System.out.println(postService.updatePost(post));
         }
-         return 1;
+        if (reportsRepository.countReports(post.getUser().getId()) >= 5){
+            post.getUser().getProfile().setBanAt(LocalDate.now().plusDays(7));
+            profileService.save(post.getUser().getProfile());
+        } else {
+            post.getUser().getProfile().setBanAt(null);
+            profileService.save(post.getUser().getProfile());
+        }
+        System.out.println(postService.updatePost(post));
+        return 1;
     }
 
     /**
