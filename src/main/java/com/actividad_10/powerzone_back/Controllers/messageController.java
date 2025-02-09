@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -117,5 +118,25 @@ public class messageController {
         return ResponseEntity.ok("Usuarios añadidos al grupo exitosamente");
     }
 
+    @GetMapping("/checkGroup")
+    public ResponseEntity<Groupname> checkGroup(
+            @RequestParam Long userId1,
+            @RequestParam Long userId2) {
+        // Busca todos los grupos donde pertenece el primer usuario
+        List<Long> user1GroupIds = groupUserRepository.findGroupIdsByUserId(userId1);
+        // Busca todos los grupos donde pertenece el segundo usuario
+        List<Long> user2GroupIds = groupUserRepository.findGroupIdsByUserId(userId2);
 
+        // Encuentra un grupo común
+        for (Long groupId : user1GroupIds) {
+            if (user2GroupIds.contains(groupId)) {
+                // Obtén el grupo común
+                Groupname commonGroup = groupNameRepository.findById(groupId).orElse(null);
+                if (commonGroup != null) {
+                    return ResponseEntity.ok(commonGroup);
+                }
+            }
+        }
+        return ResponseEntity.ok(null); // No hay grupo común
+    }
 }

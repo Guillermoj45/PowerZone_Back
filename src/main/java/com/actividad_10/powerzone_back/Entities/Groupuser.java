@@ -18,7 +18,6 @@ public class Groupuser implements Serializable {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-
     @Column(name = "group_id", nullable = false)
     private Long groupId;
 
