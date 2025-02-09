@@ -36,7 +36,7 @@ public class messageController {
     public ChatMessage send(@DestinationVariable String roomId, ChatMessage message) {
         // Aquí puedes guardar el mensaje en la base de datos si es necesario
         // message.setTimestamp(System.currentTimeMillis());
-        messageService.saveMessage(message);
+        messageService.saveMessage(message, "");
         System.out.println("Mensaje recibido en el servidor: " + message);
         return message; // El mensaje se retransmite a todos los suscriptores
     }

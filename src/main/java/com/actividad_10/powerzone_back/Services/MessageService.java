@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @AllArgsConstructor
@@ -23,11 +22,11 @@ public class MessageService {
     private GroupUserRepository groupUserRepository;
     private GroupNameRepository groupNameRepository;
 
-    public void saveMessage(ChatMessage chatMessage){
+    public void saveMessage(ChatMessage chatMessage, String GrupoName){
         GroupName groupName = groupNameRepository.findById(chatMessage.getGroupId()).orElse(null);
         if (groupName == null){
             groupName = new GroupName();
-            groupName.setName("");
+            groupName.setName(GrupoName);
             groupName = groupNameRepository.save(groupName);
         }
         GroupUser groupUser = groupUserRepository.findByUserIdAndGroupId(chatMessage.getUserId(), chatMessage.getGroupId());
@@ -45,7 +44,6 @@ public class MessageService {
         groupMessenger.setCreatedAt(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(chatMessage.getTimestamp())), ZoneId.systemDefault()));
 
         groupMessengerRepository.save(groupMessenger);
-
     }
 
 }
