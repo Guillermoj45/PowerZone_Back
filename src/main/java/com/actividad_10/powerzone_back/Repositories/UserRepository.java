@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,5 +33,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM follower WHERE profile_id = :userId AND follower_id = :followerId)", nativeQuery = true)
     boolean isFollowing(@Param("userId") Long userId, @Param("followerId") Long followerId);
-
+    @Query("SELECT f.id FROM Profile p JOIN p.followers f WHERE p.id = :userId")
+    List<Long> findFollowedUserIdsByUserId(@Param("userId") Long userId);
 }
