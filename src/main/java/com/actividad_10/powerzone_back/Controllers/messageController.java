@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,10 +27,12 @@ import java.util.List;
 @AllArgsConstructor
 public class messageController {
 
-    private GroupMessengerRepository groupMessengerRepository;
-    private GroupUserRepository groupUserRepository;
-    private GroupNameRepository groupNameRepository;
-    private MessageService messageService;
+    private final GroupMessengerRepository groupMessengerRepository;
+    private final GroupUserRepository groupUserRepository;
+    private final GroupNameRepository groupNameRepository;
+    private final MessageService messageService;
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/chat/{roomId}") // Los clientes envían mensajes a /app/chat
@@ -37,8 +41,21 @@ public class messageController {
         // Aquí puedes guardar el mensaje en la base de datos si es necesario
         // message.setTimestamp(System.currentTimeMillis());
         messageService.saveMessage(message, "");
+
         System.out.println("Mensaje recibido en el servidor: " + message);
         return message; // El mensaje se retransmite a todos los suscriptores
+    }
+
+    //TODO: Implementar el método para guardar el mensaje en la base de datos
+    @GetMapping("/try")
+    public void tryMessage() {
+        ChatMessage message = new ChatMessage();
+        message.setUserId(1L);
+        message.setGroupId(1L);
+        message.setContent("Hola");
+        message.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        messagingTemplate.convertAndSend("/topic/messages/1", message);
+        System.out.println("Mensaje enviado");
     }
 
     @PostMapping("/send")
