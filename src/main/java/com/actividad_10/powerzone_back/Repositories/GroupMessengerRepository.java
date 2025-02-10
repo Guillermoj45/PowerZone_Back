@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 
 @Repository
-public interface GroupMessengerRepository extends JpaRepository<GroupMessenger, Date> {
+public interface GroupMessengerRepository extends JpaRepository<GroupMessenger, Long> {
 
 }

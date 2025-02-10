@@ -22,6 +22,10 @@ public class MessageService {
     private GroupUserRepository groupUserRepository;
     private GroupNameRepository groupNameRepository;
 
+    public GroupMessenger getMessageById(Long id){
+        return groupMessengerRepository.findById(id).orElse(null);
+    }
+
     public void saveMessage(ChatMessage chatMessage, String GrupoName){
         GroupName groupName = groupNameRepository.findById(chatMessage.getGroupId()).orElse(null);
         if (groupName == null){

@@ -1,13 +1,12 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -19,15 +18,21 @@ public class Notification implements Serializable {
     private Long id;
 
     @Column(name = "content", nullable = false)
-    private String content;
+    private Long content;
 
     @Column(name = "type")
-    private Integer type;
+    @Enumerated(EnumType.ORDINAL)
+    private NotificationType type;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @JoinColumn(name = "recibe_id", nullable = false)
+    @ManyToOne
+    private Profile userRecibe;
+
+    @JoinColumn(name = "sender_id", nullable = false)
+    @ManyToOne
+    private Profile userSend;
 
 }
