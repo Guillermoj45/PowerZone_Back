@@ -53,28 +53,28 @@ public class NotificationService {
     // }
 
     @Async
-    public MegaNotificacion getFriendRequestNotification(Notification notification) {
+    protected MegaNotificacion getFriendRequestNotification(Notification notification) {
         GroupMessenger groupMessenger = messageService.getMessageById(notification.getContent());
 
         return new MegaNotificacion(notification, groupMessenger);
     }
 
     @Async
-    public MegaNotificacion getNewPostNotification(Notification notification) {
+    protected MegaNotificacion getNewPostNotification(Notification notification) {
         PostDto postDto = postService.getPostById(notification.getContent());
 
         return new MegaNotificacion(notification, postDto);
     }
 
     @Async
-    public MegaNotificacion getLikeAndFollowNotification(Notification notification) {
+    protected MegaNotificacion getLikeAndFollowNotification(Notification notification) {
         PostDto likePost = postService.getPostById(notification.getContent());
 
         return new MegaNotificacion(notification, likePost);
     }
 
     @Async
-    public MegaNotificacion getCommentNotification(Notification notification) {
+    protected MegaNotificacion getCommentNotification(Notification notification) {
         CommentDto comment = commentService.getComentarioById(notification.getContent());
         PostDto postDto = postService.getPostById(comment.getPostId());
 
