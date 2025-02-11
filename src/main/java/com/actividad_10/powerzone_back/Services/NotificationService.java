@@ -1,7 +1,8 @@
 package com.actividad_10.powerzone_back.Services;
 
-import com.actividad_10.powerzone_back.DTOs.Notificaciones.BaseNotification;
-import com.actividad_10.powerzone_back.DTOs.Notificaciones.MessageNotification;
+import com.actividad_10.powerzone_back.DTOs.CommentDto;
+import com.actividad_10.powerzone_back.DTOs.Notificaciones.MegaNotificacion;
+import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
@@ -16,35 +17,66 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class NotificationService {
-    NotificationRepository notificationRepository;
-    MessageService messageService;
-    UserService userService;
+    private final NotificationRepository notificationRepository;
+    private final MessageService messageService;
+    private final UserService userService;
+    private final PostService postService;
+    private final CommentService commentService;
 
-    public List<BaseNotification> getNotification(String token, Long offset) {
+
+    public List<MegaNotificacion> getNotification(String token, Long offset) {
         Long userId = userService.returnProfile(token).getId();
         List<Notification> notification = notificationRepository.findNotificationByIdUser(userId, offset);
 
-        List<BaseNotification> baseNotifications = new ArrayList<>();
+        List<MegaNotificacion> megaNotificacions = new ArrayList<>();
 
         notification.forEach(n -> {
             if (n.getType() == NotificationType.MESSAGE) {
-                baseNotifications.add(getMessageNotification(n));
+                megaNotificacions.add(getFriendRequestNotification(n));
             } else if (n.getType() == NotificationType.NEW_COMMENT) {
-                // baseNotifications.add(getFriendRequestNotification(n));
+                megaNotificacions.add(getNewPostNotification(n));
             } else if (n.getType() == NotificationType.NEW_FOLLOWER) {
-                // baseNotifications.add(getFriendRequestNotification(n));
+                megaNotificacions.add(getLikeNotification(n));
             } else if (n.getType() == NotificationType.NEW_LIKE) {
-                // baseNotifications.add(getFriendRequestNotification(n));
+                megaNotificacions.add(getLikeNotification(n));
             } else if (n.getType() == NotificationType.NEW_POST) {
-                // baseNotifications.add(getFriendRequestNotification(n));
+                megaNotificacions.add(getCommentNotification(n));
             }
         });
-        return baseNotifications;
+        return megaNotificacions;
+    }
+
+    // @Async
+    // public MessageNotification getMessageNotification(Notification notification) {
+    //     GroupMessenger groupMessenger = messageService.getMessageById(notification.getContent());
+    //     return new MessageNotification(groupMessenger, notification);
+    // }
+
+    @Async
+    public MegaNotificacion getFriendRequestNotification(Notification notification) {
+        GroupMessenger groupMessenger = messageService.getMessageById(notification.getContent());
+
+        return new MegaNotificacion(notification, groupMessenger);
     }
 
     @Async
-    public MessageNotification getMessageNotification(Notification notification) {
-        GroupMessenger groupMessenger = messageService.getMessageById(notification.getContent());
-        return new MessageNotification(groupMessenger, notification);
+    public MegaNotificacion getNewPostNotification(Notification notification) {
+        PostDto postDto = postService.getPostById(notification.getContent());
+
+        return new MegaNotificacion(notification, postDto);
+    }
+
+    @Async
+    public MegaNotificacion getLikeNotification(Notification notification) {
+        PostDto likePost = postService.getPostById(notification.getContent());
+
+        return new MegaNotificacion(notification, likePost);
+    }
+
+    @Async
+    public MegaNotificacion getCommentNotification(Notification notification) {
+        CommentDto comment = commentService.getComentarioById(notification.getContent());
+
+        return new MegaNotificacion(notification, comment);
     }
 }

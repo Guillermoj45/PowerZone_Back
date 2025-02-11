@@ -38,7 +38,7 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.post.id = :postId")
     Long countCommentsByPostId(Long postId);
 
-    @Query("SELECT new com.actividad_10.powerzone_back.DTOs.CommentDetailsDto(c.content, u.profile.nickname, u.profile.avatar) " +
+    @Query("SELECT c.content, u.profile.nickname, u.profile.avatar " +
             "FROM Comment c JOIN c.user u WHERE c.post.id = :postId ORDER BY c.createdAt ASC")
     List<CommentDetailsDto> findFirstCommentDetailsByPostId(Long postId, Pageable pageable);
 

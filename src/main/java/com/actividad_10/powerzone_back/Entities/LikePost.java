@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 public class LikePost implements Serializable {
 
     @Id
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Profile userId;
 
     @Id
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post postId;
 
     @Column(name = "created_at_post", nullable = false)
     private LocalDateTime createdAtPost;

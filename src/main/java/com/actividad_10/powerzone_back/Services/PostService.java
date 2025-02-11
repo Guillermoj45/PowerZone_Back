@@ -31,16 +31,11 @@ import java.util.stream.Collectors;
 public class PostService implements IPostService {
 
     private final ImageRepository imageRepository;
-    private PostRepository postRepository;
-
-    private UserRepository userRepository;
-
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final JwtService jwtService;
-
-    private LikePostRepository likePostRepository;
-
-    private BooksmarksRepository booksmarksRepository;
-
+    private final LikePostRepository likePostRepository;
+    private final BooksmarksRepository booksmarksRepository;
     private final CloudinaryService cloudinaryService;
 
     @Transactional
@@ -209,6 +204,7 @@ public class PostService implements IPostService {
             return postDto;
         }).collect(Collectors.toList());
     }
+
     public List<PostDto> getAllSavedPosts(String token) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -256,7 +252,6 @@ public class PostService implements IPostService {
         }).collect(Collectors.toList());
     }
 
-
     public void savePost(String token, Post post) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -287,13 +282,15 @@ public class PostService implements IPostService {
         String email = claims.get("email", String.class);
 
         Long userId = extractUserIdFromEmail(email);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         LikePost likePost = new LikePost();
-        likePost.setUserId(userId);
-        likePost.setPostId(post.getId());
+        likePost.setUserId(user.getProfile());
+        likePost.setPostId(post);
         likePost.setCreatedAtPost(postRepository.findCreatedAtById(post.getId()).get());
         likePostRepository.save(likePost);
 
     }
+
     public void unlikePost(String token, Post post) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -303,6 +300,7 @@ public class PostService implements IPostService {
         likePostRepository.deleteById(userId, post.getId());
 
     }
+
     public boolean hasUserLikedPost(String token, Long postId) {
         // Extract user data from the token
         String jwt = token.replace("Bearer ", "");
@@ -315,6 +313,7 @@ public class PostService implements IPostService {
         // Check if the user has liked the post
         return likePostRepository.existsByUserIdAndPostId(userId, postId);
     }
+
     public boolean hasUserSavedPost(String token, Long postId) {
         // Extract user data from the token
         String jwt = token.replace("Bearer ", "");
@@ -328,8 +327,7 @@ public class PostService implements IPostService {
         return booksmarksRepository.existsByUserIdAndPostId(userId, postId);
     }
 
-
-    public PostDto getPostById(String token, Long postId) {
+    public PostDto getPostById(Long postId) {
         Optional<Post> postOptional = postRepository.findById(postId);
         if (!postOptional.isPresent()) {
             throw new RuntimeException("Post not found");
@@ -376,6 +374,7 @@ public class PostService implements IPostService {
 
         return postDto;
     }
+
     public List<PostDto> getUserPosts(String token) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -421,6 +420,7 @@ public class PostService implements IPostService {
             return postDto;
         }).collect(Collectors.toList());
     }
+
     public List<PostDto> getPostsByUserId(Long userId) {
         List<Post> userPosts = postRepository.findAllByUserId(userId);
 

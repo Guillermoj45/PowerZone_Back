@@ -185,7 +185,7 @@ public class PostController {
     public ResponseEntity<PostDto> getPostById(
             @RequestHeader("Authorization") String token,
             @PathVariable Long postId) {
-        PostDto postDto = postService.getPostById(token, postId);
+        PostDto postDto = postService.getPostById(postId);
         return ResponseEntity.ok(postDto);
     }
 
