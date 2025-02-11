@@ -1,9 +1,13 @@
 package com.actividad_10.powerzone_back.Controllers;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.Profile2Dto;
 import com.actividad_10.powerzone_back.DTOs.ProfileDto;
+import com.actividad_10.powerzone_back.DTOs.TokenDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
+import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import com.actividad_10.powerzone_back.Services.ProfileService;
 import com.actividad_10.powerzone_back.Services.UserService;
 import lombok.AllArgsConstructor;
@@ -13,10 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/profile")
@@ -26,6 +28,12 @@ public class ProfileController {
     private final UserService userService;
     private final ProfileService profileService;
     private final ProfileRepository profileRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping("/getData")
     ResponseEntity<Profile2Dto> getProfile(@RequestHeader("Authorization") String token) {
@@ -80,7 +88,6 @@ public class ProfileController {
         }
     }
 
-
     @GetMapping("/{userId}/isFollowing/{followUserId}")
     public ResponseEntity<Boolean> isFollowing(
             @RequestHeader("Authorization") String token,
@@ -95,15 +102,68 @@ public class ProfileController {
         return profileService.getRecommendedProfiles(userService.returnProfile(token).getId());
     }
 
-    @GetMapping("/{profileId}/following")
-    public ResponseEntity<Set<Profile>> getFollowingProfiles(@PathVariable Long profileId) {
-        // Busca el perfil del usuario actual por su ID
-        Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + profileId));
+    @GetMapping("/following")
+    public ResponseEntity<?> getFollowingProfiles(@RequestHeader("Authorization") String token) {
+        try {
+            // Elimina el prefijo "Bearer " del token
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
 
-        System.out.println("Cantidad de perfiles seguidos: " + profile.getFollowing().size());
+            // Extrae los datos del token
+            TokenDto tokenData = jwtService.extractTokenData(token);
 
-        return ResponseEntity.ok(profile.getFollowing());
+            // Obtén el email del token
+            String email = tokenData.getEmail();
 
+            // Busca al usuario por el email en la base de datos
+            Optional<User> usuarioOpt = userRepository.findByEmail(email);
+
+            if (usuarioOpt.isPresent()) {
+                User usuario = usuarioOpt.get();
+
+                // Busca el perfil correspondiente al usuario
+                Profile profile = profileRepository.findProfileWithFollowing(usuario.getId())
+                        .orElseThrow(() -> new RuntimeException("Perfil no encontrado para el usuario con ID: " + usuario.getId()));
+
+                // Obtén los perfiles seguidos por este perfil
+                Set<Profile> followingProfiles = profile.getFollowing();
+
+                System.out.println("Perfiles seguidos antes del mapeo: " + followingProfiles.size());
+
+                // Mapea las entidades Profile a ProfileDto
+                List<ProfileDto> followingDtos = followingProfiles.stream().map(following -> {
+                    ProfileDto dto = new ProfileDto();
+                    dto.setId(following.getId());
+                    dto.setName(following.getName());
+                    dto.setAvatar(following.getAvatar());
+                    dto.setBornDate(following.getBornDate());
+                    dto.setActivo(following.getActivo());
+                    dto.setNickname(following.getNickname());
+                    dto.setFollowers(following.getFollowers() != null ? following.getFollowers().size() : 0);
+                    dto.setFollowing(following.getFollowing() != null ? following.getFollowing().size() : 0);
+                    return dto;
+                }).toList();
+
+                System.out.println("IDs de los perfiles seguidos: " +
+                        followingProfiles.stream().map(Profile::getId).collect(Collectors.toList()));
+                System.out.println("Nicknames de los perfiles seguidos: " +
+                        followingProfiles.stream().map(Profile::getNickname).collect(Collectors.toList()));
+
+                System.out.println("Perfiles seguidos después del mapeo: " + followingDtos.size());
+
+                // Devuelve la lista de perfiles seguidos
+                return ResponseEntity.ok(Map.of(
+                        "cantidad", followingDtos.size(),
+                        "perfiles", followingDtos
+                ));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o no autorizado.");
+        }
     }
+
+
 }

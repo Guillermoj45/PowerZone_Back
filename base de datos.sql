@@ -227,4 +227,10 @@ CREATE TABLE follower (
 );
 
 
-SELECT * FROM follower WHERE profile_id = 10;
+SELECT * FROM follower WHERE profile_id = 3;
+
+SELECT * FROM profile WHERE id IN (SELECT follower_id FROM follower WHERE profile_id = 2);
+SELECT profile_id, follower_id, COUNT(*)
+FROM follower
+GROUP BY profile_id, follower_id
+HAVING COUNT(*) > 1;

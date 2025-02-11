@@ -39,6 +39,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     """, nativeQuery = true)
     List<Profile> getRecommendedProfiles(@Param("profileId") Long profileId);
 
-    Optional<Profile> findByUserId(Long userId);
+    @Query("SELECT p FROM Profile p LEFT JOIN FETCH p.following WHERE p.id = :id")
+    Optional<Profile> findProfileWithFollowing(@Param("id") Long id);
+
 
 }
