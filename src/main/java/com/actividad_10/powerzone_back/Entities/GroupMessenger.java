@@ -1,12 +1,12 @@
 package com.actividad_10.powerzone_back.Entities;
 
-import com.actividad_10.powerzone_back.Entities.Ids.PostId;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -23,10 +23,10 @@ public class GroupMessenger implements Serializable {
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "grupouser", nullable = false) // Configuración de la clave foránea
-    private Groupuser grupouser;
+    private GroupUser grupouser;
 }
 

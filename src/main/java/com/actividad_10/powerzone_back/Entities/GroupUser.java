@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "groupuser")
 
-public class Groupuser implements Serializable {
+public class GroupUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +21,11 @@ public class Groupuser implements Serializable {
     @Column(name = "group_id", nullable = false)
     private Long groupId;
 
-    public Groupuser() {
+    public GroupUser() {
 
     }
 
-    public Groupuser(Long userId, Long groupId) {
+    public GroupUser(Long userId, Long groupId) {
         this.userId = userId;
         this.groupId = groupId;
     }
