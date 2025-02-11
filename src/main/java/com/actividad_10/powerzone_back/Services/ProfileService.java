@@ -45,6 +45,15 @@ public class ProfileService {
         return trasformateProfileToDto(profile);
     }
 
+    public Profile getProfileById(Long id) {
+        // Buscar el perfil por ID en el repositorio
+
+        // Convertir la entidad Profile a ProfileDto
+        return profileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + id));
+    }
+
+
     public Profile save(Profile profile) {
         return profileRepository.save(profile);
     }

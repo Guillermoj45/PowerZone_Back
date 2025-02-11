@@ -3,8 +3,10 @@ package com.actividad_10.powerzone_back.Services;
 import com.actividad_10.powerzone_back.DTOs.CommentDto;
 import com.actividad_10.powerzone_back.DTOs.Notificaciones.MegaNotificacion;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
+import com.actividad_10.powerzone_back.DTOs.ProfileDto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.Notification;
+import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
 import com.actividad_10.powerzone_back.Repositories.NotificationRepository;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,7 @@ public class NotificationService {
     private final UserService userService;
     private final PostService postService;
     private final CommentService commentService;
+    private final ProfileService profileService;
 
 
     public List<MegaNotificacion> getNotification(String token, Long offset) {
@@ -51,6 +54,15 @@ public class NotificationService {
     //     GroupMessenger groupMessenger = messageService.getMessageById(notification.getContent());
     //     return new MessageNotification(groupMessenger, notification);
     // }
+
+    @Async
+    public void createNotificationMessaje(GroupMessenger groupMessenger) {
+        Notification notification = new Notification();
+        Profile profile = profileService.getProfileById(groupMessenger.getGrupouser().getUserId());
+        notification.setUserSend(profile);
+        notification.setType(NotificationType.MESSAGE);
+        notificationRepository.save(notification);
+    }
 
     @Async
     protected MegaNotificacion getFriendRequestNotification(Notification notification) {
