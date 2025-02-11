@@ -4,16 +4,14 @@ import com.actividad_10.powerzone_back.DTOs.CommentDto;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.DTOs.Profile2Dto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
-import com.actividad_10.powerzone_back.Entities.LikePost;
 import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 @Data
-@Builder
 public class MegaNotificacion {
 
     // datos basicos
@@ -66,11 +64,12 @@ public class MegaNotificacion {
      * @param notification la notificación en cuestión
      * @param comment el comentario al que hace referencia la notificación
      */
-    public MegaNotificacion(Notification notification, CommentDto comment) {
+    public MegaNotificacion(Notification notification, CommentDto comment, PostDto postDto) {
         this.receiver = new Profile2Dto(notification.getUserRecibe());
         this.emitter = new Profile2Dto(notification.getUserSend());
         this.date = notification.getCreatedAt();
         this.type = notification.getType();
         this.comment = comment;
+        this.postDto = postDto;
     }
 }

@@ -16,12 +16,12 @@ public class LikePost implements Serializable {
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Profile userId;
+    private Profile user;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private Post postId;
+    private Post post;
 
     @Column(name = "created_at_post", nullable = false)
     private LocalDateTime createdAtPost;

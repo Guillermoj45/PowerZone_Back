@@ -34,13 +34,13 @@ public class NotificationService {
             if (n.getType() == NotificationType.MESSAGE) {
                 megaNotificacions.add(getFriendRequestNotification(n));
             } else if (n.getType() == NotificationType.NEW_COMMENT) {
-                megaNotificacions.add(getNewPostNotification(n));
-            } else if (n.getType() == NotificationType.NEW_FOLLOWER) {
-                megaNotificacions.add(getLikeNotification(n));
-            } else if (n.getType() == NotificationType.NEW_LIKE) {
-                megaNotificacions.add(getLikeNotification(n));
-            } else if (n.getType() == NotificationType.NEW_POST) {
                 megaNotificacions.add(getCommentNotification(n));
+            } else if (n.getType() == NotificationType.NEW_FOLLOWER) {
+                megaNotificacions.add(getLikeAndFollowNotification(n));
+            } else if (n.getType() == NotificationType.NEW_LIKE) {
+                megaNotificacions.add(getLikeAndFollowNotification(n));
+            } else if (n.getType() == NotificationType.NEW_POST) {
+                megaNotificacions.add(getNewPostNotification(n));
             }
         });
         return megaNotificacions;
@@ -67,7 +67,7 @@ public class NotificationService {
     }
 
     @Async
-    public MegaNotificacion getLikeNotification(Notification notification) {
+    public MegaNotificacion getLikeAndFollowNotification(Notification notification) {
         PostDto likePost = postService.getPostById(notification.getContent());
 
         return new MegaNotificacion(notification, likePost);
@@ -76,7 +76,8 @@ public class NotificationService {
     @Async
     public MegaNotificacion getCommentNotification(Notification notification) {
         CommentDto comment = commentService.getComentarioById(notification.getContent());
+        PostDto postDto = postService.getPostById(comment.getPostId());
 
-        return new MegaNotificacion(notification, comment);
+        return new MegaNotificacion(notification, comment,postDto);
     }
 }
