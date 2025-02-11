@@ -44,7 +44,6 @@ public class User implements Serializable, UserDetails {
         profile.setUser(this); // Configura la relación bidireccional
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(this.role.name()));

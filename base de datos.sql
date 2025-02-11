@@ -225,3 +225,6 @@ CREATE TABLE follower (
                           CONSTRAINT fk_follower_profile FOREIGN KEY (profile_id) REFERENCES profile (id) ON DELETE CASCADE,
                           CONSTRAINT fk_follower_follower FOREIGN KEY (follower_id) REFERENCES profile (id) ON DELETE CASCADE
 );
+
+
+SELECT * FROM follower WHERE profile_id = 10;

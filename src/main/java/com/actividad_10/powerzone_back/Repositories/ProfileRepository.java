@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
     @Query("SELECT p FROM Profile p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))")
@@ -37,4 +38,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
         limit 5;
     """, nativeQuery = true)
     List<Profile> getRecommendedProfiles(@Param("profileId") Long profileId);
+
+    Optional<Profile> findByUserId(Long userId);
+
 }

@@ -220,8 +220,6 @@ public class UserService implements IUserService, UserDetailsService {
         return false;
     }
 
-
-
     @Transactional
     public boolean unfollowUser(String token, Long unfollowUserId) {
         String jwt = token.replace("Bearer ", "");
