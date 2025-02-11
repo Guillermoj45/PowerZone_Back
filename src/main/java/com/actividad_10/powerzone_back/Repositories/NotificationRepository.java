@@ -16,6 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
          from Notification n
          where n.userRecibe.id = :id
          order by n.createdAt desc
+         limit 50
          offset :offset
        """)
     List<Notification> findNotificationByIdUser(Long id, Long offset);
