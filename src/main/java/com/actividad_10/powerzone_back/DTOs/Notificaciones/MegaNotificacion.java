@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class MegaNotificacion {
 
     // datos basicos
+    private Long id;
     private Profile2Dto receiver;
     private Profile2Dto emitter;
     private LocalDateTime date;
@@ -38,6 +39,7 @@ public class MegaNotificacion {
      * @param groupMessenger el mensaje al que hace referencia la notificación
      */
     public MegaNotificacion(Notification notification, GroupMessenger groupMessenger) {
+        this.id = notification.getId();
         this.receiver = new Profile2Dto(notification.getUserRecibe());
         this.emitter = new Profile2Dto(notification.getUserSend());
         this.date = notification.getCreatedAt();
@@ -51,6 +53,7 @@ public class MegaNotificacion {
      * @param postDto el post al que hace referencia la notificación
      */
     public MegaNotificacion(Notification notification, PostDto postDto) {
+        this.id = notification.getId();
         this.receiver = new Profile2Dto(notification.getUserRecibe());
         this.emitter = new Profile2Dto(notification.getUserSend());
         this.date = notification.getCreatedAt();
@@ -65,6 +68,7 @@ public class MegaNotificacion {
      * @param comment el comentario al que hace referencia la notificación
      */
     public MegaNotificacion(Notification notification, CommentDto comment, PostDto postDto) {
+        this.id = notification.getId();
         this.receiver = new Profile2Dto(notification.getUserRecibe());
         this.emitter = new Profile2Dto(notification.getUserSend());
         this.date = notification.getCreatedAt();
