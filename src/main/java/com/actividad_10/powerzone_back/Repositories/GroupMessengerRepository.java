@@ -9,7 +9,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Repository
-public interface GroupMessengerRepository extends JpaRepository<GroupMessenger, Date> {
+public interface GroupMessengerRepository extends JpaRepository<GroupMessenger, Long> {
 
 
     @Query("""

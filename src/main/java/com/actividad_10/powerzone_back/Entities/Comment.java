@@ -33,6 +33,7 @@ public class Comment implements Serializable {
 
     @Column(name = "post_created_at", nullable = false)
     private LocalDateTime postCreatedAt;
+
     @Column(name = "delete")
     private Boolean delete = false;
 }

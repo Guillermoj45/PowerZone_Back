@@ -23,9 +23,9 @@ import java.util.List;
 public class ReportService implements IReportService {
 
     private final ProfileService profileService;
-    private ReportsRepository reportsRepository;
-    private PostService postService;
-    private UserService userService;
+    private final ReportsRepository reportsRepository;
+    private final PostService postService;
+    private final UserService userService;
 
     /**
      * Toma 50 reportes de la base de datos

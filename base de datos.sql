@@ -214,8 +214,8 @@ create table training_exercises(
 );
 ALTER TABLE profile DROP COLUMN is_new_user;
 ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;
-ALTER TABLE reports rename column user_id to reporter;
-alter table reports drop column reason;
+ALTER TABLE if exists reports rename column user_id to reporter;
+alter table if exists reports drop column reason;
 
 DROP TABLE IF EXISTS follower;
 CREATE TABLE follower (
@@ -225,6 +225,23 @@ CREATE TABLE follower (
                           CONSTRAINT fk_follower_profile FOREIGN KEY (profile_id) REFERENCES profile (id) ON DELETE CASCADE,
                           CONSTRAINT fk_follower_follower FOREIGN KEY (follower_id) REFERENCES profile (id) ON DELETE CASCADE
 );
+
+
+DROP TABLE IF EXISTS notification;
+
+create table notification (
+                              id bigserial primary key,
+                              content bigint not null,
+                              type smallint,
+                              created_at timestamp not null default now(),
+                              recibe_id bigint not null,
+                              sender_id bigint not null,
+                              constraint fk_notification_profile foreign key (recibe_id) references profile (id) on delete cascade,
+                              constraint fk_notification_sender foreign key (sender_id) references profile (id) on delete cascade
+);
+
+alter table if exists comment add column delete boolean not null default false;
+
 
 
 SELECT * FROM follower WHERE profile_id = 10;

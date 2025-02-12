@@ -68,6 +68,18 @@ CommentService implements ICommentService {
 
         return commentDto;
     }
+
+    CommentDto getComentarioById(Long id){
+        Comment comment = commentRepository.findById(id).get();
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(comment.getId());
+        commentDto.setCreatedAt(comment.getCreatedAt());
+        commentDto.setContent(comment.getContent());
+        commentDto.setPostId(comment.getPost().getId());
+        commentDto.setUserId(comment.getUser().getId());
+        return commentDto;
+    }
+
     private Long extractUserIdFromEmail(String email) {
         return userRepository.findByEmail(email).get().getId();
     }
