@@ -237,3 +237,16 @@ create table notification (
                               constraint fk_notification_profile foreign key (recibe_id) references profile (id) on delete cascade,
                               constraint fk_notification_sender foreign key (sender_id) references profile (id) on delete cascade
 );
+
+alter table if exists comment add column delete boolean not null default false;
+
+
+
+SELECT * FROM follower WHERE profile_id = 10;
+
+select p.*
+from follower f
+join profile p on p.id = f.follower_id
+where f.profile_id = 10;
+
+

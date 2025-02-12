@@ -212,6 +212,26 @@ public class messageController {
         }
     }
 
+    @GetMapping("/group/{groupId}")
+    public ResponseEntity<List<ChatMessage>> getMessagesByGroupId(@PathVariable Long groupId) {
+        // Verificar si el grupo existe
+        if (!groupNameRepository.existsById(groupId)) {
+            return ResponseEntity.badRequest().body(null);
+        }
 
+        // Obtener los mensajes del grupo
+        List<GroupMessenger> messages = groupMessengerRepository.findByGrupouser_GroupIdOrderByCreatedAtAsc(groupId);
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        for (GroupMessenger message : messages) {
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setGroupId(message.getGrupouser().getGroupId());
+            chatMessage.setUserId(message.getGrupouser().getUserId());
+            chatMessage.setTimestamp(message.getCreatedAt().toString());
+            chatMessage.setContent(message.getMessage());
+            chatMessages.add(chatMessage);
+        }
+
+        return ResponseEntity.ok(chatMessages);
+    }
 
 }
