@@ -5,6 +5,7 @@ import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Repositories.NotificationRepository;
+import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -17,6 +18,7 @@ import java.util.List;
 public class AddNotificationService {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ProfileRepository profileRepository;
 
     @Async
     public void createNotificationMessaje(GroupMessenger groupMessenger) {
@@ -34,7 +36,7 @@ public class AddNotificationService {
 
     @Async
     public void createNotificationNewPost(Post post) {
-        for (Profile profile1 : post.getUser().getProfile().getFollowers()) {
+        for (Profile profile1 : profileRepository.findProfileWithFollowing(post.getUser().getId())) {
             Notification notification = new Notification(post, profile1);
             System.out.println(notification);
             notificationRepository.save(notification);
