@@ -15,9 +15,9 @@ public interface GroupNameRepository extends JpaRepository<GroupName, Long> {
     @Query("""
         select GN
         from GroupName GN
-                join GroupUser GU on GN.id = GU.groupId
+                join GroupUser GU on GN.id = GU.group.id
                 join GroupMessenger GM on GU = GM.grupouser
-                where GU.userId = :userId
+                where GU.user.id = :userId
         """)
     List<GroupName> getGroupsByUserId(Long userId);
 

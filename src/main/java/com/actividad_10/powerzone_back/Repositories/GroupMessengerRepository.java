@@ -15,7 +15,7 @@ public interface GroupMessengerRepository extends JpaRepository<GroupMessenger, 
     @Query("""
         select GM
         from GroupMessenger GM
-        where GM.grupouser.groupId = :groupId
+        where GM.grupouser.group.id = :groupId
         """)
     List<GroupMessenger> findByGrupouser_GroupId(Long groupId);
 }
