@@ -244,8 +244,8 @@ public class PostService implements IPostService {
                 postDto.setAvatarcomment(commentDetails.getAvatar());
             } else {
                 postDto.setFirstcomment("Se el primero en comentar esta publicación");
-                postDto.setNicknamecomment("Usuario1");
-                postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
             }
 
             return postDto;
@@ -368,8 +368,8 @@ public class PostService implements IPostService {
             postDto.setAvatarcomment(commentDetails.getAvatar());
         } else {
             postDto.setFirstcomment("Se el primero en comentar esta publicación");
-            postDto.setNicknamecomment("Usuario1");
-            postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+            postDto.setNicknamecomment(" ");
+            postDto.setAvatarcomment(" ");
         }
 
         return postDto;
@@ -413,8 +413,8 @@ public class PostService implements IPostService {
                 postDto.setAvatarcomment(commentDetails.getAvatar());
             } else {
                 postDto.setFirstcomment("Se el primero en comentar esta publicación");
-                postDto.setNicknamecomment("Usuario1");
-                postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
             }
 
             return postDto;
@@ -454,8 +454,8 @@ public class PostService implements IPostService {
                 postDto.setAvatarcomment(commentDetails.getAvatar());
             } else {
                 postDto.setFirstcomment("Se el primero en comentar esta publicación");
-                postDto.setNicknamecomment("Usuario1");
-                postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
             }
 
             return postDto;
