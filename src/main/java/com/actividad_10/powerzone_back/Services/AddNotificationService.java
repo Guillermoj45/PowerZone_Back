@@ -31,6 +31,14 @@ public class AddNotificationService {
         }
     }
 
+    @Async
+    public void createNotificationNewPost(){
+        List<Profile> profiles = notificationRepository.getUserGroupUser(1L);
+        for (Profile profile1 : profiles) {
+            Notification notification = new Notification();
 
+            notificationRepository.save(notification);
+        }
+    }
 
 }
