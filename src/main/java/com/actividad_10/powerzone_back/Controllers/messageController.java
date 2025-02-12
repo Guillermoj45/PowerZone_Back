@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -106,31 +107,32 @@ public class messageController {
 
 
     @PostMapping("/addUsersToGroup")
-    public ResponseEntity<String> addUsersToGroup(
+    public ResponseEntity<Map<String, String>> addUsersToGroup(
             @RequestParam Long groupId,
-            @RequestParam Long userId1,
-            @RequestParam Long userId2) {
+            @RequestBody List<Long> userIds) { // Recibe una lista de IDs
 
         // Verificar si el grupo existe
         if (!groupNameRepository.existsById(groupId)) {
-            return ResponseEntity.badRequest().body("El grupo no existe");
+            return ResponseEntity.badRequest().body(Map.of("message", "El grupo no existe"));
         }
 
-        // Verificar si los usuarios ya están en el grupo
-        if (groupUserRepository.existsByUserIdAndGroupId(userId1, groupId) ||
-                groupUserRepository.existsByUserIdAndGroupId(userId2, groupId)) {
-            return ResponseEntity.badRequest().body("Uno o ambos usuarios ya están en el grupo");
+        List<GroupUser> usersToAdd = new ArrayList<>();
+
+        for (Long userId : userIds) {
+            // Verificar si el usuario ya está en el grupo
+            if (groupUserRepository.existsByUserIdAndGroupId(userId, groupId)) {
+                return ResponseEntity.badRequest().body(Map.of("message", "El usuario con ID " + userId + " ya está en el grupo"));
+            }
+            usersToAdd.add(new GroupUser(userId, groupId));
         }
 
-        // Añadir ambos usuarios al grupo
-        GroupUser user1 = new GroupUser(userId1, groupId);
-        GroupUser user2 = new GroupUser(userId2, groupId);
+        // Guardar los usuarios en el grupo
+        groupUserRepository.saveAll(usersToAdd);
 
-        groupUserRepository.save(user1);
-        groupUserRepository.save(user2);
-
-        return ResponseEntity.ok("Usuarios añadidos al grupo exitosamente");
+        return ResponseEntity.ok(Map.of("message", "Usuarios añadidos al grupo exitosamente"));
     }
+
+
 
     @GetMapping("/checkGroup")
     public ResponseEntity<GroupName> checkGroup(

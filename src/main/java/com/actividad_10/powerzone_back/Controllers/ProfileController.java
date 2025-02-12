@@ -123,16 +123,11 @@ public class ProfileController {
                 User usuario = usuarioOpt.get();
 
                 // Busca el perfil correspondiente al usuario
-                Profile profile = profileRepository.findProfileWithFollowing(usuario.getId())
-                        .orElseThrow(() -> new RuntimeException("Perfil no encontrado para el usuario con ID: " + usuario.getId()));
-
+                Set<Profile> profile = profileRepository.findProfileWithFollowing(usuario.getId());
                 // Obtén los perfiles seguidos por este perfil
-                Set<Profile> followingProfiles = profile.getFollowing();
-
-                System.out.println("Perfiles seguidos antes del mapeo: " + followingProfiles.size());
 
                 // Mapea las entidades Profile a ProfileDto
-                List<ProfileDto> followingDtos = followingProfiles.stream().map(following -> {
+                List<ProfileDto> followingDtos = profile.stream().map(following -> {
                     ProfileDto dto = new ProfileDto();
                     dto.setId(following.getId());
                     dto.setName(following.getName());
@@ -144,13 +139,6 @@ public class ProfileController {
                     dto.setFollowing(following.getFollowing() != null ? following.getFollowing().size() : 0);
                     return dto;
                 }).toList();
-
-                System.out.println("IDs de los perfiles seguidos: " +
-                        followingProfiles.stream().map(Profile::getId).collect(Collectors.toList()));
-                System.out.println("Nicknames de los perfiles seguidos: " +
-                        followingProfiles.stream().map(Profile::getNickname).collect(Collectors.toList()));
-
-                System.out.println("Perfiles seguidos después del mapeo: " + followingDtos.size());
 
                 // Devuelve la lista de perfiles seguidos
                 return ResponseEntity.ok(Map.of(
