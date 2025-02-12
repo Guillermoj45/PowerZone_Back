@@ -2,6 +2,7 @@ package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.Notification;
+import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Repositories.NotificationRepository;
 import lombok.AllArgsConstructor;
@@ -32,13 +33,11 @@ public class AddNotificationService {
     }
 
     @Async
-    public void createNotificationNewPost(){
-        List<Profile> profiles = notificationRepository.getUserGroupUser(1L);
-        for (Profile profile1 : profiles) {
-            Notification notification = new Notification();
-
+    public void createNotificationNewPost(Post post) {
+        for (Profile profile1 : post.getUser().getProfile().getFollowers()) {
+            Notification notification = new Notification(post, profile1);
+            System.out.println(notification);
             notificationRepository.save(notification);
         }
     }
-
 }

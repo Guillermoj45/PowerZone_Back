@@ -52,6 +52,20 @@ public class Notification implements Serializable {
         this.createdAt = LocalDateTime.now();
     }
 
+    /**
+     * Constructor para notificaciones de posts
+     * @param profile1 el perfil al que se le envía la notificación
+     *
+     * @return
+     */
+    public Notification(Post post,Profile profile1) {
+        this.userSend = post.getUser().getProfile();
+        this.userRecibe = profile1;
+        this.content = post.getId();
+        this.type = NotificationType.NEW_POST;
+        this.createdAt = LocalDateTime.now();
+    }
+
     @Override
     public String toString(){
         return "Notification{" +

@@ -37,6 +37,7 @@ public class PostService implements IPostService {
     private final LikePostRepository likePostRepository;
     private final BooksmarksRepository booksmarksRepository;
     private final CloudinaryService cloudinaryService;
+    private final AddNotificationService addNotificationService;
 
     @Transactional
     @Override
@@ -56,6 +57,7 @@ public class PostService implements IPostService {
 
         // Save the new post first
         Post savedPost = postRepository.save(newPost);
+        addNotificationService.createNotificationNewPost(savedPost);
 
         // Upload the image to Cloudinary and get the URL if the image is present
         if (image != null && !image.isEmpty()) {
