@@ -51,9 +51,8 @@ public class MessageService {
         groupMessenger.setGrupouser(groupUser);
         groupMessenger.setCreatedAt(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(chatMessage.getTimestamp())), ZoneId.systemDefault()));
 
+        groupMessenger = groupMessengerRepository.save(groupMessenger);
         addNotificationService.createNotificationMessaje(groupMessenger);
-
-        groupMessengerRepository.save(groupMessenger);
     }
 
 }

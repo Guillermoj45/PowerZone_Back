@@ -20,7 +20,6 @@ public class AddNotificationService {
     @Async
     public void createNotificationMessaje(GroupMessenger groupMessenger) {
         List<Profile> profiles = notificationRepository.getUserGroupUser(groupMessenger.getGrupouser().getGroup().getId());
-
         for (Profile profile1 : profiles) {
             if (!profile1.getUser().getId().equals(groupMessenger.getGrupouser().getUser().getId())) {
                 Notification notification = new Notification(groupMessenger, profile1);
