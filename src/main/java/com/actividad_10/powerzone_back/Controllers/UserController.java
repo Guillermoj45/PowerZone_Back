@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/ImAdmin")
-    ResponseEntity<Boolean> ImAdmin(@RequestHeader(value = "Authorization", defaultValue = "Hola") String token) {
+    ResponseEntity<Boolean> ImAdmin(@RequestHeader(value = "Authorization") String token) {
         String jwt = token.replace("Bearer ", "");
         String rol = jwtService.extractTokenData(jwt).getRol();
         if (rol.equals("ADMIN")) {
@@ -55,5 +55,11 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(false);
+    }
+
+    @GetMapping("/isBanned")
+    ResponseEntity<Boolean> IsBanned(@RequestHeader(value = "Authorization") String token) {
+        boolean banned = userService.isBanned(token);
+        return ResponseEntity.status(HttpStatus.OK).body(banned);
     }
 }

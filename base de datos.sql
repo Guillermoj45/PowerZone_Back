@@ -212,10 +212,8 @@ create table training_exercises(
     constraint fk_training_exercises_exercises foreign key (exercises_id) references exercises (id) on delete cascade,
     constraint pk_training_exercises primary key (training_id, exercises_id)
 );
-ALTER TABLE profile DROP COLUMN is_new_user;
+
 ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;
-ALTER TABLE if exists reports rename column user_id to reporter;
-alter table if exists reports drop column reason;
 
 DROP TABLE IF EXISTS follower;
 CREATE TABLE follower (
@@ -239,18 +237,3 @@ create table notification (
                               constraint fk_notification_profile foreign key (recibe_id) references profile (id) on delete cascade,
                               constraint fk_notification_sender foreign key (sender_id) references profile (id) on delete cascade
 );
-
-alter table if exists comment add column delete boolean not null default false;
-
-
-
-SELECT * FROM follower WHERE profile_id = 10;
-
-select p.*
-from follower f
-join profile p on p.id = f.follower_id
-where f.profile_id = 10;
-
-select GM
-from groupmessenger GM
-where GM. = :groupId
