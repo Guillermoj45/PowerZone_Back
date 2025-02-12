@@ -19,10 +19,11 @@ import java.time.ZoneId;
 @Service
 @AllArgsConstructor
 public class MessageService {
-    private GroupMessengerRepository groupMessengerRepository;
-    private GroupUserRepository groupUserRepository;
-    private GroupNameRepository groupNameRepository;
-    private ProfileService profileService;
+    private final GroupMessengerRepository groupMessengerRepository;
+    private final GroupUserRepository groupUserRepository;
+    private final GroupNameRepository groupNameRepository;
+    private final ProfileService profileService;
+    private final AddNotificationService addNotificationService;
 
     public GroupMessenger getMessageById(Long id){
         return groupMessengerRepository.findById(id).orElse(null);
@@ -49,6 +50,8 @@ public class MessageService {
         groupMessenger.setMessage(chatMessage.getContent());
         groupMessenger.setGrupouser(groupUser);
         groupMessenger.setCreatedAt(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(chatMessage.getTimestamp())), ZoneId.systemDefault()));
+
+        addNotificationService.createNotificationMessaje(groupMessenger);
 
         groupMessengerRepository.save(groupMessenger);
     }

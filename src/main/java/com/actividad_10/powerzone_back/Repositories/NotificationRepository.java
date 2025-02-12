@@ -2,6 +2,8 @@ package com.actividad_10.powerzone_back.Repositories;
 
 import com.actividad_10.powerzone_back.DTOs.Notificaciones.BaseNotification;
 import com.actividad_10.powerzone_back.Entities.Notification;
+import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,6 +23,14 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
        """)
     List<Notification> findNotificationByIdUser(Long id, Long offset);
 
+
+    @Query("""
+       select gu.user.profile
+         from GroupName gn
+            join GroupUser gu on gn.id = gu.group.id
+         where gn.id = :idGroup
+       """)
+    List<Profile> getUserGroupUser(Long idGroup);
 
 
 }
