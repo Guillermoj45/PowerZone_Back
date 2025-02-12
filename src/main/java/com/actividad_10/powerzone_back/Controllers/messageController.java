@@ -128,21 +128,18 @@ public class messageController {
         }
 
         List<GroupUser> usersToAdd = new ArrayList<>();
+        GroupName groupName = groupNameRepository.getById(groupId);
 
         for (Long userId : userIds) {
             // Verificar si el usuario ya está en el grupo
             if (groupUserRepository.existsByUserIdAndGroupId(userId, groupId)) {
                 return ResponseEntity.badRequest().body(Map.of("message", "El usuario con ID " + userId + " ya está en el grupo"));
             }
-            usersToAdd.add(new GroupUser(userId, groupId));
-        }
-        GroupName groupName = groupNameRepository.getById(groupId);
-        User user1 = userRepository.getById(userId1);
-        User user2 = userRepository.getById(userId1);
 
-        // Añadir ambos usuarios al grupo
-        GroupUser groupUser1 = new GroupUser(user1, groupName);
-        GroupUser groupUser2 = new GroupUser(user2, groupName);
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            usersToAdd.add(new GroupUser(user, groupName));
+        }
+
         // Guardar los usuarios en el grupo
         groupUserRepository.saveAll(usersToAdd);
 

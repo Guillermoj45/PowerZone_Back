@@ -20,4 +20,6 @@ public interface GroupNameRepository extends JpaRepository<GroupName, Long> {
                 where GU.userId = :userId
         """)
     List<GroupName> getGroupsByUserId(Long userId);
+
+    List<GroupName> getGroupNameById(Long id);
 }
