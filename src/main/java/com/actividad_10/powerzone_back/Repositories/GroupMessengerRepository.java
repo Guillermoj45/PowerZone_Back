@@ -18,4 +18,7 @@ public interface GroupMessengerRepository extends JpaRepository<GroupMessenger, 
         where GM.grupouser.groupId = :groupId
         """)
     List<GroupMessenger> findByGrupouser_GroupId(Long groupId);
+
+    List<GroupMessenger> findByGrupouser_GroupIdOrderByCreatedAtAsc(Long groupId);
+
 }

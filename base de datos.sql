@@ -251,6 +251,4 @@ from follower f
 join profile p on p.id = f.follower_id
 where f.profile_id = 10;
 
-select GM
-from groupmessenger GM
-where GM. = :groupId
+
