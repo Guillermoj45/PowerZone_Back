@@ -2,6 +2,7 @@ package com.actividad_10.powerzone_back.Repositories;
 
 import com.actividad_10.powerzone_back.DTOs.CommentDetailsDto;
 import com.actividad_10.powerzone_back.Entities.Post;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -42,4 +43,6 @@ public interface PostRepository extends JpaRepository<Post, Long>{
        "FROM Comment c JOIN c.user u WHERE c.post.id = :postId ORDER BY c.createdAt ASC")
     List<CommentDetailsDto> findFirstCommentDetailsByPostId(Long postId, Pageable pageable);
 
+    @Query("SELECT p FROM Post p WHERE p.user.id IN :userIds")
+    List<Post> findAllByUserIdIn(@Param("userIds") List<Long> userIds);
 }

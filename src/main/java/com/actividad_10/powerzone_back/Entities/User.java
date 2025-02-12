@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,17 +13,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "users")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Evita bucles recursivos
 @JsonIgnoreProperties({"password", "authorities", "enabled", "credentialsNonExpired", "accountNonExpired", "accountNonLocked"})
 public class User implements Serializable, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include // Solo se usa el ID para `hashCode` y `equals`
     private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -41,9 +43,10 @@ public class User implements Serializable, UserDetails {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
-        profile.setUser(this); // Configura la relación bidireccional
+        if (profile != null) {
+            profile.setUser(this); // Configura la relación bidireccional
+        }
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -51,7 +54,7 @@ public class User implements Serializable, UserDetails {
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         return this.password;
     }
 
@@ -62,21 +65,21 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

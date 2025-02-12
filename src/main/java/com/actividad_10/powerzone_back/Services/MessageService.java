@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -55,4 +56,12 @@ public class MessageService {
         addNotificationService.createNotificationMessaje(groupMessenger);
     }
 
+    
+    public List<GroupName> getGroups(Long userId){
+        return groupNameRepository.getGroupsByUserId(userId);
+    }
+
+    public List<GroupMessenger> getMessages(Long groupId){
+        return groupMessengerRepository.findByGrupouser_GroupId(groupId);
+    }
 }

@@ -1,6 +1,8 @@
 package com.actividad_10.powerzone_back.Controllers;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.ChatMessage;
+import com.actividad_10.powerzone_back.DTOs.TokenDto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.GroupName;
 import com.actividad_10.powerzone_back.Entities.GroupUser;
@@ -11,6 +13,9 @@ import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import com.actividad_10.powerzone_back.Services.MessageService;
 import lombok.AllArgsConstructor;
+import com.actividad_10.powerzone_back.Repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,10 +24,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/messages")
 @AllArgsConstructor
 public class messageController {
 
@@ -32,7 +40,7 @@ public class messageController {
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
-
+    private JwtService jwtService;
 
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/chat/{roomId}") // Los clientes envían mensajes a /app/chat
@@ -110,20 +118,23 @@ public class messageController {
 
 
     @PostMapping("/addUsersToGroup")
-    public ResponseEntity<String> addUsersToGroup(
+    public ResponseEntity<Map<String, String>> addUsersToGroup(
             @RequestParam Long groupId,
-            @RequestParam Long userId1,
-            @RequestParam Long userId2) {
+            @RequestBody List<Long> userIds) { // Recibe una lista de IDs
 
         // Verificar si el grupo existe
         if (!groupNameRepository.existsById(groupId)) {
-            return ResponseEntity.badRequest().body("El grupo no existe");
+            return ResponseEntity.badRequest().body(Map.of("message", "El grupo no existe"));
         }
 
-        // Verificar si los usuarios ya están en el grupo
-        if (groupUserRepository.existsByUserIdAndGroupId(userId1, groupId) ||
-                groupUserRepository.existsByUserIdAndGroupId(userId2, groupId)) {
-            return ResponseEntity.badRequest().body("Uno o ambos usuarios ya están en el grupo");
+        List<GroupUser> usersToAdd = new ArrayList<>();
+
+        for (Long userId : userIds) {
+            // Verificar si el usuario ya está en el grupo
+            if (groupUserRepository.existsByUserIdAndGroupId(userId, groupId)) {
+                return ResponseEntity.badRequest().body(Map.of("message", "El usuario con ID " + userId + " ya está en el grupo"));
+            }
+            usersToAdd.add(new GroupUser(userId, groupId));
         }
         GroupName groupName = groupNameRepository.getById(groupId);
         User user1 = userRepository.getById(userId1);
@@ -132,12 +143,13 @@ public class messageController {
         // Añadir ambos usuarios al grupo
         GroupUser groupUser1 = new GroupUser(user1, groupName);
         GroupUser groupUser2 = new GroupUser(user2, groupName);
+        // Guardar los usuarios en el grupo
+        groupUserRepository.saveAll(usersToAdd);
 
-        groupUserRepository.save(groupUser1);
-        groupUserRepository.save(groupUser2);
-
-        return ResponseEntity.ok("Usuarios añadidos al grupo exitosamente");
+        return ResponseEntity.ok(Map.of("message", "Usuarios añadidos al grupo exitosamente"));
     }
+
+
 
     @GetMapping("/checkGroup")
     public ResponseEntity<GroupName> checkGroup(
@@ -160,4 +172,49 @@ public class messageController {
         }
         return ResponseEntity.ok(null); // No hay grupo común
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> obtenerInfoUsuarioYGrupos(@RequestHeader("Authorization") String token) {
+        try {
+            // Elimina el prefijo "Bearer " del token
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            // Extrae los datos del token
+            TokenDto tokenData = jwtService.extractTokenData(token);
+
+            // Obtén el email del token
+            String email = tokenData.getEmail();
+
+            // Busca al usuario por el email en la base de datos
+            Optional<User> usuarioOpt = userRepository.findByEmail(email);
+
+            // Verifica si el usuario existe
+            if (usuarioOpt.isPresent()) {
+                User usuario = usuarioOpt.get();
+                Long userId = usuario.getId();
+
+                // Obtén todos los grupos a los que pertenece el usuario
+                List<GroupName> grupos = groupUserRepository.findAllByUserId(userId);
+
+                // Devuelve la información del usuario y los grupos
+                return ResponseEntity.ok().body(Map.of(
+                        "id", usuario.getId(),
+                        "email", usuario.getEmail(),
+                        "rol", tokenData.getRol(),
+                        "grupos", grupos,
+                        "fecha_creacion", tokenData.getFecha_creacion(),
+                        "fecha_expiracion", tokenData.getFecha_expiracion()
+                ));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o no autorizado.");
+        }
+    }
+
+
+
 }

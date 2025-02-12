@@ -241,3 +241,16 @@ create table notification (
 );
 
 alter table if exists comment add column delete boolean not null default false;
+
+
+
+SELECT * FROM follower WHERE profile_id = 10;
+
+select p.*
+from follower f
+join profile p on p.id = f.follower_id
+where f.profile_id = 10;
+
+select GM
+from groupmessenger GM
+where GM. = :groupId

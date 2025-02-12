@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
     @Query("SELECT p FROM Profile p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))")
@@ -37,4 +39,14 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
         limit 5;
     """, nativeQuery = true)
     List<Profile> getRecommendedProfiles(@Param("profileId") Long profileId);
+
+    @Query(value = """
+            select p.*
+            from follower f
+            join profile p on p.id = f.follower_id
+            where f.profile_id = :id;
+            """, nativeQuery = true)
+    Set<Profile> findProfileWithFollowing(@Param("id") Long id);
+
+
 }

@@ -464,52 +464,52 @@ public class PostService implements IPostService {
         }).collect(Collectors.toList());
     }
 
-    //public List<PostDto> getPostsFromFollowedUsers(String token) {
-    //    String jwt = token.replace("Bearer ", "");
-    //    Claims claims = jwtService.extractDatosToken(jwt);
-    //    String email = claims.get("email", String.class);
-//
-    //    Long userId = extractUserIdFromEmail(email);
-    //    List<Long> followedUserIds = userRepository.findFollowedUserIdsByUserId(userId);
-    //    List<Post> followedUserPosts = postRepository.findAllByUserIdIn(followedUserIds);
-    //
-    //    return followedUserPosts.stream().map(post -> {
-    //        Post2Dto post2Dto = new Post2Dto();
-    //        post2Dto.setId(post.getId());
-    //        post2Dto.setContent(post.getContent());
-    //        post2Dto.setCreatedAt(post.getCreatedAt());
-    //        post2Dto.setUserId(post.getUser().getId());
-    //        post2Dto.setDelete(post.getDelete());
-//
-    //        User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-    //        String avatar = user.getProfile().getAvatar();
-    //        String nickname = user.getProfile().getNickname();
-//
-    //        Long numcomments = postRepository.countCommentsByPostId(post.getId());
-    //        Long numlikes = postRepository.countLikesByPostId(post.getId());
-    //        Pageable pageable = PageRequest.of(0, 1);
-    //        List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
-    //        Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
-//
-    //        String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
-    //        Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
-    //        String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
-//
-    //        PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
-    //        if (firstCommentDetails.isPresent()) {
-    //            CommentDetailsDto commentDetails = firstCommentDetails.get();
-    //            postDto.setFirstcomment(commentDetails.getContent());
-    //            postDto.setNicknamecomment(commentDetails.getNickname());
-    //            postDto.setAvatarcomment(commentDetails.getAvatar());
-    //        } else {
-    //            postDto.setFirstcomment("Se el primero en comentar esta publicación");
-    //            postDto.setNicknamecomment("Usuario1");
-    //            postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
-    //        }
-//
-    //        return postDto;
-    //    }).collect(Collectors.toList());
-    //}
+    public List<PostDto> getPostsFromFollowedUsers(String token) {
+        String jwt = token.replace("Bearer ", "");
+        Claims claims = jwtService.extractDatosToken(jwt);
+        String email = claims.get("email", String.class);
+
+        Long userId = extractUserIdFromEmail(email);
+        List<Long> followedUserIds = userRepository.findFollowedUserIdsByUserId(userId);
+        List<Post> followedUserPosts = postRepository.findAllByUserIdIn(followedUserIds);
+
+        return followedUserPosts.stream().map(post -> {
+            Post2Dto post2Dto = new Post2Dto();
+            post2Dto.setId(post.getId());
+            post2Dto.setContent(post.getContent());
+            post2Dto.setCreatedAt(post.getCreatedAt());
+            post2Dto.setUserId(post.getUser().getId());
+            post2Dto.setDelete(post.getDelete());
+
+            User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String avatar = user.getProfile().getAvatar();
+            String nickname = user.getProfile().getNickname();
+
+            Long numcomments = postRepository.countCommentsByPostId(post.getId());
+            Long numlikes = postRepository.countLikesByPostId(post.getId());
+            Pageable pageable = PageRequest.of(0, 1);
+            List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
+            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
+
+            String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
+            Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
+            String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
+
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+            if (firstCommentDetails.isPresent()) {
+                CommentDetailsDto commentDetails = firstCommentDetails.get();
+                postDto.setFirstcomment(commentDetails.getContent());
+                postDto.setNicknamecomment(commentDetails.getNickname());
+                postDto.setAvatarcomment(commentDetails.getAvatar());
+            } else {
+                postDto.setFirstcomment("Se el primero en comentar esta publicación");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
+            }
+
+            return postDto;
+        }).collect(Collectors.toList());
+    }
     public void sharePost(String token, Long postId) {
     }
 }

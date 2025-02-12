@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("**").permitAll()
                         //.requestMatchers("/auth/**", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
-                        // .requestMatchers("/admin/**").hasRole("ADMIN")
+                        //.requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

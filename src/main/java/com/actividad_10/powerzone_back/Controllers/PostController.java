@@ -60,11 +60,11 @@ public class PostController {
         postService.deletePost(token,deletePost);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-   // @GetMapping("/following")
-   // public ResponseEntity<List<PostDto>> getPostsFromFollowedUsers(@RequestHeader("Authorization") String token) {
-   //     List<PostDto> followedUserPosts = postService.getPostsFromFollowedUsers(token);
-   //     return ResponseEntity.status(HttpStatus.OK).body(followedUserPosts);
-   // }
+    @GetMapping("/followed")
+    public ResponseEntity<List<PostDto>> getPostsFromFollowedUsers(@RequestHeader("Authorization") String token) {
+        List<PostDto> followedUserPosts = postService.getPostsFromFollowedUsers(token);
+        return ResponseEntity.status(HttpStatus.OK).body(followedUserPosts);
+    }
 
     @GetMapping("/all")
     ResponseEntity<List<PostDto>> getAllPosts(@RequestHeader("Authorization") String token) {
