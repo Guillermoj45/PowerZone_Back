@@ -4,9 +4,11 @@ import com.actividad_10.powerzone_back.DTOs.ChatMessage;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.GroupName;
 import com.actividad_10.powerzone_back.Entities.GroupUser;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.GroupMessengerRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
+import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import com.actividad_10.powerzone_back.Services.MessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ public class messageController {
     private final GroupNameRepository groupNameRepository;
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
 
 
     // Manejar mensajes enviados por los clientes
@@ -122,13 +125,16 @@ public class messageController {
                 groupUserRepository.existsByUserIdAndGroupId(userId2, groupId)) {
             return ResponseEntity.badRequest().body("Uno o ambos usuarios ya están en el grupo");
         }
+        GroupName groupName = groupNameRepository.getById(groupId);
+        User user1 = userRepository.getById(userId1);
+        User user2 = userRepository.getById(userId1);
 
         // Añadir ambos usuarios al grupo
-        GroupUser user1 = new GroupUser(userId1, groupId);
-        GroupUser user2 = new GroupUser(userId2, groupId);
+        GroupUser groupUser1 = new GroupUser(user1, groupName);
+        GroupUser groupUser2 = new GroupUser(user2, groupName);
 
-        groupUserRepository.save(user1);
-        groupUserRepository.save(user2);
+        groupUserRepository.save(groupUser1);
+        groupUserRepository.save(groupUser2);
 
         return ResponseEntity.ok("Usuarios añadidos al grupo exitosamente");
     }

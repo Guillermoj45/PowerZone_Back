@@ -55,14 +55,6 @@ public class NotificationService {
     //     return new MessageNotification(groupMessenger, notification);
     // }
 
-    @Async
-    public void createNotificationMessaje(GroupMessenger groupMessenger) {
-        Notification notification = new Notification();
-        Profile profile = profileService.getProfileById(groupMessenger.getGrupouser().getUserId());
-        notification.setUserSend(profile);
-        notification.setType(NotificationType.MESSAGE);
-        notificationRepository.save(notification);
-    }
 
     @Async
     protected MegaNotificacion getFriendRequestNotification(Notification notification) {

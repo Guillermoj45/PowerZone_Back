@@ -4,6 +4,7 @@ import com.actividad_10.powerzone_back.DTOs.ChatMessage;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.GroupName;
 import com.actividad_10.powerzone_back.Entities.GroupUser;
+import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Repositories.GroupMessengerRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
@@ -21,6 +22,7 @@ public class MessageService {
     private GroupMessengerRepository groupMessengerRepository;
     private GroupUserRepository groupUserRepository;
     private GroupNameRepository groupNameRepository;
+    private ProfileService profileService;
 
     public GroupMessenger getMessageById(Long id){
         return groupMessengerRepository.findById(id).orElse(null);
@@ -34,11 +36,12 @@ public class MessageService {
             groupName = groupNameRepository.save(groupName);
         }
         GroupUser groupUser = groupUserRepository.findByUserIdAndGroupId(chatMessage.getUserId(), chatMessage.getGroupId());
+        Profile profile = profileService.getProfileById(chatMessage.getUserId());
 
         if(groupUser == null){
             groupUser = new GroupUser();
-            groupUser.setUserId(chatMessage.getUserId());
-            groupUser.setGroupId(chatMessage.getGroupId());
+            groupUser.setUser(profile.getUser());
+            groupUser.setGroup(groupName);
             groupUser = groupUserRepository.save(groupUser);
         }
 

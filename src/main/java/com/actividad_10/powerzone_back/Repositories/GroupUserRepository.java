@@ -13,6 +13,6 @@ public interface GroupUserRepository extends JpaRepository<GroupUser, Long>{
     GroupUser findByUserIdAndGroupId(Long userId, Long groupId);
     boolean existsByUserIdAndGroupId(Long userId, Long groupId);
 
-    @Query("SELECT gu.groupId FROM GroupUser gu WHERE gu.userId = :userId")
+    @Query("SELECT gu.group.id FROM GroupUser gu WHERE gu.user.id = :userId")
     List<Long> findGroupIdsByUserId(@Param("userId") Long userId);
 }
