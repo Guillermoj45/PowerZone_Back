@@ -49,4 +49,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Set<Profile> findProfileWithFollowing(@Param("id") Long id);
 
 
+    @Query("SELECT CASE WHEN p.banAt IS NULL OR p.banAt < CURRENT_DATE THEN FALSE ELSE TRUE END FROM Profile p WHERE p.id = :profileId")
+    boolean isUserBanned(@Param("profileId") Long profileId);
+
 }

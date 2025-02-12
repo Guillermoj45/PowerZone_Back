@@ -251,4 +251,13 @@ public class UserService implements IUserService, UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
         return user.getId();
     }
+
+    public boolean isBanned(String token) {
+        token = jwtService.desEncriptToken(token);
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+        User user = userRepository.findByEmail(tokenDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + tokenDto.getEmail()));
+
+        return profileRepository.isUserBanned(user.getProfile().getId());
+    }
 }
