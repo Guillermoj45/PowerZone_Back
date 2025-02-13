@@ -8,6 +8,7 @@ WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw .
 COPY mvnw.cmd .
+COPY .env .
 
 # Ensure the Maven wrapper script has execute permissions
 RUN chmod +x mvnw
@@ -20,7 +21,7 @@ COPY src ./src
 RUN ./mvnw package
 
 # Expose the port the application runs on
-EXPOSE 8080:1234
+EXPOSE 8080:8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "target/PowerZone_back-0.0.1-SNAPSHOT.jar"]
