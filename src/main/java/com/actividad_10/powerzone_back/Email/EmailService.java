@@ -20,7 +20,20 @@ public class EmailService {
             sendEmailClass.sendEmail(
                     email,
                     "Bienvenid@ a PowerZone",
-                    "Estamos encantados de que hayas confiado en nosotros como red social Fitness \uD83D\uDCAA\uD83D\uDCAA"
+                    "\uD83C\uDFCB\uFE0F\u200D♂\uFE0F ¡Bienvenido a PowerZone! \uD83C\uDF4F\n" +
+                            "\n" +
+                            "¡Nos emociona tenerte aquí! \uD83D\uDE80 PowerZone es la red social diseñada para los apasionados del fitness y la vida saludable. Aquí podrás:\n" +
+                            "\n" +
+                            "✅ Compartir tu progreso con fotos y publicaciones.\n" +
+                            "\uD83E\uDD16 Preguntar a nuestra IA sobre entrenamientos, nutrición y bienestar.\n" +
+                            "\uD83D\uDCAC Chatear con otros usuarios y hacer comunidad.\n" +
+                            "\uD83C\uDFC6 Descubrir nuevos retos y mantenerte motivado.\n" +
+                            "\n" +
+                            "Estás en el lugar perfecto para alcanzar tus objetivos y conectar con personas que comparten tu estilo de vida. ¡Empieza explorando y haz que cada día cuente! \uD83D\uDCAA\uD83D\uDD25\n" +
+                            "\n" +
+                            "\uD83D\uDCF2 ¿Listo para la acción? Comparte tu primera publicación o únete a la conversación.\n" +
+                            "\n" +
+                            "#PowerZone #Fitness #Salud #Comunidad \uD83D\uDCAA\uD83D\uDCAA"
             );
         }
     }
