@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -13,14 +14,16 @@ import java.time.LocalDate;
 public class LikePost implements Serializable {
 
     @Id
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Profile user;
 
     @Id
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(name = "created_at_post", nullable = false)
-    private LocalDate createdAtPost;
+    private LocalDateTime createdAtPost;
 
 }

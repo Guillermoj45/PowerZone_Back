@@ -1,12 +1,16 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.Entities.Post;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface IPostService {
-    void createPost(int idUser);
-    void deletePost(int idPost);
+    PostDto createPost(String token, Post newPost, MultipartFile image);
+    void deletePost(String token, Post deletePost);
 
-    Optional<Post> findByTitle(String title);
+    List<Post> findbestPost();
+    void savePost(String token, Post post);
+    void unsavePost(String token, Post post);
 }

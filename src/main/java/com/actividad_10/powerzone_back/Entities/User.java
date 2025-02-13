@@ -1,19 +1,30 @@
 package com.actividad_10.powerzone_back.Entities;
 
+import com.actividad_10.powerzone_back.Entities.emun.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
 
 @Data
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Evita bucles recursivos
+@JsonIgnoreProperties({"password", "authorities", "enabled", "credentialsNonExpired", "accountNonExpired", "accountNonLocked"})
+public class User implements Serializable, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include // Solo se usa el ID para `hashCode` y `equals`
     private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -22,22 +33,53 @@ public class User implements Serializable {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false)
-    private Integer role = 0;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "role", nullable = false, columnDefinition = "0")
+    private Rol role;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 
-    @ManyToMany
-    @JoinTable(name = "follower",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "follower_id")}
-    )
-    private Set<User> followers;
-
-    // Método para asociar el perfil
     public void setProfile(Profile profile) {
         this.profile = profile;
-        profile.setUser(this); // Configura la relación bidireccional
+        if (profile != null) {
+            profile.setUser(this); // Configura la relación bidireccional
+        }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

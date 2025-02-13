@@ -1,11 +1,15 @@
 package com.actividad_10.powerzone_back.Services;
 
-import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDTO;
-import com.actividad_10.powerzone_back.DTOs.ProfileDto;
-import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.DTOs.CreacionPerfilDto;
+import com.actividad_10.powerzone_back.DTOs.LoginDto;
+import com.actividad_10.powerzone_back.DTOs.Profile2Dto;
+import com.actividad_10.powerzone_back.DTOs.RespuestaDto;
+import org.springframework.http.ResponseEntity;
 
 public interface IUserService {
-    void createUser(CreacionPerfilDTO nuevoPerfil);
+    void createUser(CreacionPerfilDto nuevoPerfil);
 
-    ProfileDto LoginUser(String email, String password);
+    ResponseEntity<RespuestaDto> LoginUser(LoginDto loginDto);
+
+    Profile2Dto returnProfile(String token);
 }

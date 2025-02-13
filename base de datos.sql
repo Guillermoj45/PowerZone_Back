@@ -1,6 +1,7 @@
 create database powerzone;
 
-
+set search_path to powerzone;
+set search_path = "public";
 
 create table diet (
                       id bigserial primary key,
@@ -42,13 +43,14 @@ create table alimentacion_ingredients(
 create table "users" (
                         id bigserial primary key,
                         email varchar(50) not null unique,
-                        password varchar(50) not null,
+                        password varchar(100) not null,
                         role smallint not null default 0
 );
 
 create table "profile" (
                            id bigint primary key,
                            name varchar(50) not null,
+                           nickname varchar(50) not null unique,
                            avatar varchar(200) not null default 'https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png',
                            born_date date not null,
                            ban_at timestamp,
@@ -69,7 +71,6 @@ create table "follower" (
 
 create table "post" (
                         id bigserial not null,
-                        title varchar(50) not null,
                         content text not null,
                         created_at timestamp not null default now(),
                         user_id bigint not null,
@@ -77,6 +78,8 @@ create table "post" (
                         primary key (id, created_at),
                         constraint fk_post_user foreign key (user_id) references "users" (id) on delete cascade
 ) partition by RANGE (created_at);
+
+create index idx_post_content on post (content);
 
 create table post_2025 partition of post
     for values from ('2025-01-01') to ('2026-01-01');
@@ -93,22 +96,25 @@ create table default_post partition of post
 create index idx_post_created_at on post (created_at);
 
 create table image (
-    id bigint not null,
+    id bigserial not null,
+    id_post bigint not null ,
     post_created_at timestamp not null,
     image varchar(200) not null,
-    primary key (id, post_created_at, image),
-    constraint fk_image_post foreign key (id, post_created_at) references post (id, created_at) on delete cascade
+    type smallint not null,
+    primary key (id),
+    constraint fk_image_post foreign key (id_post, post_created_at) references post (id, created_at) on delete cascade
 );
 
 create table comment (
-    id bigserial primary key,
-    content text not null,
-    created_at timestamp not null default now(),
-    user_id bigint not null,
-    post_id bigint not null,
-    post_created_at timestamp not null,
-    constraint fk_comment_user foreign key (user_id) references "users" (id) on delete cascade,
-    constraint fk_comment_post foreign key (post_id, post_created_at) references post (id, created_at) on delete cascade
+                         id bigserial primary key,
+                         content text not null,
+                         created_at timestamp not null default now(),
+                         user_id bigint not null,
+                         post_id bigint not null,
+                         post_created_at timestamp not null,
+                         delete boolean not null default false,
+                         constraint fk_comment_user foreign key (user_id) references "users" (id) on delete cascade,
+                         constraint fk_comment_post foreign key (post_id, post_created_at) references post (id, created_at) on delete cascade
 );
 
 create table like_post (
@@ -167,10 +173,10 @@ create table reports (
     type smallint not null,
     content text not null,
     created_at timestamp not null default now(),
-    user_id bigint not null,
+    reporter bigint not null,
     post_id bigint not null,
     created_at_post timestamp not null,
-    constraint fk_reports_user foreign key (user_id) references "users" (id) on delete cascade,
+    constraint fk_reports_reporter foreign key (reporter) references "users" (id) on delete cascade,
     constraint fk_reports_post foreign key (post_id, created_at_post) references post (id, created_at) on delete cascade
 );
 
@@ -206,4 +212,41 @@ create table training_exercises(
     constraint fk_training_exercises_exercises foreign key (exercises_id) references exercises (id) on delete cascade,
     constraint pk_training_exercises primary key (training_id, exercises_id)
 );
+
+ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;
+
+DROP TABLE IF EXISTS follower;
+CREATE TABLE follower (
+                          profile_id BIGINT NOT NULL,
+                          follower_id BIGINT NOT NULL,
+                          CONSTRAINT pk_follower PRIMARY KEY (profile_id, follower_id),
+                          CONSTRAINT fk_follower_profile FOREIGN KEY (profile_id) REFERENCES profile (id) ON DELETE CASCADE,
+                          CONSTRAINT fk_follower_follower FOREIGN KEY (follower_id) REFERENCES profile (id) ON DELETE CASCADE
+);
+
+
+DROP TABLE IF EXISTS notification;
+
+create table notification (
+                              id bigserial primary key,
+                              content bigint not null,
+                              type smallint,
+                              created_at timestamp not null default now(),
+                              recibe_id bigint not null,
+                              sender_id bigint not null,
+                              constraint fk_notification_profile foreign key (recibe_id) references profile (id) on delete cascade,
+                              constraint fk_notification_sender foreign key (sender_id) references profile (id) on delete cascade
+);
+
+alter table if exists comment add column delete boolean not null default false;
+
+
+
+SELECT * FROM follower WHERE profile_id = 10;
+
+select p.*
+from follower f
+join profile p on p.id = f.follower_id
+where f.profile_id = 10;
+
 
