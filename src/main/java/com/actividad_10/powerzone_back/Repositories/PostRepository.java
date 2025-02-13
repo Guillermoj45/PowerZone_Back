@@ -20,9 +20,11 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     Optional<LocalDateTime> findCreatedAtById(Long id);
     Optional<Post> findById(Long id);
 
-    @Query("SELECT p FROM Post p JOIN LikePost l ON p.id = l.post.id GROUP BY p.id ORDER BY COUNT(l.user.id) DESC")
+    @Query("SELECT p FROM Post p JOIN LikePost l ON p.id = l.post.id GROUP BY p.id, p.content, p.createdAt, p.user.id, p.delete ORDER BY COUNT(l.user.id) DESC")
     List<Post> findPostsWithMostLikes();
 
+    @Query("SELECT p FROM Post p JOIN Comment c ON p.id = c.post.id GROUP BY p.id, p.content, p.createdAt, p.user.id, p.delete ORDER BY COUNT(c.id) DESC")
+    List<Post> findPostsWithMostComments();
     @Query("""
         select p
         from Post p

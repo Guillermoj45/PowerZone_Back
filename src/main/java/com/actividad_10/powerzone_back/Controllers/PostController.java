@@ -71,7 +71,17 @@ public class PostController {
         List<PostDto> allPosts = postService.getAllPosts();
         return ResponseEntity.status(HttpStatus.OK).body(allPosts);
     }
+    @GetMapping("/most-liked")
+    public ResponseEntity<List<PostDto>> getPostsWithMostLikes() {
+        List<PostDto> mostLikedPosts = postService.getPostsWithMostLikes();
+        return ResponseEntity.status(HttpStatus.OK).body(mostLikedPosts);
+    }
 
+    @GetMapping("/most-commented")
+    public ResponseEntity<List<PostDto>> getPostsWithMostComments() {
+        List<PostDto> mostCommentedPosts = postService.getPostsWithMostComments();
+        return ResponseEntity.status(HttpStatus.OK).body(mostCommentedPosts);
+    }
     @GetMapping("/hasLiked")
     public ResponseEntity<Boolean> hasUserLikedPost(
             @RequestHeader("Authorization") String token,
