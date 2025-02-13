@@ -228,6 +228,7 @@ public class messageController {
             chatMessage.setUserId(message.getGrupouser().getUser().getId());
             chatMessage.setTimestamp(message.getCreatedAt().toString());
             chatMessage.setContent(message.getMessage());
+            chatMessage.setSender(message.getGrupouser().getUser().getProfile().getNickname());
             chatMessages.add(chatMessage);
         }
 
