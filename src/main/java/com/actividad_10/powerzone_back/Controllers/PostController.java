@@ -152,7 +152,11 @@ public class PostController {
                 .body(Map.of("message", "Post unliked"));
     }
 
-
+    @GetMapping("/{postId}/userId")
+    public ResponseEntity<Long> getUserIdByPostId(@PathVariable Long postId) {
+        Long userId = postService.getUserIdByPostId(postId);
+        return ResponseEntity.ok(userId);
+    }
     @PostMapping("/hasLiked")
     public ResponseEntity<Boolean> hasLikedPost(
             @RequestHeader("Authorization") String token,

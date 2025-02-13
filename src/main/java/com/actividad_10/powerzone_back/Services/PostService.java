@@ -102,8 +102,8 @@ public class PostService implements IPostService {
             postDto.setAvatarcomment(commentDetails.getAvatar());
         } else {
             postDto.setFirstcomment("Se el primero en comentar esta publicación");
-            postDto.setNicknamecomment("Usuario1");
-            postDto.setAvatarcomment("https://picsum.photos/800/400?random=1");
+            postDto.setNicknamecomment(" ");
+            postDto.setAvatarcomment(" ");
         }
         postDto.setPost(post2Dto);
         postDto.setAvatar(avatar);
@@ -509,6 +509,12 @@ public class PostService implements IPostService {
 
             return postDto;
         }).collect(Collectors.toList());
+    }
+
+    public Long getUserIdByPostId(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
+        return post.getUser().getId();
     }
     public void sharePost(String token, Long postId) {
     }
