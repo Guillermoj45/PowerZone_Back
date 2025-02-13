@@ -224,8 +224,8 @@ public class messageController {
         List<ChatMessage> chatMessages = new ArrayList<>();
         for (GroupMessenger message : messages) {
             ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setGroupId(message.getGrupouser().getGroupId());
-            chatMessage.setUserId(message.getGrupouser().getUserId());
+            chatMessage.setGroupId(message.getGrupouser().getGroup().getId());
+            chatMessage.setUserId(message.getGrupouser().getUser().getId());
             chatMessage.setTimestamp(message.getCreatedAt().toString());
             chatMessage.setContent(message.getMessage());
             chatMessages.add(chatMessage);
