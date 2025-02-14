@@ -250,3 +250,10 @@ join profile p on p.id = f.follower_id
 where f.profile_id = 10;
 
 
+CREATE TABLE search_history (
+                                id SERIAL PRIMARY KEY,
+                                profile_id BIGINT NOT NULL,
+                                search_text VARCHAR(255) NOT NULL,
+                                searched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
+);
