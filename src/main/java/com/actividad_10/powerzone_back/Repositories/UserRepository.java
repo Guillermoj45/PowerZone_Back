@@ -31,7 +31,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void unfollowUser(@Param("userId") Long userId, @Param("followerId") Long followerId);
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM follower WHERE profile_id = :userId AND follower_id = :followerId)", nativeQuery = true)
+
     boolean isFollowing(@Param("userId") Long userId, @Param("followerId") Long followerId);
     @Query("SELECT f.id FROM Profile p JOIN p.followers f WHERE p.id = :userId")
     List<Long> findFollowedUserIdsByUserId(@Param("userId") Long userId);
+
 }

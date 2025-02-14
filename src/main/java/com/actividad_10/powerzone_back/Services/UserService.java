@@ -258,4 +258,13 @@ public class UserService implements IUserService, UserDetailsService {
 
         return profileRepository.isUserBanned(user.getProfile().getId());
     }
+
+    public boolean isAdmin(String token) {
+        token = jwtService.desEncriptToken(token);
+        TokenDto tokenDto = jwtService.extractTokenData(token);
+
+        return "ADMIN".equals(tokenDto.getRol());
+    }
+
+
 }

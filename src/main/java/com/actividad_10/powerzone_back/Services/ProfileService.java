@@ -1,9 +1,13 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.ProfileDto;
+import com.actividad_10.powerzone_back.DTOs.TokenDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Entities.User;
 import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +19,7 @@ import java.util.stream.Collectors;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+    private JwtService jwtService;
 
     public List<ProfileDto> searchUsers(String query) {
 
