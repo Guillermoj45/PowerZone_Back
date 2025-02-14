@@ -19,25 +19,41 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     int countFollowersByProfileId(@Param("profileId") Long profileId);
 
     @Query(value = """
-        select p2.*
-        from profile p
-            join follower f on p.id = f.profile_id
-            join profile p2 on f.follower_id = p2.id
-            where p.id in (
-                select p2.id
-                from follower f
-                join profile p2 on f.follower_id = p2.id
-                where f.profile_id = :profileId
-            ) and p2.id not in (
-                select p2.id
-                from follower f
-                join profile p2 on f.follower_id = p2.id
-                where f.profile_id = :profileId
-            ) and p2.id != :profileId
-        group by p2.id
-        order by count(p2.nickname)
-        limit 5;
-    """, nativeQuery = true)
+        select *
+        from (
+            select p2.*
+              from profile p
+                       join follower f on p.id = f.profile_id
+                       join profile p2 on f.follower_id = p2.id
+              where p.id in (select p2.id
+                             from follower f
+                                      join profile p2 on f.follower_id = p2.id
+                             where f.profile_id = :profileId)
+                and p2.id not in (select p2.id
+                                  from follower f
+                                           join profile p2 on f.follower_id = p2.id
+                                  where f.profile_id = :profileId)
+                and p2.id != :profileId
+              group by p2.id
+              order by count(p2.nickname)
+              )
+            as p2 union distinct
+                (
+                    select p.*
+                    from follower
+                    join profile p on follower.follower_id = p.id
+                        where p.id not in (
+                            select f.follower_id
+                            from follower f
+                                join profile p on f.follower_id = p.id
+                            where profile_id = :profileId
+                            ) and p.id != :profileId
+                    group by follower_id, p.id
+                    order by count(follower_id) desc
+        
+                )
+                limit 5;
+        """, nativeQuery = true)
     List<Profile> getRecommendedProfiles(@Param("profileId") Long profileId);
 
     @Query(value = """
