@@ -30,9 +30,9 @@ public class NotificationController {
     }
 
     // Manejar mensajes enviados por los clientes
-    @MessageMapping("/roomNotification/{roomId}") // Los clientes envían mensajes a /app/chat
-    @SendTo("/topic/roomNotification/{roomId}") // Los mensajes se envían a los suscriptores de /topic/messages
-    public ChatMessage send(@DestinationVariable String roomId, ChatMessage message) {
+    @MessageMapping("/roomNotification/{userID}") // Los clientes envían mensajes a /app/chat
+    @SendTo("/topic/roomNotification/{userID}") // Los mensajes se envían a los suscriptores de /topic/messages
+    public ChatMessage send(@DestinationVariable String userID, ChatMessage message) {
         // Aquí puedes guardar el mensaje en la base de datos si es necesario
         // message.setTimestamp(System.currentTimeMillis());
 
