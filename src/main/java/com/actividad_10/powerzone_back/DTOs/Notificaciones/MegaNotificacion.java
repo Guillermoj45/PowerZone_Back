@@ -6,7 +6,9 @@ import com.actividad_10.powerzone_back.DTOs.Profile2Dto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -45,6 +47,20 @@ public class MegaNotificacion {
         this.date = notification.getCreatedAt();
         this.type = notification.getType();
         this.groupMessenger = groupMessenger;
+    }
+
+    /**
+     * Constructor para notificaciones de tipo follow
+     * @param notification la notificación en cuestión
+     * @param profile el perfil al que hace referencia la notificación
+     */
+    public MegaNotificacion(Notification notification, Profile2Dto profile) {
+        this.id = notification.getId();
+        this.receiver = new Profile2Dto(notification.getUserRecibe());
+        this.emitter = new Profile2Dto(notification.getUserSend());
+        this.date = notification.getCreatedAt();
+        this.type = notification.getType();
+        this.profile = new Profile2Dto(notification.getUserSend());
     }
 
     /**

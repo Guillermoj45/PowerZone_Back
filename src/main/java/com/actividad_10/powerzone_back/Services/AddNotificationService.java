@@ -1,5 +1,8 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.DTOs.Notificaciones.MegaNotificacion;
+import com.actividad_10.powerzone_back.DTOs.PostDto;
+import com.actividad_10.powerzone_back.DTOs.Profile2Dto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Entities.Post;
@@ -24,12 +27,16 @@ public class AddNotificationService {
     @Async
     public void createNotificationMessaje(GroupMessenger groupMessenger) {
         List<Profile> profiles = notificationRepository.getUserGroupUser(groupMessenger.getGrupouser().getGroup().getId());
+
         for (Profile profile1 : profiles) {
             if (!profile1.getUser().getId().equals(groupMessenger.getGrupouser().getUser().getId())) {
                 Notification notification = new Notification(groupMessenger, profile1);
-                // messagingTemplate.convertAndSend("/notification/" + profile1.getId(), notification);
-                System.out.println(notification);
-                notificationRepository.save(notification);
+                System.out.println("Mensaje enviado a: " + profile1.getUser().getId());
+
+                MegaNotificacion notification1 = new MegaNotificacion(notification, groupMessenger);
+                sendNotification(notification1);
+
+                saveNotification(notification);
             }
         }
     }
@@ -38,29 +45,52 @@ public class AddNotificationService {
     public void createNotificationNewPost(Post post) {
         for (Profile profile1 : profileRepository.findProfileWithFollowing(post.getUser().getId())) {
             Notification notification = new Notification(post, profile1, NotificationType.NEW_POST);
-            System.out.println(notification);
-            notificationRepository.save(notification);
+
+            MegaNotificacion notification1 = new MegaNotificacion(notification, new PostDto(post));
+            sendNotification(notification1);
+
+            saveNotification(notification);
         }
     }
 
     @Async
     public void createNotificationFollow(Profile profile, Profile profile1) {
         Notification notification = new Notification(profile, profile1);
-        System.out.println(notification);
-        notificationRepository.save(notification);
+
+        MegaNotificacion notification1 = new MegaNotificacion(notification, new Profile2Dto(profile));
+        sendNotification(notification1);
+
+        saveNotification(notification);
     }
 
     @Async
     public void createNotificationLike(Post post, Profile profile1) {
         Notification notification = new Notification(post, profile1, NotificationType.NEW_LIKE);
-        System.out.println(notification);
-        notificationRepository.save(notification);
+
+        MegaNotificacion notification1 = new MegaNotificacion(notification, new PostDto(post));
+        sendNotification(notification1);
+
+        saveNotification(notification);
     }
 
     @Async
     public void createNotificationComment(Post post, Profile profile1) {
         Notification notification = new Notification(post, profile1, NotificationType.NEW_COMMENT);
-        System.out.println(notification);
+
+        MegaNotificacion notification1 = new MegaNotificacion(notification, new PostDto(post));
+
+        saveNotification(notification);
+    }
+
+    @Async
+    public void sendNotification(MegaNotificacion notification) {
+        messagingTemplate.convertAndSend("/topic/roomNotification/25", notification);
+    }
+
+    @Async
+    protected void saveNotification(Notification notification) {
         notificationRepository.save(notification);
     }
+
+
 }

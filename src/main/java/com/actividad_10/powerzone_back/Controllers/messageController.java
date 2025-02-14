@@ -62,7 +62,7 @@ public class messageController {
         message.setGroupId(1L);
         message.setContent("Hola");
         message.setTimestamp(String.valueOf(System.currentTimeMillis()));
-        messagingTemplate.convertAndSend("/topic/messages/1", message);
+        messagingTemplate.convertAndSend("/topic/roomNotification/25", message);
         System.out.println("Mensaje enviado");
     }
 

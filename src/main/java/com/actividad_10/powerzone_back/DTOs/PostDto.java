@@ -21,4 +21,16 @@ public class PostDto {
     private String nicknamecomment = " ";
     private String firstcomment = "Se el primero en comentar esta publicación";
     private LocalDateTime createdAt;
+
+    public PostDto(Post post) {
+        this.post = new Post2Dto();
+        this.post.setId(post.getId());
+        this.post.setContent(post.getContent());
+        this.post.setCreatedAt(post.getCreatedAt());
+        this.post.setUserId(post.getUser().getId());
+        this.avatar = post.getUser().getProfile().getAvatar();
+        this.nickname = post.getUser().getProfile().getNickname();
+        this.createdAt = post.getCreatedAt();
+
+    }
 }

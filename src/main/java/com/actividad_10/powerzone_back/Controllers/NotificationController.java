@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class NotificationController {
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/roomNotification/{userID}") // Los clientes envían mensajes a /app/chat
     @SendTo("/topic/roomNotification/{userID}") // Los mensajes se envían a los suscriptores de /topic/messages
-    public ChatMessage send(@DestinationVariable String userID, ChatMessage message) {
+    public HashMap<String, String> send(@DestinationVariable String userID, HashMap<String, String> message) {
         // Aquí puedes guardar el mensaje en la base de datos si es necesario
         // message.setTimestamp(System.currentTimeMillis());
 

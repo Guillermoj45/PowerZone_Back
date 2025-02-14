@@ -50,7 +50,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
                             ) and p.id != :profileId
                     group by follower_id, p.id
                     order by count(follower_id) desc
-        
                 )
                 limit 5;
         """, nativeQuery = true)
