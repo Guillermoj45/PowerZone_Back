@@ -27,7 +27,7 @@ public class ProfileService {
             return List.of(); // Devuelve una lista vacía si no hay consulta
         }
 
-        List<Profile> profiles = profileRepository.findByNameContainingIgnoreCase(query);
+        List<Profile> profiles = profileRepository.findByNicknameContainingIgnoreCase(query);
 
         // Convertir las entidades a DTOs
         return profiles.stream().map(profile -> {
@@ -37,6 +37,7 @@ public class ProfileService {
             dto.setAvatar(profile.getAvatar());
             dto.setBornDate(profile.getBornDate());
             dto.setActivo(profile.getActivo());
+            dto.setNickname(profile.getNickname());
             return dto;
         }).collect(Collectors.toList());
     }
