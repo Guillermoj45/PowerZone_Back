@@ -15,8 +15,8 @@ public class ChatBotController {
     private ChatBotService chatBotService;
 
     @PostMapping("/chat")
-    ResponseEntity<String> createUser(@RequestHeader("Authorization") String token, @RequestBody String mensaje) {
+    public String createUser(@RequestHeader("Authorization") String token, @RequestBody String mensaje) {
         String response = chatBotService.holaBot(mensaje);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return response;
     }
 }
