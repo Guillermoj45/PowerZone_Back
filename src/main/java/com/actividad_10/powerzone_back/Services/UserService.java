@@ -33,7 +33,7 @@ public class UserService implements IUserService, UserDetailsService {
     private final JwtService jwtService;
     private final CloudinaryService cloudinaryService;
     private final ProfileRepository profileRepository;
-
+    private final AddNotificationService addNotificationService;
 
 
     private boolean isEmailPasswordNull(String email, String password){
@@ -209,12 +209,12 @@ public class UserService implements IUserService, UserDetailsService {
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
 
-        Long userId = extractUserIdFromEmail(email);
-        Optional<UserIdDto> userOptional = userRepository.findByUserId(userId);
-        Optional<UserIdDto> followUserOptional = userRepository.findByUserId(followUserId);
+        User user = extractUserIdFromEmail(email);
+        Optional<User> followUserOptional = userRepository.findById(followUserId);
 
-        if (userOptional.isPresent() && followUserOptional.isPresent()) {
-            userRepository.followUser(userId, followUserId);
+        if (followUserOptional.isPresent()) {
+            addNotificationService.createNotificationFollow(user.getProfile(), followUserOptional.get().getProfile());
+            userRepository.followUser(user.getId(), followUserId);
             return true;
         }
         return false;
@@ -226,12 +226,11 @@ public class UserService implements IUserService, UserDetailsService {
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
 
-        Long userId = extractUserIdFromEmail(email);
-        Optional<UserIdDto> userOptional = userRepository.findByUserId(userId);
-        Optional<UserIdDto> unfollowUserOptional = userRepository.findByUserId(unfollowUserId);
+        User userId = extractUserIdFromEmail(email);
+        Optional<User> unfollowUserOptional = userRepository.findById(unfollowUserId);
 
-        if (userOptional.isPresent() && unfollowUserOptional.isPresent()) {
-            userRepository.unfollowUser(userId, unfollowUserId);
+        if (unfollowUserOptional.isPresent()) {
+            userRepository.unfollowUser(userId.getId(), unfollowUserId);
             return true;
         }
         return false;
@@ -242,14 +241,13 @@ public class UserService implements IUserService, UserDetailsService {
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
 
-        Long userId = extractUserIdFromEmail(email);
+        Long userId = extractUserIdFromEmail(email).getId();
         return userRepository.isFollowing(userId, followUserId);
     }
 
-    private Long extractUserIdFromEmail(String email) {
-        User user = userRepository.findByEmail(email)
+    private User extractUserIdFromEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
-        return user.getId();
     }
 
     public boolean isBanned(String token) {

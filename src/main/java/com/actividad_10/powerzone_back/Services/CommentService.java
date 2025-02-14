@@ -11,6 +11,7 @@ import com.actividad_10.powerzone_back.Repositories.PostRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,20 +19,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class
-CommentService implements ICommentService {
+@AllArgsConstructor
+public class CommentService implements ICommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PostRepository postRepository;
-
-    public CommentService(JwtService jwtService, CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
-        this.jwtService = jwtService;
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-    }
+    private final AddNotificationService addNotificationService;
 
     @Override
     public CommentDto createComment(String token, Comment newComment) {
@@ -47,11 +42,14 @@ CommentService implements ICommentService {
         }
 
         Optional<Post> postOptional = postRepository.findById(newComment.getPost().getId());
-        if (!postOptional.isPresent()) {
+        if (postOptional.isEmpty()) {
             throw new RuntimeException("Post not found");
         }
 
         Post post = postOptional.get();
+
+        addNotificationService.createNotificationComment(post, newComment.getUser().getProfile());
+
         newComment.setPost(post);
         newComment.setPostCreatedAt(post.getCreatedAt());
         newComment.setCreatedAt(LocalDateTime.now());
@@ -105,9 +103,11 @@ CommentService implements ICommentService {
             throw new RuntimeException("No tienes permiso para eliminar este comentario");
         }
     }
+
     public List<CommentDetailsDto> getAllCommentsByPostId(Long postId) {
         return commentRepository.findAllCommentDetailsByPostId(postId);
     }
+
     @Override
     public void getCommentByUserName(Comment userComments) {
         User userId = userComments.getUser();

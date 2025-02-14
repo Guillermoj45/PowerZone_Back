@@ -23,7 +23,7 @@ public class ChatBotService {
     public String holaBot(String mensaje) {
         // Construcción del JSON
         JsonObject json = new JsonObject();
-        json.addProperty("model", "llama-3.2-1b-instruct");
+        json.addProperty("model", "hermes-3-llama-3.2-3b");
 
         JsonArray messages = new JsonArray();
 

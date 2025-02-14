@@ -4,6 +4,7 @@ import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Entities.Post;
 import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
 import com.actividad_10.powerzone_back.Repositories.NotificationRepository;
 import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
 import lombok.AllArgsConstructor;
@@ -30,16 +31,36 @@ public class AddNotificationService {
                 System.out.println(notification);
                 notificationRepository.save(notification);
             }
-
         }
     }
 
     @Async
     public void createNotificationNewPost(Post post) {
         for (Profile profile1 : profileRepository.findProfileWithFollowing(post.getUser().getId())) {
-            Notification notification = new Notification(post, profile1);
+            Notification notification = new Notification(post, profile1, NotificationType.NEW_POST);
             System.out.println(notification);
             notificationRepository.save(notification);
         }
+    }
+
+    @Async
+    public void createNotificationFollow(Profile profile, Profile profile1) {
+        Notification notification = new Notification(profile, profile1);
+        System.out.println(notification);
+        notificationRepository.save(notification);
+    }
+
+    @Async
+    public void createNotificationLike(Post post, Profile profile1) {
+        Notification notification = new Notification(post, profile1, NotificationType.NEW_LIKE);
+        System.out.println(notification);
+        notificationRepository.save(notification);
+    }
+
+    @Async
+    public void createNotificationComment(Post post, Profile profile1) {
+        Notification notification = new Notification(post, profile1, NotificationType.NEW_COMMENT);
+        System.out.println(notification);
+        notificationRepository.save(notification);
     }
 }

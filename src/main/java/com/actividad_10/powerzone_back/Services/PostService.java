@@ -285,6 +285,7 @@ public class PostService implements IPostService {
 
         Long userId = extractUserIdFromEmail(email);
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        addNotificationService.createNotificationLike(post, user.getProfile());
         LikePost likePost = new LikePost();
         likePost.setUser(user.getProfile());
         likePost.setPost(post);
