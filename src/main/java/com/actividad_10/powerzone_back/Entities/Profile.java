@@ -14,13 +14,13 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "profile")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Evita bucles recursivos
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Profile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @EqualsAndHashCode.Include // Solo se usa el ID para `hashCode` y `equals`
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "name", nullable = false)
