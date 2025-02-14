@@ -20,8 +20,8 @@ import java.util.List;
 @RequestMapping("/notification")
 @AllArgsConstructor
 public class NotificationController {
-    NotificationService notificationService;
-    JwtService jwtService;
+    private final NotificationService notificationService;
+    private final JwtService jwtService;
 
     @GetMapping
     public List<MegaNotificacion> getNotification(@RequestHeader("Authorization") String token, @RequestParam(value = "offset", defaultValue = "0") long offaset){

@@ -33,9 +33,9 @@ public class CommentService implements ICommentService {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
         String email = claims.get("email", String.class);
-        Long userId = extractUserIdFromEmail(email);
+        User user = extractUserIdFromEmail(email);
 
-        newComment.setUser(userRepository.findById(userId).get());
+        newComment.setUser(user);
 
         if (newComment.getPost() == null || newComment.getPost().getId() == null) {
             throw new RuntimeException("Post ID is required");
@@ -48,7 +48,7 @@ public class CommentService implements ICommentService {
 
         Post post = postOptional.get();
 
-        addNotificationService.createNotificationComment(post, newComment.getUser().getProfile());
+        addNotificationService.createNotificationComment(post, newComment);
 
         newComment.setPost(post);
         newComment.setPostCreatedAt(post.getCreatedAt());
@@ -78,8 +78,8 @@ public class CommentService implements ICommentService {
         return commentDto;
     }
 
-    private Long extractUserIdFromEmail(String email) {
-        return userRepository.findByEmail(email).get().getId();
+    private User extractUserIdFromEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
     }
     @Override
     @Transactional
@@ -91,7 +91,7 @@ public class CommentService implements ICommentService {
         String rol = claims.get("rol", String.class);
 
         // Obtener el ID del usuario a partir del email
-        Long userId = extractUserIdFromEmail(email);
+        Long userId = extractUserIdFromEmail(email).getId();
 
         // Verificar que el comentario pertenece al usuario
         if (deleteComment.getUser().getId().equals(userId)) {

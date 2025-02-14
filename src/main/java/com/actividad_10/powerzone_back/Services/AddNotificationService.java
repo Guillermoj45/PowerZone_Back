@@ -1,12 +1,10 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.DTOs.CommentDto;
 import com.actividad_10.powerzone_back.DTOs.Notificaciones.MegaNotificacion;
 import com.actividad_10.powerzone_back.DTOs.PostDto;
 import com.actividad_10.powerzone_back.DTOs.Profile2Dto;
-import com.actividad_10.powerzone_back.Entities.GroupMessenger;
-import com.actividad_10.powerzone_back.Entities.Notification;
-import com.actividad_10.powerzone_back.Entities.Post;
-import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Entities.*;
 import com.actividad_10.powerzone_back.Entities.emun.NotificationType;
 import com.actividad_10.powerzone_back.Repositories.NotificationRepository;
 import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
@@ -74,11 +72,12 @@ public class AddNotificationService {
     }
 
     @Async
-    public void createNotificationComment(Post post, Profile profile1) {
-        Notification notification = new Notification(post, profile1, NotificationType.NEW_COMMENT);
+    public void createNotificationComment(Post post, Comment comment) {
+        Notification notification = new Notification(post, comment.getUser().getProfile(), NotificationType.NEW_COMMENT);
 
-        MegaNotificacion notification1 = new MegaNotificacion(notification, new PostDto(post));
+        MegaNotificacion notification1 = new MegaNotificacion(notification, new CommentDto(comment), new PostDto(post));
 
+        sendNotification(notification1);
         saveNotification(notification);
     }
 
