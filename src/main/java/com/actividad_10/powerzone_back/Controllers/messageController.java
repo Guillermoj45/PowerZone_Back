@@ -2,6 +2,7 @@ package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.ChatMessage;
+import com.actividad_10.powerzone_back.DTOs.GrupoUltimoMensajeDTO;
 import com.actividad_10.powerzone_back.DTOs.TokenDto;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.GroupName;
@@ -41,6 +42,7 @@ public class messageController {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
     private JwtService jwtService;
+    private MessageService chatMessageService;
 
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/chat/{roomId}") // Los clientes envían mensajes a /app/chat
@@ -234,5 +236,12 @@ public class messageController {
 
         return ResponseEntity.ok(chatMessages);
     }
+
+    @GetMapping("/grupos/ultimos-mensajes")
+    public ResponseEntity<List<GrupoUltimoMensajeDTO>> obtenerUltimosMensajesPorGrupo() {
+        List<GrupoUltimoMensajeDTO> ultimosMensajes = chatMessageService.obtenerUltimosMensajesPorGrupo();
+        return ResponseEntity.ok(ultimosMensajes);
+    }
+
 
 }
