@@ -82,7 +82,11 @@ public class PostController {
         List<PostDto> mostCommentedPosts = postService.getPostsWithMostComments();
         return ResponseEntity.status(HttpStatus.OK).body(mostCommentedPosts);
     }
-
+    @GetMapping("/pattern")
+    public ResponseEntity<List<PostDto>> getPostsByPattern(@RequestParam String pattern) {
+        List<PostDto> posts = postService.getPostsByPattern(pattern);
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
     @GetMapping("/hasLiked")
     public ResponseEntity<Boolean> hasUserLikedPost(
             @RequestHeader("Authorization") String token,
