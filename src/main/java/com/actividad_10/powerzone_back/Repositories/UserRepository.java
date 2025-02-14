@@ -21,8 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.password FROM User u WHERE u.email = :email")
     Optional<String> findPasswordByEmail(@Param("email") String email);
 
-    @Query("SELECT new com.actividad_10.powerzone_back.DTOs.UserIdDto(u.id) FROM User u WHERE u.id = :id")
-    Optional<UserIdDto> findByUserId(Long id);
+
     @Modifying
     @Query(value = "INSERT INTO follower (profile_id, follower_id) VALUES (:userId, :followerId)", nativeQuery = true)
     void followUser(@Param("userId") Long userId, @Param("followerId") Long followerId);

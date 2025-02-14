@@ -28,12 +28,8 @@ public class ProfileController {
     private final UserService userService;
     private final ProfileService profileService;
     private final ProfileRepository profileRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtService jwtService;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @PostMapping("/getData")
     ResponseEntity<Profile2Dto> getProfile(@RequestHeader("Authorization") String token) {
