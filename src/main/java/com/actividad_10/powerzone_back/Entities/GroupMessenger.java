@@ -5,13 +5,12 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "groupmessenger")
-public class    GroupMessenger implements Serializable {
+public class GroupMessenger implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)

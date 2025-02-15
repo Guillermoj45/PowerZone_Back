@@ -241,12 +241,14 @@ create table notification (
 alter table if exists comment add column delete boolean not null default false;
 
 
+CREATE TABLE search_history (
+                                id SERIAL PRIMARY KEY,
+                                profile_id BIGINT NOT NULL,
+                                search_text VARCHAR(255) NOT NULL,
+                                searched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (profile_id) REFERENCES profile(id) ON DELETE CASCADE
+);
 
-SELECT * FROM follower WHERE profile_id = 10;
-
-select p.*
-from follower f
-join profile p on p.id = f.follower_id
-where f.profile_id = 10;
-
+ALTER TABLE groupname
+    ADD COLUMN image VARCHAR(200) DEFAULT 'https://default.image.url';
 

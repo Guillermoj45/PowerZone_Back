@@ -10,7 +10,8 @@ public interface IPostService {
     PostDto createPost(String token, Post newPost, MultipartFile image);
     void deletePost(String token, Post deletePost);
 
-    List<Post> findbestPost();
+    List<PostDto> getPostsWithMostLikes();
+    List<PostDto> getPostsWithMostComments();
     void savePost(String token, Post post);
     void unsavePost(String token, Post post);
 }

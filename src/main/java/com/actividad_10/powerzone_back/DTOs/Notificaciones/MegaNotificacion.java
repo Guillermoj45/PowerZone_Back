@@ -48,6 +48,20 @@ public class MegaNotificacion {
     }
 
     /**
+     * Constructor para notificaciones de tipo follow
+     * @param notification la notificación en cuestión
+     * @param profile el perfil al que hace referencia la notificación
+     */
+    public MegaNotificacion(Notification notification, Profile2Dto profile) {
+        this.id = notification.getId();
+        this.receiver = new Profile2Dto(notification.getUserRecibe());
+        this.emitter = new Profile2Dto(notification.getUserSend());
+        this.date = notification.getCreatedAt();
+        this.type = notification.getType();
+        this.profile = new Profile2Dto(notification.getUserSend());
+    }
+
+    /**
      * Constructor para notificaciones de tipo like y nuevo post
      * @param notification la notificación en cuestión
      * @param postDto el post al que hace referencia la notificación

@@ -12,18 +12,15 @@ import com.actividad_10.powerzone_back.Repositories.*;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.Pageable;
-
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -155,14 +152,88 @@ public class PostService implements IPostService {
         return postRepository.findById(postId).orElse(null);
     }
 
-    public void findallPost(Post userPosts) {
-        postRepository.findAll();
+    public List<PostDto> getPostsWithMostComments() {
+        List<Post> posts = postRepository.findPostsWithMostComments();
+
+        return posts.stream().map(post -> {
+            Post2Dto post2Dto = new Post2Dto();
+            post2Dto.setId(post.getId());
+            post2Dto.setContent(post.getContent());
+            post2Dto.setCreatedAt(post.getCreatedAt());
+            post2Dto.setUserId(post.getUser().getId());
+            post2Dto.setDelete(post.getDelete());
+
+            User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String avatar = user.getProfile().getAvatar();
+            String nickname = user.getProfile().getNickname();
+
+            Long numcomments = postRepository.countCommentsByPostId(post.getId());
+            Long numlikes = postRepository.countLikesByPostId(post.getId());
+            Pageable pageable = PageRequest.of(0, 1);
+            List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
+            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
+
+            String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
+            Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
+            String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
+
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
+            if (firstCommentDetails.isPresent()) {
+                CommentDetailsDto commentDetails = firstCommentDetails.get();
+                postDto.setFirstcomment(commentDetails.getContent());
+                postDto.setNicknamecomment(commentDetails.getNickname());
+                postDto.setAvatarcomment(commentDetails.getAvatar());
+            } else {
+                postDto.setFirstcomment("Se el primero en comentar esta publicación");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
+            }
+
+            return postDto;
+        }).collect(Collectors.toList());
     }
 
-    public List<Post> findbestPost() {
-        return postRepository.findPostsWithMostLikes();
+    public List<PostDto> getPostsWithMostLikes() {
+        List<Post> posts = postRepository.findPostsWithMostLikes();
 
+        return posts.stream().map(post -> {
+            Post2Dto post2Dto = new Post2Dto();
+            post2Dto.setId(post.getId());
+            post2Dto.setContent(post.getContent());
+            post2Dto.setCreatedAt(post.getCreatedAt());
+            post2Dto.setUserId(post.getUser().getId());
+            post2Dto.setDelete(post.getDelete());
+
+            User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String avatar = user.getProfile().getAvatar();
+            String nickname = user.getProfile().getNickname();
+
+            Long numcomments = postRepository.countCommentsByPostId(post.getId());
+            Long numlikes = postRepository.countLikesByPostId(post.getId());
+            Pageable pageable = PageRequest.of(0, 1);
+            List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
+            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
+
+            String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
+            Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
+            String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
+
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
+            if (firstCommentDetails.isPresent()) {
+                CommentDetailsDto commentDetails = firstCommentDetails.get();
+                postDto.setFirstcomment(commentDetails.getContent());
+                postDto.setNicknamecomment(commentDetails.getNickname());
+                postDto.setAvatarcomment(commentDetails.getAvatar());
+            } else {
+                postDto.setFirstcomment("Se el primero en comentar esta publicación");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
+            }
+
+            return postDto;
+        }).collect(Collectors.toList());
     }
+
 
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAllPosts();
@@ -191,7 +262,7 @@ public class PostService implements IPostService {
             Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
             String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
 
-            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
             if (firstCommentDetails.isPresent()) {
                 CommentDetailsDto commentDetails = firstCommentDetails.get();
                 postDto.setFirstcomment(commentDetails.getContent());
@@ -238,7 +309,7 @@ public class PostService implements IPostService {
             Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
             String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
 
-            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
             if (firstCommentDetails.isPresent()) {
                 CommentDetailsDto commentDetails = firstCommentDetails.get();
                 postDto.setFirstcomment(commentDetails.getContent());
@@ -253,7 +324,46 @@ public class PostService implements IPostService {
             return postDto;
         }).collect(Collectors.toList());
     }
+    public List<PostDto> getPostsByPattern(String pattern) {
+        List<Post> posts = postRepository.findPostsByPattern(pattern);
 
+        return posts.stream().map(post -> {
+            Post2Dto post2Dto = new Post2Dto();
+            post2Dto.setId(post.getId());
+            post2Dto.setContent(post.getContent());
+            post2Dto.setCreatedAt(post.getCreatedAt());
+            post2Dto.setUserId(post.getUser().getId());
+            post2Dto.setDelete(post.getDelete());
+
+            User user = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String avatar = user.getProfile().getAvatar();
+            String nickname = user.getProfile().getNickname();
+
+            Long numcomments = postRepository.countCommentsByPostId(post.getId());
+            Long numlikes = postRepository.countLikesByPostId(post.getId());
+            Pageable pageable = PageRequest.of(0, 1);
+            List<CommentDetailsDto> firstCommentDetailsList = postRepository.findFirstCommentDetailsByPostId(post.getId(), pageable);
+            Optional<CommentDetailsDto> firstCommentDetails = firstCommentDetailsList.isEmpty() ? Optional.empty() : Optional.of(firstCommentDetailsList.get(0));
+
+            String cloudinaryBaseUrl = "https://res.cloudinary.com/dflz0gveu/image/upload/";
+            Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
+            String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
+
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
+            if (firstCommentDetails.isPresent()) {
+                CommentDetailsDto commentDetails = firstCommentDetails.get();
+                postDto.setFirstcomment(commentDetails.getContent());
+                postDto.setNicknamecomment(commentDetails.getNickname());
+                postDto.setAvatarcomment(commentDetails.getAvatar());
+            } else {
+                postDto.setFirstcomment("Se el primero en comentar esta publicación");
+                postDto.setNicknamecomment(" ");
+                postDto.setAvatarcomment(" ");
+            }
+
+            return postDto;
+        }).collect(Collectors.toList());
+    }
     public void savePost(String token, Post post) {
         String jwt = token.replace("Bearer ", "");
         Claims claims = jwtService.extractDatosToken(jwt);
@@ -285,6 +395,7 @@ public class PostService implements IPostService {
 
         Long userId = extractUserIdFromEmail(email);
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        addNotificationService.createNotificationLike(post, user.getProfile());
         LikePost likePost = new LikePost();
         likePost.setUser(user.getProfile());
         likePost.setPost(post);
@@ -362,7 +473,7 @@ public class PostService implements IPostService {
         String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
 
         // Create and return the DTO
-        PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+        PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
         if (firstCommentDetails.isPresent()) {
             CommentDetailsDto commentDetails = firstCommentDetails.get();
             postDto.setFirstcomment(commentDetails.getContent());
@@ -407,7 +518,7 @@ public class PostService implements IPostService {
             Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
             String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
 
-            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
             if (firstCommentDetails.isPresent()) {
                 CommentDetailsDto commentDetails = firstCommentDetails.get();
                 postDto.setFirstcomment(commentDetails.getContent());
@@ -448,7 +559,7 @@ public class PostService implements IPostService {
             Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
             String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
 
-            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
             if (firstCommentDetails.isPresent()) {
                 CommentDetailsDto commentDetails = firstCommentDetails.get();
                 postDto.setFirstcomment(commentDetails.getContent());
@@ -495,7 +606,7 @@ public class PostService implements IPostService {
             Optional<Image> imageOptional = imageRepository.findByPostId(post.getId());
             String imagePost = imageOptional.map(img -> cloudinaryBaseUrl + img.getImage()).orElse(null);
 
-            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null);
+            PostDto postDto = new PostDto(post2Dto, imagePost, avatar, nickname, numlikes, numcomments, null, null, null, post.getCreatedAt());
             if (firstCommentDetails.isPresent()) {
                 CommentDetailsDto commentDetails = firstCommentDetails.get();
                 postDto.setFirstcomment(commentDetails.getContent());

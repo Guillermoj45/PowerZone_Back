@@ -1,15 +1,17 @@
 package com.actividad_10.powerzone_back.Services;
 
 import com.actividad_10.powerzone_back.DTOs.ChatMessage;
+import com.actividad_10.powerzone_back.DTOs.GrupoUltimoMensajeDTO;
 import com.actividad_10.powerzone_back.Entities.GroupMessenger;
 import com.actividad_10.powerzone_back.Entities.GroupName;
 import com.actividad_10.powerzone_back.Entities.GroupUser;
 import com.actividad_10.powerzone_back.Entities.Profile;
+import com.actividad_10.powerzone_back.Repositories.ChatMessageRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupMessengerRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,11 +27,13 @@ public class MessageService {
     private final GroupNameRepository groupNameRepository;
     private final ProfileService profileService;
     private final AddNotificationService addNotificationService;
+    private final ChatMessageRepository chatMessageRepository;
 
     public GroupMessenger getMessageById(Long id){
         return groupMessengerRepository.findById(id).orElse(null);
     }
 
+    @Async
     public void saveMessage(ChatMessage chatMessage, String GrupoName){
         GroupName groupName = groupNameRepository.findById(chatMessage.getGroupId()).orElse(null);
         if (groupName == null){
@@ -64,4 +68,9 @@ public class MessageService {
     public List<GroupMessenger> getMessages(Long groupId){
         return groupMessengerRepository.findByGrupouser_GroupId(groupId);
     }
+
+    public List<GrupoUltimoMensajeDTO> obtenerUltimosMensajesPorGrupo() {
+        return chatMessageRepository.obtenerUltimosMensajesPorGrupo();
+    }
+
 }

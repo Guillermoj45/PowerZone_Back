@@ -1,5 +1,6 @@
 package com.actividad_10.powerzone_back.Services;
 
+import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.ProfileDto;
 import com.actividad_10.powerzone_back.Entities.Profile;
 import com.actividad_10.powerzone_back.Repositories.ProfileRepository;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+    private JwtService jwtService;
 
     public List<ProfileDto> searchUsers(String query) {
 
@@ -22,18 +24,10 @@ public class ProfileService {
             return List.of(); // Devuelve una lista vacía si no hay consulta
         }
 
-        List<Profile> profiles = profileRepository.findByNameContainingIgnoreCase(query);
+        List<Profile> profiles = profileRepository.findByNicknameContainingIgnoreCase(query);
 
         // Convertir las entidades a DTOs
-        return profiles.stream().map(profile -> {
-            ProfileDto dto = new ProfileDto();
-            dto.setId(profile.getId());
-            dto.setName(profile.getName());
-            dto.setAvatar(profile.getAvatar());
-            dto.setBornDate(profile.getBornDate());
-            dto.setActivo(profile.getActivo());
-            return dto;
-        }).collect(Collectors.toList());
+        return profiles.stream().map(this::trasformateProfileToDto).collect(Collectors.toList());
     }
 
     public ProfileDto getUserById(Long id) {
@@ -75,8 +69,6 @@ public class ProfileService {
         dto.setBornDate(profile.getBornDate());
         dto.setActivo(profile.getActivo());
         dto.setNickname(profile.getNickname());
-        dto.setFollowers(profileRepository.countFollowersByProfileId(profile.getId()));
-        dto.setFollowing(profileRepository.countFollowingByProfileId(profile.getId()));
         return dto;
     }
 

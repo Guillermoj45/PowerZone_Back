@@ -7,8 +7,10 @@ import com.actividad_10.powerzone_back.DTOs.ReportsAdminDto;
 import com.actividad_10.powerzone_back.Entities.emun.Rol;
 import com.actividad_10.powerzone_back.Exceptions.NoAdmin;
 import com.actividad_10.powerzone_back.Services.ReportService;
+import com.actividad_10.powerzone_back.Services.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -21,6 +23,7 @@ public class AdminController {
 
     private ReportService reportService;
     private JwtService jwtService;
+    private UserService userService;
 
     @GetMapping()
     public List<ReportsAdminDto> getReports(@RequestHeader("Authorization") String token, @RequestParam(value = "offset", defaultValue = "0") int offset, Principal principal){
@@ -69,5 +72,10 @@ public class AdminController {
         }
 
         throw new NoAdmin("Necesitas ser administrador para esto");
+    }
+
+    @GetMapping("/isAdmin")
+    public ResponseEntity<Boolean> isAdmin(@RequestHeader("Authorization") String token){
+        return new ResponseEntity<>(userService.isAdmin(token), HttpStatus.OK);
     }
 }

@@ -1,6 +1,5 @@
 package com.actividad_10.powerzone_back.Repositories;
 
-import com.actividad_10.powerzone_back.DTOs.UserIdDto;
 import com.actividad_10.powerzone_back.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,8 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.password FROM User u WHERE u.email = :email")
     Optional<String> findPasswordByEmail(@Param("email") String email);
 
-    @Query("SELECT new com.actividad_10.powerzone_back.DTOs.UserIdDto(u.id) FROM User u WHERE u.id = :id")
-    Optional<UserIdDto> findByUserId(Long id);
+
     @Modifying
     @Query(value = "INSERT INTO follower (profile_id, follower_id) VALUES (:userId, :followerId)", nativeQuery = true)
     void followUser(@Param("userId") Long userId, @Param("followerId") Long followerId);
@@ -32,7 +30,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void unfollowUser(@Param("userId") Long userId, @Param("followerId") Long followerId);
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM follower WHERE profile_id = :userId AND follower_id = :followerId)", nativeQuery = true)
+
     boolean isFollowing(@Param("userId") Long userId, @Param("followerId") Long followerId);
     @Query("SELECT f.id FROM Profile p JOIN p.followers f WHERE p.id = :userId")
     List<Long> findFollowedUserIdsByUserId(@Param("userId") Long userId);
+
 }

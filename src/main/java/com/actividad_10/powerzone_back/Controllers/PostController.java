@@ -12,7 +12,6 @@ import com.actividad_10.powerzone_back.Services.ReportService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +70,22 @@ public class PostController {
         List<PostDto> allPosts = postService.getAllPosts();
         return ResponseEntity.status(HttpStatus.OK).body(allPosts);
     }
+    @GetMapping("/most-liked")
+    public ResponseEntity<List<PostDto>> getPostsWithMostLikes() {
+        List<PostDto> mostLikedPosts = postService.getPostsWithMostLikes();
+        return ResponseEntity.status(HttpStatus.OK).body(mostLikedPosts);
+    }
 
+    @GetMapping("/most-commented")
+    public ResponseEntity<List<PostDto>> getPostsWithMostComments() {
+        List<PostDto> mostCommentedPosts = postService.getPostsWithMostComments();
+        return ResponseEntity.status(HttpStatus.OK).body(mostCommentedPosts);
+    }
+    @GetMapping("/pattern")
+    public ResponseEntity<List<PostDto>> getPostsByPattern(@RequestParam String pattern) {
+        List<PostDto> posts = postService.getPostsByPattern(pattern);
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
     @GetMapping("/hasLiked")
     public ResponseEntity<Boolean> hasUserLikedPost(
             @RequestHeader("Authorization") String token,

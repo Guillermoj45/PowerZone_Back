@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -53,10 +52,22 @@ public class Notification implements Serializable {
     }
 
     /**
+     * Constructor para notificaciones de seguimiento
+     * @param profile el perfil que sigue
+     * @param profile1 el perfil que es seguido
+     */
+    public Notification(Profile profile, Profile profile1) {
+        this.userSend = profile;
+        this.userRecibe = profile1;
+        this.content = profile.getId();
+        this.type = NotificationType.NEW_FOLLOWER;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    /**
      * Constructor para notificaciones de posts
      * @param profile1 el perfil al que se le envía la notificación
-     *
-     * @return
+     * @param post el post en cuestión
      */
     public Notification(Post post,Profile profile1) {
         this.userSend = post.getUser().getProfile();
@@ -65,6 +76,20 @@ public class Notification implements Serializable {
         this.type = NotificationType.NEW_POST;
         this.createdAt = LocalDateTime.now();
     }
+
+    /**
+     * Constructor para notificaciones de comentarios
+     * @param post el post al que se le ha comentado
+     * @param profile1 el perfil al que se le envía la notificación
+     */
+    public Notification(Post post, Profile profile1, NotificationType type) {
+        this.userSend = profile1;
+        this.userRecibe = post.getUser().getProfile();
+        this.content = post.getId();
+        this.type = type;
+        this.createdAt = LocalDateTime.now();
+    }
+
 
     @Override
     public String toString(){
