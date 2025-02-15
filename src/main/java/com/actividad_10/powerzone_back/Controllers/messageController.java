@@ -14,6 +14,7 @@ import com.actividad_10.powerzone_back.Repositories.GroupMessengerRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
+import com.actividad_10.powerzone_back.Services.GroupService;
 import com.actividad_10.powerzone_back.Services.MessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +52,7 @@ public class messageController {
     private final ObjectMapper objectMapper;
     private MessageService chatMessageService;
     private final CloudinaryService cloudinaryService;
+    private final GroupService groupService;
 
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/chat/{roomId}") // Los clientes envían mensajes a /app/chat
@@ -272,5 +274,15 @@ public class messageController {
         return ResponseEntity.ok(ultimosMensajes);
     }
 
+    @GetMapping("/grupos/{groupId}")
+    public ResponseEntity<GroupName> getGroupDetails(@PathVariable Long groupId) {
+        GroupName group = groupService.getGroupById(groupId);
+
+        if (group == null) {
+            return ResponseEntity.notFound().build();  // Si no se encuentra el grupo, respondemos con 404
+        }
+
+        return ResponseEntity.ok(group);  // Si se encuentra el grupo, respondemos con 200 y los datos del grupo
+    }
 
 }
