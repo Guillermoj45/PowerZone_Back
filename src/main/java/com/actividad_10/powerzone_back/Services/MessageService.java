@@ -12,6 +12,7 @@ import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
 import jdk.dynalink.linker.LinkerServices;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -33,6 +34,7 @@ public class MessageService {
         return groupMessengerRepository.findById(id).orElse(null);
     }
 
+    @Async
     public void saveMessage(ChatMessage chatMessage, String GrupoName){
         GroupName groupName = groupNameRepository.findById(chatMessage.getGroupId()).orElse(null);
         if (groupName == null){
