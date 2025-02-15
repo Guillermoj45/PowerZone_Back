@@ -69,13 +69,27 @@ public class Notification implements Serializable {
      * @param profile1 el perfil al que se le envía la notificación
      * @param post el post en cuestión
      */
-    public Notification(Post post,Profile profile1, NotificationType type) {
+    public Notification(Post post,Profile profile1) {
+        this.userSend = post.getUser().getProfile();
+        this.userRecibe = profile1;
+        this.content = post.getId();
+        this.type = NotificationType.NEW_POST;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    /**
+     * Constructor para notificaciones de comentarios
+     * @param post el post al que se le ha comentado
+     * @param profile1 el perfil al que se le envía la notificación
+     */
+    public Notification(Post post, Profile profile1, NotificationType type) {
         this.userSend = profile1;
         this.userRecibe = post.getUser().getProfile();
         this.content = post.getId();
         this.type = type;
         this.createdAt = LocalDateTime.now();
     }
+
 
     @Override
     public String toString(){

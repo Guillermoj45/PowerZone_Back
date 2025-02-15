@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "groupmessenger")
-public class    GroupMessenger implements Serializable {
+public class GroupMessenger implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)

@@ -42,7 +42,7 @@ public class AddNotificationService {
     @Async
     public void createNotificationNewPost(Post post) {
         for (Profile profile1 : profileRepository.findProfileWithFollowing(post.getUser().getId())) {
-            Notification notification = new Notification(post, profile1, NotificationType.NEW_POST);
+            Notification notification = new Notification(post, profile1);
 
             MegaNotificacion notification1 = new MegaNotificacion(notification, new PostDto(post));
             sendNotification(notification1);
