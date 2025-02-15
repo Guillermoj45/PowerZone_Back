@@ -4,6 +4,7 @@ import com.actividad_10.powerzone_back.Entities.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 @Data
 @AllArgsConstructor

@@ -11,14 +11,12 @@ import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import com.actividad_10.powerzone_back.Services.ProfileService;
 import com.actividad_10.powerzone_back.Services.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/profile")

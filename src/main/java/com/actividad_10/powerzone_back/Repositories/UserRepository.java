@@ -1,6 +1,5 @@
 package com.actividad_10.powerzone_back.Repositories;
 
-import com.actividad_10.powerzone_back.DTOs.UserIdDto;
 import com.actividad_10.powerzone_back.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

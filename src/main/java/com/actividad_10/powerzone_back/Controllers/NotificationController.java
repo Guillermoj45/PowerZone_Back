@@ -1,16 +1,12 @@
 package com.actividad_10.powerzone_back.Controllers;
 
 import com.actividad_10.powerzone_back.Config.JwtService;
-import com.actividad_10.powerzone_back.DTOs.ChatMessage;
-import com.actividad_10.powerzone_back.DTOs.Notificaciones.BaseNotification;
 import com.actividad_10.powerzone_back.DTOs.Notificaciones.MegaNotificacion;
-import com.actividad_10.powerzone_back.Entities.Notification;
 import com.actividad_10.powerzone_back.Services.NotificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

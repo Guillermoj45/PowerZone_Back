@@ -2,7 +2,10 @@ package com.actividad_10.powerzone_back.Entities;
 
 import com.actividad_10.powerzone_back.Entities.emun.ReportState;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
