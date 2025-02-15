@@ -71,8 +71,8 @@ public class Notification implements Serializable {
      * @param post el post en cuestión
      */
     public Notification(Post post,Profile profile1, NotificationType type) {
-        this.userSend = post.getUser().getProfile();
-        this.userRecibe = profile1;
+        this.userSend = profile1;
+        this.userRecibe = post.getUser().getProfile();
         this.content = post.getId();
         this.type = type;
         this.createdAt = LocalDateTime.now();

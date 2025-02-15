@@ -30,16 +30,7 @@ public class ProfileService {
         List<Profile> profiles = profileRepository.findByNicknameContainingIgnoreCase(query);
 
         // Convertir las entidades a DTOs
-        return profiles.stream().map(profile -> {
-            ProfileDto dto = new ProfileDto();
-            dto.setId(profile.getId());
-            dto.setName(profile.getName());
-            dto.setAvatar(profile.getAvatar());
-            dto.setBornDate(profile.getBornDate());
-            dto.setActivo(profile.getActivo());
-            dto.setNickname(profile.getNickname());
-            return dto;
-        }).collect(Collectors.toList());
+        return profiles.stream().map(this::trasformateProfileToDto).collect(Collectors.toList());
     }
 
     public ProfileDto getUserById(Long id) {
@@ -81,8 +72,6 @@ public class ProfileService {
         dto.setBornDate(profile.getBornDate());
         dto.setActivo(profile.getActivo());
         dto.setNickname(profile.getNickname());
-        dto.setFollowers(profileRepository.countFollowersByProfileId(profile.getId()));
-        dto.setFollowing(profileRepository.countFollowingByProfileId(profile.getId()));
         return dto;
     }
 
