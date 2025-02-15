@@ -83,7 +83,7 @@ public class AddNotificationService {
 
     @Async
     public void sendNotification(MegaNotificacion notification) {
-        messagingTemplate.convertAndSend("/topic/roomNotification/25", notification);
+        messagingTemplate.convertAndSend("/topic/roomNotification/" + notification.getReceiver().getId(), notification);
     }
 
     @Async
