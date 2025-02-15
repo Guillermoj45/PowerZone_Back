@@ -18,4 +18,7 @@ public class GroupName implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "image", nullable = false, length = 200, columnDefinition = "varchar(200) default 'https://default.image.url'")
+    private String image = "https://default.image.url";
+
 }

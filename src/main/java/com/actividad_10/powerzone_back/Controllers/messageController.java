@@ -1,5 +1,7 @@
 package com.actividad_10.powerzone_back.Controllers;
 
+import com.actividad_10.powerzone_back.Cloudinary.CloudinaryService;
+import com.actividad_10.powerzone_back.Cloudinary.UploadResult;
 import com.actividad_10.powerzone_back.Config.JwtService;
 import com.actividad_10.powerzone_back.DTOs.ChatMessage;
 import com.actividad_10.powerzone_back.DTOs.GrupoUltimoMensajeDTO;
@@ -13,6 +15,8 @@ import com.actividad_10.powerzone_back.Repositories.GroupNameRepository;
 import com.actividad_10.powerzone_back.Repositories.GroupUserRepository;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import com.actividad_10.powerzone_back.Services.MessageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import com.actividad_10.powerzone_back.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +27,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +48,9 @@ public class messageController {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
     private JwtService jwtService;
+    private final ObjectMapper objectMapper;
     private MessageService chatMessageService;
+    private final CloudinaryService cloudinaryService;
 
     // Manejar mensajes enviados por los clientes
     @MessageMapping("/chat/{roomId}") // Los clientes envían mensajes a /app/chat
@@ -95,11 +103,21 @@ public class messageController {
         return ResponseEntity.ok(message);
     }
 
-
     // Crear un nuevo grupo
-    @PostMapping("/create")
-    public ResponseEntity<GroupName> createGroup(@RequestBody GroupName newGroup) {
-        System.out.println("Recibido: " + newGroup);  // Verifica que se recibe el JSON correctamente
+    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
+    public ResponseEntity<GroupName> createGroup(
+            @RequestPart("group") String groupJson,  // El JSON con los detalles del grupo
+            @RequestPart(value = "file", required = false) MultipartFile file) {  // Imagen opcional del grupo
+
+        System.out.println("Grupo recibido en JSON: " + groupJson);
+
+        // Convertir JSON a objeto GroupName
+        GroupName newGroup;
+        try {
+            newGroup = objectMapper.readValue(groupJson, GroupName.class);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
         // Revisa si el grupo existe
         boolean exists = groupNameRepository.existsByName(newGroup.getName());
@@ -110,6 +128,17 @@ public class messageController {
         }
 
         try {
+            // Si se recibe una imagen, subirla a Cloudinary
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadResult uploadResult = cloudinaryService.uploadFilePV(file, "groups");
+                    newGroup.setImage(uploadResult.getPublicId());  // Guardar el ID público de la imagen
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Error al subir la imagen
+                }
+            }
+
+            // Guardar el grupo en la base de datos
             GroupName savedGroup = groupNameRepository.save(newGroup);
             System.out.println("Grupo guardado: " + savedGroup);
             return ResponseEntity.ok(savedGroup); // Retorna el grupo guardado
