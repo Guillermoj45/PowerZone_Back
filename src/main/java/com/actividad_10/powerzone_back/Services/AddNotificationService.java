@@ -73,7 +73,7 @@ public class AddNotificationService {
 
     @Async
     public void createNotificationComment(Post post, Comment comment) {
-        Notification notification = new Notification(post, comment.getUser().getProfile(), NotificationType.NEW_COMMENT);
+        Notification notification = new Notification(post, comment.getUser().getProfile(), comment);
 
         MegaNotificacion notification1 = new MegaNotificacion(notification, new CommentDto(comment), new PostDto(post));
 

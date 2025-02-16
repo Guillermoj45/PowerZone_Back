@@ -48,14 +48,14 @@ public class CommentService implements ICommentService {
 
         Post post = postOptional.get();
 
-        addNotificationService.createNotificationComment(post, newComment);
-
         newComment.setPost(post);
         newComment.setPostCreatedAt(post.getCreatedAt());
         newComment.setCreatedAt(LocalDateTime.now());
 
 
-        commentRepository.save(newComment);
+        newComment = commentRepository.save(newComment);
+
+        addNotificationService.createNotificationComment(post, newComment);
 
         CommentDto commentDto = new CommentDto();
         commentDto.setId(newComment.getId());
