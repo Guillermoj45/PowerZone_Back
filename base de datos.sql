@@ -250,5 +250,5 @@ CREATE TABLE search_history (
 );
 
 ALTER TABLE groupname
-    ADD COLUMN image VARCHAR(200) DEFAULT 'https://default.image.url';
+    ADD COLUMN image VARCHAR(200) not null DEFAULT 'powerzone/groups/mxbvxomgfy5ko3fufbks';
 
