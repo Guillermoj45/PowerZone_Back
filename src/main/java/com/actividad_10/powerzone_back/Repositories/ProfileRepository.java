@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.Set;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
-    @Query("SELECT p FROM Profile p WHERE LOWER(p.nickname) LIKE LOWER(CONCAT('%', :query, '%'))")
+    @Query("""
+        SELECT p
+        FROM Profile p
+        WHERE LOWER(p.nickname) LIKE LOWER(CONCAT('%', :query, '%'))
+        order by similarity(p.nickname, :query) desc
+        """)
     List<Profile> findByNicknameContainingIgnoreCase(String query);
     @Query(value = "SELECT COUNT(*) FROM follower WHERE profile_id = :profileId", nativeQuery = true)
     int countFollowingByProfileId(@Param("profileId") Long profileId);
