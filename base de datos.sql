@@ -3,43 +3,6 @@ create database powerzone;
 set search_path to powerzone;
 set search_path = "public";
 
-create table diet (
-                      id bigserial primary key,
-                      name varchar(50) not null,
-                      image varchar(200) not null
-);
-
-create table alimentacion (
-                              id bigserial primary key,
-                              name varchar(50) not null,
-                              description text not null
-);
-
-create table diet_alimentacion (
-                                   diet_id bigint not null,
-                                   alimentacion_id bigint not null,
-                                   constraint pk_diet_alimentacion primary key (diet_id, alimentacion_id),
-                                   constraint fk_diet_alimentacion_diet foreign key (diet_id) references diet (id) on delete cascade,
-                                   constraint fk_diet_alimentacion_alimentacion foreign key (alimentacion_id) references alimentacion (id) on delete cascade
-);
-
-create table ingredients(
-                            id bigserial primary key,
-                            name varchar(50) not null,
-                            image varchar(200) not null,
-                            description text not null
-);
-
-create table alimentacion_ingredients(
-                                         id bigserial,
-                                         alimentacion_id bigint not null,
-                                         ingredients_id bigint not null,
-                                         constraint fk_alimentacion_ingredients_alimentacion foreign key (alimentacion_id) references alimentacion (id) on delete cascade,
-                                         constraint fk_alimentacion_ingredients_ingredients foreign key (ingredients_id) references ingredients (id) on delete cascade,
-                                         constraint pk_alimentacion_ingredients primary key (alimentacion_id, ingredients_id)
-
-);
-
 create table "users" (
                         id bigserial primary key,
                         email varchar(50) not null unique,
@@ -54,19 +17,11 @@ create table "profile" (
                            avatar varchar(200) not null default 'https://res.cloudinary.com/dflz0gveu/image/upload/v1718394870/avatars/default.png',
                            born_date date not null,
                            ban_at timestamp,
-                           diet bigint,
+
                            created_at timestamp not null default now(),
                            activo boolean not null default true,
-                           constraint fk_profile_user foreign key (id) references "users" (id) on delete cascade,
-                           constraint fk_profile_diet foreign key (diet) references "diet" (id) on delete SET NULL
-);
+                           constraint fk_profile_user foreign key (id) references "users" (id) on delete cascade
 
-create table "follower" (
-                            user_id bigint not null,
-                            follower_id bigint not null,
-                            constraint pk_follower primary key (user_id, follower_id),
-                            constraint fk_follower_user foreign key (user_id) references "users" (id) on delete cascade,
-                            constraint fk_follower_follower foreign key (follower_id) references "users" (id) on delete cascade
 );
 
 create table "post" (
@@ -189,33 +144,9 @@ create table notification (
                               constraint fk_notification_user foreign key (user_id) references "users" (id) on delete cascade
 );
 
-
-create table training(
-    id bigserial primary key,
-    name varchar(50) not null,
-    image varchar(200) not null,
-    description text not null
-);
-
-create table exercises(
-    id bigserial primary key,
-    name varchar(50) not null,
-    image varchar(200) not null,
-    description text not null
-);
-
-create table training_exercises(
-    training_id bigint not null,
-    exercises_id bigint not null,
-    muscles smallint not null,
-    constraint fk_training_exercises_training foreign key (training_id) references training (id) on delete cascade,
-    constraint fk_training_exercises_exercises foreign key (exercises_id) references exercises (id) on delete cascade,
-    constraint pk_training_exercises primary key (training_id, exercises_id)
-);
-
 ALTER TABLE profile ADD COLUMN is_new_user BOOLEAN DEFAULT TRUE;
 
-DROP TABLE IF EXISTS follower;
+
 CREATE TABLE follower (
                           profile_id BIGINT NOT NULL,
                           follower_id BIGINT NOT NULL,
@@ -237,8 +168,6 @@ create table notification (
                               constraint fk_notification_profile foreign key (recibe_id) references profile (id) on delete cascade,
                               constraint fk_notification_sender foreign key (sender_id) references profile (id) on delete cascade
 );
-
-alter table if exists comment add column delete boolean not null default false;
 
 
 CREATE TABLE search_history (
