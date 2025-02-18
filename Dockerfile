@@ -8,7 +8,6 @@ WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw .
 COPY mvnw.cmd .
-COPY .env .
 
 # Ensure the Maven wrapper script has execute permissions
 RUN chmod +x mvnw
