@@ -1,5 +1,5 @@
 FROM openjdk:23-jdk-slim
-LABEL authors="guill"
+LABEL authors="javi"
 
 # Set the working directory
 WORKDIR /app
