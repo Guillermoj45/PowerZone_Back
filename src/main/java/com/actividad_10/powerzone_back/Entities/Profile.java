@@ -41,9 +41,6 @@ public class Profile implements Serializable {
     @Column(name = "is_new_user", nullable = false, columnDefinition = "boolean default true")
     private boolean isNewUser = true;
 
-    @Column(name = "diet")
-    private Long diet;
-
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt = LocalDate.now();
 
