@@ -1,5 +1,5 @@
 FROM openjdk:23-jdk-slim
-LABEL authors="guill"
+LABEL authors="rafa"
 
 # Set the working directory
 WORKDIR /app
@@ -8,7 +8,6 @@ WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw .
 COPY mvnw.cmd .
-COPY .env .
 
 # Ensure the Maven wrapper script has execute permissions
 RUN chmod +x mvnw
